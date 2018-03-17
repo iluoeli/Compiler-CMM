@@ -557,6 +557,7 @@ char *yytext;
 %locations
 */
 #line 5 "lexical.l"
+	#include <stdlib.h>
 	#include "TreeNode.h"
 	#include "syntax.tab.h"
 	int yycolumn = 1;
@@ -568,7 +569,7 @@ char *yytext;
 	  yycolumn += yyleng;
 	  */
 /*definitions*/
-#line 572 "lex.yy.c"
+#line 573 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -786,10 +787,10 @@ YY_DECL
 		}
 
 	{
-#line 27 "lexical.l"
+#line 28 "lexical.l"
 
 
-#line 793 "lex.yy.c"
+#line 794 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -859,244 +860,284 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 29 "lexical.l"
+#line 30 "lexical.l"
 {printf("WARP\n"); yycolumn = 1;}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 30 "lexical.l"
+#line 31 "lexical.l"
 {/*white space, do nothing*/}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 31 "lexical.l"
+#line 32 "lexical.l"
 {printf("INT\n");
 		yylval.pNode = createNode("INT", yylineno); 
+		yylval.pNode->nType = Int;
+		yylval.pNode->iValue = atoi(yytext);
 		return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 34 "lexical.l"
+#line 37 "lexical.l"
 {printf("INT(HEX)\n");
 		yylval.pNode = createNode("INT", yylineno); 
+		yylval.pNode->nType = Int;
+		yylval.pNode->iValue = atoi(yytext);
 		return INT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 37 "lexical.l"
+#line 42 "lexical.l"
 {printf("INT(OCT)\n");
 		yylval.pNode = createNode("INT", yylineno); 
+		yylval.pNode->nType = Int;
+		yylval.pNode->iValue = atoi(yytext);
 		return INT;}
 	YY_BREAK
 /* (^-?[1-9]{digit}*)|0		{printf("INT\n");} */
 case 6:
 YY_RULE_SETUP
-#line 41 "lexical.l"
+#line 48 "lexical.l"
 {printf("FLOAT(DEC)\n");
 		yylval.pNode = createNode("FLOAT", yylineno); 
+		yylval.pNode->nType = Float;
+		yylval.pNode->iValue = atof(yytext);
 		return FLOAT;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 44 "lexical.l"
+#line 53 "lexical.l"
 {printf("FLOAT\n");
 		yylval.pNode = createNode("FLOAT", yylineno); 
+		yylval.pNode->nType = Float;
+		yylval.pNode->iValue = atof(yytext);
 		return FLOAT;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 47 "lexical.l"
+#line 58 "lexical.l"
 {printf("SEMI\n");
 		yylval.pNode = createNode("SEMI", yylineno); 
+		yylval.pNode->nType = Token;
 		return SEMI;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 50 "lexical.l"
+#line 62 "lexical.l"
 {printf("COMMA\n");
 		yylval.pNode = createNode("COMMA", yylineno); 
+		yylval.pNode->nType = Token;
 		return COMMA;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 53 "lexical.l"
+#line 66 "lexical.l"
 {printf("ASSIGNOP\n");
 		yylval.pNode = createNode("ASSIGNOP", yylineno); 
+		yylval.pNode->nType = Token;
 		return ASSIGNOP;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 56 "lexical.l"
+#line 70 "lexical.l"
 {printf("RELOP\n");
 		yylval.pNode = createNode("RELOP", yylineno); 
+		yylval.pNode->nType = Relop;
 		return RELOP;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 59 "lexical.l"
+#line 74 "lexical.l"
 {printf("PLUS\n");
 		yylval.pNode = createNode("PLUS", yylineno); 
+		yylval.pNode->nType = Token;
 		return PLUS;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 62 "lexical.l"
+#line 78 "lexical.l"
 {printf("MINUS\n");
 		yylval.pNode = createNode("MINUS", yylineno); 
+		yylval.pNode->nType = Token;
 		return MINUS;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 65 "lexical.l"
+#line 82 "lexical.l"
 {printf("STAR\n");
 		yylval.pNode = createNode("STAR", yylineno); 
+		yylval.pNode->nType = Token;
 		return STAR;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 68 "lexical.l"
+#line 86 "lexical.l"
 {printf("DIV\n");
 		yylval.pNode = createNode("DIV", yylineno); 
+		yylval.pNode->nType = Token;
 		return DIV;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 71 "lexical.l"
+#line 90 "lexical.l"
 {printf("AND\n");
 		yylval.pNode = createNode("AND", yylineno); 
+		yylval.pNode->nType = Token;
 		return AND;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 74 "lexical.l"
+#line 94 "lexical.l"
 {printf("OR\n");
 		yylval.pNode = createNode("OR", yylineno); 
+		yylval.pNode->nType = Token;
 		return OR;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 77 "lexical.l"
+#line 98 "lexical.l"
 {printf("DOT\n");
 		yylval.pNode = createNode("DOT", yylineno); 
+		yylval.pNode->nType = Token;
 		return DOT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 80 "lexical.l"
+#line 102 "lexical.l"
 {printf("NOT\n");
 		yylval.pNode = createNode("NOT", yylineno); 
+		yylval.pNode->nType = Token;
 		return NOT;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 83 "lexical.l"
+#line 106 "lexical.l"
 {printf("LP\n"); 
 		yylval.pNode = createNode("LP", yylineno); 
+		yylval.pNode->nType = Token;
 		return LP;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 86 "lexical.l"
+#line 110 "lexical.l"
 {printf("RP\n"); 
 		yylval.pNode = createNode("RP", yylineno); 
+		yylval.pNode->nType = Token;
 		return RP;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 89 "lexical.l"
+#line 114 "lexical.l"
 {printf("LB\n");
 		yylval.pNode = createNode("LB", yylineno); 
+		yylval.pNode->nType = Token;
 		return LB;} 
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 92 "lexical.l"
+#line 118 "lexical.l"
 {printf("RB\n"); 
 		yylval.pNode = createNode("RB", yylineno); 
+		yylval.pNode->nType = Token;
 		return RB;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 95 "lexical.l"
+#line 122 "lexical.l"
 {printf("LC\n"); 
 		yylval.pNode = createNode("LC", yylineno); 
+		yylval.pNode->nType = Token;
 		return LC;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 98 "lexical.l"
+#line 126 "lexical.l"
 {printf("RC\n"); 
 		yylval.pNode = createNode("RC", yylineno); 
+		yylval.pNode->nType = Token;
 		return RC;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 101 "lexical.l"
+#line 130 "lexical.l"
 {char c = input(); while (c != '\n') c = input();}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 102 "lexical.l"
+#line 131 "lexical.l"
 {printf("TYPE\n");
 		yylval.pNode = createNode("TYPE", yylineno); 
+		yylval.pNode->nType = Type;
+		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
+		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
 		return TYPE;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 105 "lexical.l"
+#line 137 "lexical.l"
 {printf("STRUCT\n");
 		yylval.pNode = createNode("STRUCT", yylineno); 
+		yylval.pNode->nType = Token;
 		return STRUCT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 108 "lexical.l"
+#line 141 "lexical.l"
 {printf("RETURN\n");
 		yylval.pNode = createNode("RETURN", yylineno); 
+		yylval.pNode->nType = Token;
 		return RETURN;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 111 "lexical.l"
+#line 145 "lexical.l"
 {printf("IF\n");
 		yylval.pNode = createNode("IF", yylineno); 
+		yylval.pNode->nType = Token;
 		return IF;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 114 "lexical.l"
+#line 149 "lexical.l"
 {printf("ELSE\n");
 		yylval.pNode = createNode("ELSE", yylineno); 
+		yylval.pNode->nType = Token;
 		return ELSE;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 117 "lexical.l"
+#line 153 "lexical.l"
 {printf("WHILE\n");
 		yylval.pNode = createNode("WHILE", yylineno); 
+		yylval.pNode->nType = Token;
 		return WHILE;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 120 "lexical.l"
+#line 157 "lexical.l"
 {printf("ID\n");
 		yylval.pNode = createNode("ID", yylineno); 
+		yylval.pNode->nType = Id;
+		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
+		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
+		yylval.pNode->nType = Token;
 		return ID;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 123 "lexical.l"
+#line 164 "lexical.l"
 {printf("Error type A at line %d: Mysterious characters \'%s\'\n",
 			yylineno, yytext);
 		}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 127 "lexical.l"
+#line 168 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1100 "lex.yy.c"
+#line 1141 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2109,7 +2150,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 127 "lexical.l"
+#line 168 "lexical.l"
 
 
 

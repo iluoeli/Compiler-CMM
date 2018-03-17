@@ -141,7 +141,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 9 "syntax.y" /* yacc.c:355  */
+#line 10 "syntax.y" /* yacc.c:355  */
 
 	int nType;
 	struct TreeNode *pNode;
@@ -461,14 +461,14 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
-       0,    53,    53,    59,    60,    62,    63,    64,    66,    67,
-      70,    71,    73,    74,    76,    77,    79,    82,    83,    85,
-      86,    88,    89,    91,    94,    96,    97,    99,   100,   101,
-     102,   103,   106,   107,   109,   111,   112,   114,   115,   118,
-     119,   120,   121,   122,   123,   124,   125,   126,   127,   128,
-     129,   130,   131,   132,   133,   134,   136,   137
+       0,    55,    55,    62,    68,    71,    78,    84,    92,    97,
+     106,   111,   117,   126,   133,   138,   140,   147,   152,   161,
+     169,   177,   184,   190,   198,   207,   213,   215,   221,   226,
+     233,   244,   255,   261,   263,   271,   276,   284,   289,   298,
+     305,   312,   319,   326,   333,   340,   347,   354,   360,   366,
+     374,   381,   389,   396,   401,   406,   412,   419
 };
 #endif
 
@@ -1327,347 +1327,631 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 53 "syntax.y" /* yacc.c:1646  */
+#line 55 "syntax.y" /* yacc.c:1646  */
     {
 		(yyval.pNode) = createNode("Program", (yyvsp[0].pNode)->lineno); 
-		root = (yyval.pNode);
+		(yyval.pNode)->nType = NonTerminal;
 		addChild((yyval.pNode), (yyvsp[0].pNode));
+		root = (yyval.pNode);
 	}
-#line 1337 "syntax.tab.c" /* yacc.c:1646  */
+#line 1338 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 59 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1343 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 4:
-#line 60 "syntax.y" /* yacc.c:1646  */
-    {}
+#line 62 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ExtDefList", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
 #line 1349 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
+  case 4:
+#line 68 "syntax.y" /* yacc.c:1646  */
+    {//null
+	}
+#line 1356 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
   case 5:
-#line 62 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1355 "syntax.tab.c" /* yacc.c:1646  */
+#line 71 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ExtDef", (yyvsp[-2].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1368 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 63 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1361 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 7:
-#line 64 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1367 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 8:
-#line 66 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1373 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 9:
-#line 67 "syntax.y" /* yacc.c:1646  */
-    {}
+#line 78 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ExtDef", (yyvsp[-1].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
 #line 1379 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 70 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1385 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 11:
-#line 71 "syntax.y" /* yacc.c:1646  */
-    {}
+  case 7:
+#line 84 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ExtDef", (yyvsp[-2].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
 #line 1391 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 12:
-#line 73 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1397 "syntax.tab.c" /* yacc.c:1646  */
+  case 8:
+#line 92 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ExtDecList", (yyvsp[0].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1401 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 13:
-#line 74 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1403 "syntax.tab.c" /* yacc.c:1646  */
+  case 9:
+#line 97 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ExtDecList", (yyvsp[-2].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1413 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 14:
-#line 76 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1409 "syntax.tab.c" /* yacc.c:1646  */
+  case 10:
+#line 106 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Specifier", (yyvsp[0].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1423 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 15:
-#line 77 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1415 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 16:
-#line 79 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1421 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 17:
-#line 82 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1427 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 18:
-#line 83 "syntax.y" /* yacc.c:1646  */
-    {}
+  case 11:
+#line 111 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Specifier", (yyvsp[0].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
 #line 1433 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 19:
-#line 85 "syntax.y" /* yacc.c:1646  */
+  case 12:
+#line 117 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("StructSpecifier", (yyvsp[-4].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[-4].pNode));
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1447 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 13:
+#line 126 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("StructSpecifier", (yyvsp[-1].pNode)->lineno); 
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1458 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 14:
+#line 133 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("OptTag", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1468 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 15:
+#line 138 "syntax.y" /* yacc.c:1646  */
     {}
-#line 1439 "syntax.tab.c" /* yacc.c:1646  */
+#line 1474 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 16:
+#line 140 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Tag", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1484 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 147 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("VarDec", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+	}
+#line 1494 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 152 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("VarDec", (yyvsp[-3].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1507 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 161 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("FunDec", (yyvsp[-3].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1520 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 86 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1445 "syntax.tab.c" /* yacc.c:1646  */
+#line 169 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("FunDec", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1532 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 88 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1451 "syntax.tab.c" /* yacc.c:1646  */
+#line 177 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("VarList", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1544 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 89 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1457 "syntax.tab.c" /* yacc.c:1646  */
+#line 184 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("VarList", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1554 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 91 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1463 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 24:
-#line 94 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1469 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 25:
-#line 96 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1475 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 26:
-#line 97 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1481 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 27:
-#line 99 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1487 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 28:
-#line 100 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1493 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 29:
-#line 101 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1499 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 30:
-#line 102 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1505 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 31:
-#line 103 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1511 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 32:
-#line 106 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1517 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 33:
-#line 107 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1523 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 34:
-#line 109 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1529 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 35:
-#line 111 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1535 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 36:
-#line 112 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1541 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 37:
-#line 114 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1547 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 38:
-#line 115 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1553 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 39:
-#line 118 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1559 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 40:
-#line 119 "syntax.y" /* yacc.c:1646  */
-    {}
+#line 190 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("ParamDec", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
 #line 1565 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 41:
-#line 120 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1571 "syntax.tab.c" /* yacc.c:1646  */
+  case 24:
+#line 198 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("CompSt", (yyvsp[-3].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1578 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 42:
-#line 121 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1577 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 122 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1583 "syntax.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 44:
-#line 123 "syntax.y" /* yacc.c:1646  */
-    {}
+  case 25:
+#line 207 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("StmtList", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
 #line 1589 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 45:
-#line 124 "syntax.y" /* yacc.c:1646  */
+  case 26:
+#line 213 "syntax.y" /* yacc.c:1646  */
     {}
 #line 1595 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
-  case 46:
-#line 125 "syntax.y" /* yacc.c:1646  */
+  case 27:
+#line 215 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Stmt", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1606 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 28:
+#line 221 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Stmt", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1616 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 29:
+#line 226 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Stmt", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1628 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 30:
+#line 233 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Stmt", (yyvsp[-6].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-6].pNode));
+		addChild((yyval.pNode), (yyvsp[-5].pNode));
+		addChild((yyval.pNode), (yyvsp[-4].pNode));
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1644 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 244 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Stmt", (yyvsp[-4].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-4].pNode));
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1658 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 255 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("DefList", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1669 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 261 "syntax.y" /* yacc.c:1646  */
     {}
-#line 1601 "syntax.tab.c" /* yacc.c:1646  */
+#line 1675 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 34:
+#line 263 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Def", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1687 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 35:
+#line 271 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("DecList", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1697 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 36:
+#line 276 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("DecList", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1709 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 37:
+#line 284 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Dec", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1719 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 38:
+#line 289 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Dec", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1731 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 39:
+#line 298 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1743 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 40:
+#line 305 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1755 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 41:
+#line 312 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1767 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 319 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1779 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 326 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1791 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 333 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1803 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 340 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1815 "syntax.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 347 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1827 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 126 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1607 "syntax.tab.c" /* yacc.c:1646  */
+#line 354 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1838 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 127 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1613 "syntax.tab.c" /* yacc.c:1646  */
+#line 360 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-1].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1849 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 128 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1619 "syntax.tab.c" /* yacc.c:1646  */
+#line 366 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-3].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1862 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 129 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1625 "syntax.tab.c" /* yacc.c:1646  */
+#line 374 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1874 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 130 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1631 "syntax.tab.c" /* yacc.c:1646  */
+#line 381 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-3].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-3].pNode));
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1887 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 131 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1637 "syntax.tab.c" /* yacc.c:1646  */
+#line 389 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1899 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 132 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1643 "syntax.tab.c" /* yacc.c:1646  */
+#line 396 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1909 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 133 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1649 "syntax.tab.c" /* yacc.c:1646  */
+#line 401 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1919 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 134 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1655 "syntax.tab.c" /* yacc.c:1646  */
+#line 406 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Exp", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1929 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 136 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1661 "syntax.tab.c" /* yacc.c:1646  */
+#line 412 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Args", (yyvsp[-2].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[-2].pNode));
+		addChild((yyval.pNode), (yyvsp[-1].pNode));
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1941 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 137 "syntax.y" /* yacc.c:1646  */
-    {}
-#line 1667 "syntax.tab.c" /* yacc.c:1646  */
+#line 419 "syntax.y" /* yacc.c:1646  */
+    {
+		(yyval.pNode) = createNode("Args", (yyvsp[0].pNode)->lineno);
+		addChild((yyval.pNode), (yyvsp[0].pNode));
+		(yyval.pNode)->nType = NonTerminal;
+}
+#line 1951 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1671 "syntax.tab.c" /* yacc.c:1646  */
+#line 1955 "syntax.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1895,7 +2179,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 140 "syntax.y" /* yacc.c:1906  */
+#line 426 "syntax.y" /* yacc.c:1906  */
 
 
 #include "lex.yy.c"

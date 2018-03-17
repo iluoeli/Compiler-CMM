@@ -6,20 +6,22 @@
 #include <string.h>
 
 
-enum ValueType {
-	Int,
+typedef enum ValueType {
+	Int = 1,
 	Float,
 	Id,
 	Type,
 	Relop,
-	Other
-};
+	Token,
+	NonTerminal,
+	None
+} ValueType;
 
 
 
 typedef struct TreeNode {
 	int lineno;			//line no
-	int nType;			//to explain which type value is,interger or float or id
+	ValueType nType;			//to explain which type value is,interger or float or id
 	union {
 		int iValue;
 		float fValue;

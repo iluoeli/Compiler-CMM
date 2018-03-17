@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include "TreeNode.h"
 
 extern FILE *yyin;
 extern int yylineno;
+extern struct TreeNode *root;
 void yyrestart(FILE *);
 void yyparse();
 
@@ -21,6 +23,10 @@ int main(int argc, char **argv)
 			yyparse();
 			fclose(fp);
 			yylineno = 1;
+
+			//print tree
+			printTree(root);
+			root = NULL;
 		}
 	}
 	
