@@ -6,14 +6,14 @@
 	#include "TreeNode.h"
 	#include "syntax.tab.h"
 	int yycolumn = 1;
-	int nError = 0;
-	/*
+	 int nError = 0;
+	
 	#define YY_USER_ACTION \
 	  yylloc.first_line = yylloc.last_line = yylineno;\
-	  yylloc.first_colunm = yycolumn; \
+	  yylloc.first_column = yycolumn; \
 	  yylloc.last_column = yycolumn + yyleng - 1; \
 	  yycolumn += yyleng;
-	  */
+	  
 %}
 
 /*definitions*/
@@ -49,12 +49,12 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 [+-]?{digits}(\.{digits})?([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = Float;
-		yylval.pNode->iValue = atof(yytext);
+		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 [+-]?([1-9]{digit}*\.?{digits}|{digits}\.)		{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = Float;
-		yylval.pNode->iValue = atof(yytext);
+		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 ;		{
 		yylval.pNode = createNode("SEMI", yylineno); 
@@ -168,25 +168,3 @@ while	{
 
 %%
 
-/*
-int main(int argc, char **argv)
-{
-	int i;
-	if (argc > 1) {
-		for(i = 1; i < argc; i++) {
-			FILE *fp= fopen(argv[i], "r");
-			if(!fp) {
-				perror(argv[1]);
-				return 1;
-			}
-			printf("parsering file %d......\n", i);
-			yyrestart(fp);
-			yylex();
-			fclose(fp);
-			yylineno = 1;
-		}
-	}
-	
-	return 0;
-}
-*/

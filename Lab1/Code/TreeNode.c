@@ -28,38 +28,44 @@ void addChild(struct TreeNode *parent, struct TreeNode *child)
 	parent->childs[parent->nChild++] = child;
 }
 
+void printNode(struct TreeNode *subTree, int depth)
+{
+	int i;
+	for(i=0; i < depth; i++)
+		printf("  ");
+	switch(subTree->nType) {
+		case Int:
+			printf("%s: %d\n", subTree->info, subTree->iValue);
+			break;
+		case Float:
+			printf("%s: %g\n", subTree->info, subTree->fValue);
+			break;
+		case Id:
+			printf("%s: %s\n", subTree->info, subTree->ptr);
+			break;
+		case Type:
+			printf("%s: %s\n", subTree->info, subTree->ptr);
+			break;
+		case Relop:
+			printf("%s\n", subTree->info);
+			break;
+		case Token:
+			printf("%s\n", subTree->info);
+			break;
+		case NonTerminal:
+			printf("%s (%d)\n", subTree->info, subTree->lineno);
+			break;
+	}
+}
+
 void preOrder(struct TreeNode *subTree, int depth)
 {
 	if(subTree != NULL) {
 		//visit current node
-		int i;
-		for(i=0; i < depth; i++)
-			printf("  ");
-		switch(subTree->nType) {
-			case Int:
-				printf("%s: %d\n", subTree->info, subTree->iValue);
-				break;
-			case Float:
-				printf("%s: %f\n", subTree->info, subTree->fValue);
-				break;
-			case Id:
-				printf("%s: %s\n", subTree->info, subTree->ptr);
-				break;
-			case Type:
-				printf("%s: %s\n", subTree->info, subTree->ptr);
-				break;
-			case Relop:
-				printf("%s\n", subTree->info);
-				break;
-			case Token:
-				printf("%s\n", subTree->info);
-				break;
-			case NonTerminal:
-				printf("%s (%d)\n", subTree->info, subTree->lineno);
-				break;
-		}
+		printNode(subTree, depth);
 
 		//then visit childs
+		int i;
 		for(i = 0; i < subTree->nChild; i++)
 			preOrder(subTree->childs[i], depth+1);
 	}
