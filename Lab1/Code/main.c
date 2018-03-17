@@ -4,6 +4,7 @@
 extern FILE *yyin;
 extern int yylineno;
 extern struct TreeNode *root;
+extern int nError;
 void yyrestart(FILE *);
 void yyparse();
 
@@ -18,15 +19,17 @@ int main(int argc, char **argv)
 				perror(argv[1]);
 				return 1;
 			}
-			printf("parsering file %d......\n", i);
+			printf("\n\nparsering file %d......\n", i);
 			yyrestart(fp);
 			yyparse();
 			fclose(fp);
 			yylineno = 1;
 
 			//print tree
-			printTree(root);
+			if(!nError)
+				printTree(root);
 			root = NULL;
+			nError = 0;
 		}
 	}
 	

@@ -65,7 +65,8 @@ ExtDefList : ExtDef ExtDefList	{
 		addChild($$, $2);
 		$$->nType = NonTerminal;
 	}
-	|	{//null
+	| {//null
+		$$ = NULL;
 	}
 	;
 ExtDef : Specifier ExtDecList SEMI	{
@@ -135,7 +136,9 @@ OptTag : ID	{
 		addChild($$, $1);
 		$$->nType = NonTerminal;
 	}
-	|	{}
+	| {//null
+		$$ = NULL;
+	}
 	;
 Tag : ID	{
 		$$ = createNode("Tag", $1->lineno);
@@ -156,7 +159,7 @@ VarDec : ID	{
 		addChild($$, $3);
 		addChild($$, $4);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 FunDec : ID LP VarList RP{
 		$$ = createNode("FunDec", $1->lineno);
@@ -165,14 +168,14 @@ FunDec : ID LP VarList RP{
 		addChild($$, $3);
 		addChild($$, $4);
 		$$->nType = NonTerminal;
-}
+	}
 	| ID LP RP	{
 		$$ = createNode("FunDec", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 VarList : ParamDec COMMA VarList	{
 		$$ = createNode("VarList", $1->lineno);
@@ -180,19 +183,19 @@ VarList : ParamDec COMMA VarList	{
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| ParamDec	{
 		$$ = createNode("VarList", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 ParamDec : Specifier VarDec	{
 		$$ = createNode("ParamDec", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 
 CompSt : LC DefList StmtList RC	{
@@ -202,34 +205,36 @@ CompSt : LC DefList StmtList RC	{
 		addChild($$, $3);
 		addChild($$, $4);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 StmtList : Stmt StmtList	{
 		$$ = createNode("StmtList", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		$$->nType = NonTerminal;
-}
-	|	{}
+	}
+	| {//null
+		$$ = NULL;
+	}
 	;
 Stmt : Exp SEMI	{
 		$$ = createNode("Stmt", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		$$->nType = NonTerminal;
-}
+	}
 	| CompSt	{
 		$$ = createNode("Stmt", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	| RETURN Exp SEMI	{
 		$$ = createNode("Stmt", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| IF LP Exp RP Stmt ELSE Stmt	{
 		$$ = createNode("Stmt", $1->lineno);
 		addChild($$, $1);
@@ -240,7 +245,7 @@ Stmt : Exp SEMI	{
 		addChild($$, $6);
 		addChild($$, $7);
 		$$->nType = NonTerminal;
-}
+	}
 	| WHILE LP Exp RP Stmt	{
 		$$ = createNode("Stmt", $1->lineno);
 		addChild($$, $1);
@@ -249,7 +254,7 @@ Stmt : Exp SEMI	{
 		addChild($$, $4);
 		addChild($$, $5);
 		$$->nType = NonTerminal;
-}
+	}
 	| error SEMI	{
 		
 	}
@@ -260,8 +265,10 @@ DefList : Def DefList	{
 		addChild($$, $1);
 		addChild($$, $2);
 		$$->nType = NonTerminal;
-}
-	| {}
+	}
+	| {//null
+		$$ = NULL;
+	}
 	;
 Def : Specifier DecList SEMI	{
 		$$ = createNode("Def", $1->lineno);
@@ -269,33 +276,33 @@ Def : Specifier DecList SEMI	{
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 DecList : Dec	{
 		$$ = createNode("DecList", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	| Dec COMMA DecList	{
 		$$ = createNode("DecList", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 Dec : VarDec	{
 		$$ = createNode("Dec", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	| VarDec ASSIGNOP Exp	{
 		$$ = createNode("Dec", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 
 Exp : Exp ASSIGNOP Exp	{
@@ -304,68 +311,68 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp AND Exp	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp OR Exp	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp RELOP Exp	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp PLUS Exp	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp MINUS Exp	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp DIV Exp	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| LP Exp RP		{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| MINUS Exp		{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		$$->nType = NonTerminal;
-}
+	}
 	| NOT Exp		{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		$$->nType = NonTerminal;
-}
+	}
 	| ID LP Args RP	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
@@ -373,14 +380,14 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $3);
 		addChild($$, $4);
 		$$->nType = NonTerminal;
-}
+	}
 	| ID LP RP		{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp LB Exp RB	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
@@ -388,29 +395,29 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $3);
 		addChild($$, $4);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp DOT ID	{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| ID			{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	| INT			{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	| FLOAT			{
 		$$ = createNode("Exp", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 Args : Exp COMMA Args	{
 		$$ = createNode("Args", $1->lineno);
@@ -418,12 +425,12 @@ Args : Exp COMMA Args	{
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
-}
+	}
 	| Exp			{
 		$$ = createNode("Args", $1->lineno);
 		addChild($$, $1);
 		$$->nType = NonTerminal;
-}
+	}
 	;
 
 %%
