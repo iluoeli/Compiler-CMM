@@ -1,8 +1,10 @@
 %{
 	#include <stdio.h>
+	#include <stdarg.h>
 	#include "TreeNode.h"
 	int yylex();	
-	void yyerror(const char *msg);
+//	void yyerror(const char *msg);
+	void yyerror(char *pstr, ...);
 	void syntaxError(const char *msg, int lineno);
 	struct TreeNode *root = NULL;
 	extern int nError;
@@ -424,7 +426,7 @@ Exp : Exp ASSIGNOP Exp	{
 	}
 	| Exp LB error RB	{//error handle 
 		nError ++;
-		syntaxError("Missing \"]\"", @3.first_line);
+		yyerror("Missing \"]\"");
 	}
 	;
 Args : Exp COMMA Args	{
@@ -458,3 +460,13 @@ void yyerror(const char *msg)
 {
 }
 */
+
+void yyerror(char *pstr, ...)
+{
+	printf("Error type B at line %d: ", yylineno);
+	va_list varList;
+	va_start(varList, pstr);
+	vprintf(pstr, varList);
+	va_end(varList);
+	printf(".\n");
+}
