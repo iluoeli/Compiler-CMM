@@ -5,16 +5,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct TreeNode {
-	int lineno;
-	char *value;
-	char *info;
-	int nChild;
-	struct TreeNode *childs[8];
+
+enum ValueType {
+	Int,
+	Float,
+	Id,
+	Type,
+	Relop,
+	Other
 };
 
+
+
+typedef struct TreeNode {
+	int lineno;			//line no
+	int nType;			//to explain which type value is,interger or float or id
+	union {
+		int iValue;
+		float fValue;
+		char *ptr;
+	};
+	char *info;			//other information
+	int nChild;			//childs no
+	struct TreeNode *childs[8];	//childs pointers
+} TreeNode;
+
 struct TreeNode *newNode();
-struct TreeNode *creatNode(char *pstr, int lineno);
+struct TreeNode *createNode(char *pstr, int lineno);
 void addChild(struct TreeNode *parent, struct TreeNode *child);
 void printTree(struct TreeNode *root);
 

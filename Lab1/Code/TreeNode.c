@@ -12,7 +12,7 @@ struct TreeNode *newNode()
 	return node;
 }
 
-struct TreeNode *creatNode(char *pstr, int lineno)
+struct TreeNode *createNode(char *pstr, int lineno)
 {
 	struct TreeNode *node = newNode();
 	node->lineno = lineno;
@@ -25,7 +25,7 @@ struct TreeNode *creatNode(char *pstr, int lineno)
 void addChild(struct TreeNode *parent, struct TreeNode *child)
 {
 	if(!parent || !child)	return;
-	parent->childs[nChild++] = child;
+	parent->childs[parent->nChild++] = child;
 }
 
 void printTree(struct TreeNode *root)
