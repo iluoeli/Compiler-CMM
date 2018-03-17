@@ -1,9 +1,16 @@
-%{
+%locations
+%option yylineno
 
+%{
+	int yycolunm = 1;
+	#define YY_USER_ACTION \
+	  yylloc.first_line = yylloc.last_line = yylineno;\
+	  yylloc.first_colunm = yycolumn; \
+	  yylloc.last_column = yycolumn + yyleng - 1; \
+	  yycolumn += yyleng;
 %}
 
 /*definitions*/
-%option yylineno
 delim	[ \t\n\r]
 ws		{delim}+
 digit	[0-9]
@@ -11,13 +18,17 @@ letter_	[_a-zA-Z]
 digits	{digit}+
 number	{digits}(\.{digits})?(E[+-]?{digit})?
 
+
 %%
 
-\n		{printf("WARP\n");}
+\n		{printf("WARP\n"); yycolumn = 1;}
 {ws}	{/*white space, do nothing*/}
-0|([1-9][0-9]*)	{printf("INT\n");}
+0|([+-]?[1-9][0-9]*)	{printf("INT\n");}
+0[xX][A-Fa-f0-9]+	{printf("INT(HEX)\n");}
+0[0-7]+		{printf("INT(OCT)\n");}
 	/* (^-?[1-9]{digit}*)|0		{printf("INT\n");} */
-^[+-]?([1-9]{digit}*\.?{digits}|{digits}\.)$		{printf("FLOAT\n");}
+[+-]?{digits}(\.{digits})?([Ee][+-]?{digits})?	{printf("FLOAT(DEC)\n");}
+[+-]?([1-9]{digit}*\.?{digits}|{digits}\.)		{printf("FLOAT\n");}
 ;		{printf("SEMI\n");}
 ,		{printf("COMMA\n");}
 =		{printf("ASSIGNOP\n");}
@@ -52,13 +63,21 @@ while	{printf("WHILE\n");}
 
 int main(int argc, char **argv)
 {
+	int i;
 	if (argc > 1) {
-		if (!(yyin = fopen(argv[1], "r"))) {
-			perror(argv[1]);
-			return 1;
+		for(i = 1; i < argc; i++) {
+			FILE *fp= fopen(argv[i], "r");
+			if(!fp) {
+				perror(argv[1]);
+				return 1;
+			}
+			printf("parsering file %d......\n", i);
+			yyrestart(fp);
+			yylex();
+			fclose(fp);
+			yylineno = 1;
 		}
 	}
-	while(yylex() != 0);
 	
 	return 0;
 }
