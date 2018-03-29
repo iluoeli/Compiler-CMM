@@ -45,8 +45,12 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 		yylval.pNode->nType = Int;
 		yylval.pNode->iValue = atoi(yytext);
 		return INT;}
-	/* (^-?[1-9]{digit}*)|0		{} */
 [+-]?{digits}(\.{digits})?([Ee][+-]?{digits})?	{
+		yylval.pNode = createNode("FLOAT", yylineno); 
+		yylval.pNode->nType = Float;
+		yylval.pNode->fValue = atof(yytext);
+		return FLOAT;}
+[+-]?\.{digits}([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = Float;
 		yylval.pNode->fValue = atof(yytext);
