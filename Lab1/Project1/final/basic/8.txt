@@ -1,0 +1,18 @@
+int foo(int a, int b, int c)
+{
+    return a + b + c;
+}
+float bar(float a) 
+{
+    return a + 1.0;
+}
+int main()
+{
+    int a = 1;
+    int b = 2;
+    int c = 3;
+    foo(a, b, c);
+    foo(a, 1, b);
+    float d = 1.0;
+    float e = bar(d);
+}

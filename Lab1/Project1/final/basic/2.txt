@@ -1,0 +1,6 @@
+int main()
+{
+    int a = 123;
+    int arr[103];
+    arr[123] = 123;
+}

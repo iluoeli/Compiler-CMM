@@ -1,0 +1,11 @@
+struct C
+{
+    int a;
+    float b;
+};
+
+int main()
+{
+    struct C c;
+    int tmp = c.a + 1;
+}

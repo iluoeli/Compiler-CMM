@@ -1,0 +1,5 @@
+int main()
+{
+    int float = 1;
+    float 1err = 1.0;
+}

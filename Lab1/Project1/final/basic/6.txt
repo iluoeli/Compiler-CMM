@@ -1,0 +1,11 @@
+int main()
+{
+    int a = 1;
+    while(a != 100) {
+        if (a<=50) {
+            a = a + 1;
+        } else {
+            a = a + b;
+        }
+    }
+}

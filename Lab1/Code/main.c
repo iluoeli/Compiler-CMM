@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 				perror(argv[1]);
 				return 1;
 			}
-			printf("\n\nparsering file %d......\n", i);
+		//	printf("\n\nparsering file %d......\n", i);
 			yyrestart(fp);
 			yyparse();
 			fclose(fp);

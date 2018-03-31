@@ -6,7 +6,8 @@
 	#include "TreeNode.h"
 	#include "syntax.tab.h"
 	int yycolumn = 1;
-	 int nError = 0;
+	int nError = 0;
+	int newLine = 0;
 	
 	#define YY_USER_ACTION \
 	  yylloc.first_line = yylloc.last_line = yylineno;\
@@ -18,7 +19,7 @@
 
 /*definitions*/
 %option yylineno
-delim	[ \t\n\r]
+delim	[ \t\r]
 ws		{delim}+
 digit	[0-9]
 letter_	[_a-zA-Z]
@@ -28,7 +29,7 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 
 %%
 
-\n		{ yycolumn = 1;}
+\n		{ yycolumn = 1;	newLine = 1;}
 {ws}	{/*white space, do nothing*/}
 0|([+-]?[1-9][0-9]*)	{
 		yylval.pNode = createNode("INT", yylineno); 
@@ -38,24 +39,26 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 0[xX][A-Fa-f0-9]+	{
 		yylval.pNode = createNode("INT", yylineno); 
 		yylval.pNode->nType = Int;
-		yylval.pNode->iValue = atoi(yytext);
+		yylval.pNode->iValue = strtol(yytext, NULL, 16);
 		return INT;}
 0[0-7]+		{
 		yylval.pNode = createNode("INT", yylineno); 
 		yylval.pNode->nType = Int;
-		yylval.pNode->iValue = atoi(yytext);
+		yylval.pNode->iValue = strtol(yytext, NULL, 8);
 		return INT;}
-[+-]?{digits}(\.{digits})?([Ee][+-]?{digits})?	{
+		/*
+[+-]?({digits}*\.?{digits}|{digits}\.)([Ee][+-]?{digits})?	{
+		yylval.pNode = createNode("FLOAT", yylineno); 
+		yylval.pNode->nType = Float;
+		yylval.pNode->fValue = atof(yytext);
+		return FLOAT;}
+		*/
+[+-]?{digits}\.({digits})?([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = Float;
 		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 [+-]?\.{digits}([Ee][+-]?{digits})?	{
-		yylval.pNode = createNode("FLOAT", yylineno); 
-		yylval.pNode->nType = Float;
-		yylval.pNode->fValue = atof(yytext);
-		return FLOAT;}
-[+-]?([1-9]{digit}*\.?{digits}|{digits}\.)		{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = Float;
 		yylval.pNode->fValue = atof(yytext);
@@ -84,7 +87,7 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 		yylval.pNode = createNode("MINUS", yylineno); 
 		yylval.pNode->nType = Token;
 		return MINUS;}
-\*		{
+"*"		{
 		yylval.pNode = createNode("STAR", yylineno); 
 		yylval.pNode->nType = Token;
 		return STAR;}
@@ -132,7 +135,18 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 		yylval.pNode = createNode("RC", yylineno); 
 		yylval.pNode->nType = Token;
 		return RC;}
-"//"	{char c = input(); while (c != '\n') c = input();}
+"//"	{char c = input(); while (c != EOF && c != '\n') c = input();}
+"/*"	{	char c = input(); 
+			while (c != EOF) {
+				if(c == '*') {
+					c = input();
+					if(c == '/')
+						break;
+				}
+				else
+					c = input();
+			}
+		}
 (int)|(float)	{
 		yylval.pNode = createNode("TYPE", yylineno); 
 		yylval.pNode->nType = Type;
@@ -165,10 +179,18 @@ while	{
 		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
 		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
 		return ID;}
-.		{printf("Error type A at line %d: Mysterious characters \'%s\'\n",
+0[xX][0-9a-zA-Z]+	{
+            printf("Error type A at Line %d: Illegal hexadecimal number \"%s\".\n",
+            yylineno, yytext);
+            nError ++;	return INT;}
+0[0-9a-zA-Z]+		{
+            printf("Error type A at Line %d: Illegal octal number \"%s\".\n",
+            yylineno, yytext);
+            nError ++; return INT;}
+.		{
+			printf("Error type A at Line %d: Mysterious characters \"%s\".\n",
 			yylineno, yytext);
-			nError ++;
-		}
+			nError ++;}
 
 %%
 

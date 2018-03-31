@@ -1,0 +1,11 @@
+struct 
+{
+    int x;
+    int y;
+    double a, b;
+};
+
+int mian()
+{
+
+}

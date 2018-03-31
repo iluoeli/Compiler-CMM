@@ -1,0 +1,9 @@
+int main()
+{
+    int op1 = 1;
+    int op2 = 2;
+    int rlt1 = op1 + op2;
+    int rlt1 = op1 - op2;
+    int rlt1 = op1 * op2;
+    int rlt1 = op1 / op2;
+}

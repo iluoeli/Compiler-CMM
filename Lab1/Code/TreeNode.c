@@ -16,8 +16,9 @@ struct TreeNode *createNode(char *pstr, int lineno)
 {
 	struct TreeNode *node = newNode();
 	node->lineno = lineno;
-	node->info = (char *)malloc(sizeof(pstr));
+	node->info = (char *)malloc(strlen(pstr));
 	strncpy(node->info, pstr, strlen(pstr));
+	//node->info[strlen(pstr)] = '\0';
 
 	return node;
 }
@@ -38,7 +39,7 @@ void printNode(struct TreeNode *subTree, int depth)
 			printf("%s: %d\n", subTree->info, subTree->iValue);
 			break;
 		case Float:
-			printf("%s: %g\n", subTree->info, subTree->fValue);
+			printf("%s: %f\n", subTree->info, subTree->fValue);
 			break;
 		case Id:
 			printf("%s: %s\n", subTree->info, subTree->ptr);

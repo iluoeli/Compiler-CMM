@@ -8,6 +8,7 @@
 	void syntaxError(const char *msg, int lineno);
 	struct TreeNode *root = NULL;
 	extern int nError;
+	extern int newLine;
 %}
 
 /*declared types */
@@ -94,6 +95,10 @@ ExtDef : Specifier ExtDecList SEMI	{
 		addChild($$, $3);
 		$$->nType = NonTerminal;
 	}
+	| error SEMI {//error recovery
+		nError ++;
+		yyerror("Missing \";\"");
+	}
 	;
 ExtDecList : VarDec	{
 		$$ = createNode("ExtDecList", @$.first_line); 
@@ -135,6 +140,10 @@ StructSpecifier : STRUCT OptTag LC DefList RC	{
 		addChild($$, $2);
 		$$->nType = NonTerminal;
 	}
+	| STRUCT OptTag error RC {//error handle
+		nError ++;	
+		yyerror("Missing \"{\"");
+	}
 	;
 OptTag : ID	{
 		$$ = createNode("OptTag", @$.first_line);
@@ -165,6 +174,10 @@ VarDec : ID	{
 		addChild($$, $4);
 		$$->nType = NonTerminal;
 	}
+	| VarDec LB error	{//error handle	
+		nError ++;	
+		yyerror("Missing \"]\"");
+	}
 	;
 FunDec : ID LP VarList RP{
 		$$ = createNode("FunDec", @$.first_line);
@@ -180,6 +193,10 @@ FunDec : ID LP VarList RP{
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
+	}
+	| ID error RP {//error handle
+		nError ++;	
+		yyerror("Missing \")\"");
 	}
 	;
 VarList : ParamDec COMMA VarList	{
@@ -240,6 +257,15 @@ Stmt : Exp SEMI	{
 		addChild($$, $3);
 		$$->nType = NonTerminal;
 	}
+	| IF LP Exp RP Stmt %prec LOWER_THAN_ELSE	{
+		$$ = createNode("Stmt", @$.first_line);
+		addChild($$, $1);
+		addChild($$, $2);
+		addChild($$, $3);
+		addChild($$, $4);
+		addChild($$, $5);
+		$$->nType = NonTerminal;
+	}
 	| IF LP Exp RP Stmt ELSE Stmt	{
 		$$ = createNode("Stmt", @$.first_line);
 		addChild($$, $1);
@@ -260,9 +286,10 @@ Stmt : Exp SEMI	{
 		addChild($$, $5);
 		$$->nType = NonTerminal;
 	}
-	| error SEMI	{//error handle
+	| Exp error SEMI	{//error handle
 		nError ++;
-		syntaxError("Missing \";\"\n", @1.first_line);		
+		yyerror("Missing \";\"");
+		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 	;
 
@@ -282,6 +309,11 @@ Def : Specifier DecList SEMI	{
 		addChild($$, $2);
 		addChild($$, $3);
 		$$->nType = NonTerminal;
+	}
+	| Specifier DecList error SEMI	{//error handle
+		nError ++;
+		yyerror("Missing \";\"");
+		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 	;
 DecList : Dec	{
@@ -347,6 +379,13 @@ Exp : Exp ASSIGNOP Exp	{
 		$$->nType = NonTerminal;
 	}
 	| Exp MINUS Exp	{
+		$$ = createNode("Exp", @$.first_line);
+		addChild($$, $1);
+		addChild($$, $2);
+		addChild($$, $3);
+		$$->nType = NonTerminal;
+	}
+	| Exp STAR Exp	{
 		$$ = createNode("Exp", @$.first_line);
 		addChild($$, $1);
 		addChild($$, $2);
@@ -463,10 +502,14 @@ void yyerror(const char *msg)
 
 void yyerror(char *pstr, ...)
 {
-	printf("Error type B at line %d: ", yylineno);
-	va_list varList;
-	va_start(varList, pstr);
-	vprintf(pstr, varList);
-	va_end(varList);
-	printf(".\n");
+	//if(newLine) {
+		//printf("Error type B at Line %d: ", yylineno);
+		fprintf(stderr, "Error type B at Line %d: ", yylineno);
+		va_list varList;
+		va_start(varList, pstr);
+		vprintf(pstr, varList);
+		va_end(varList);
+		printf(".\n");
+		newLine = 0;
+	//}
 }
