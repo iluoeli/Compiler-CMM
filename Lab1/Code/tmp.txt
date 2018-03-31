@@ -1,1 +1,0 @@
-s/{}/{\r\t$$ = createNode("", $1->lineno);\r\taddChild($$, $1);\r}

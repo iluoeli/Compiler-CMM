@@ -5,7 +5,7 @@
 	int yylex();	
 //	void yyerror(const char *msg);
 	void yyerror(char *pstr, ...);
-	void syntaxError(const char *msg, int lineno);
+	void detailedMessage(const char *msg);
 	struct TreeNode *root = NULL;
 	extern int nError;
 	extern int newLine;
@@ -196,7 +196,7 @@ FunDec : ID LP VarList RP{
 	}
 	| ID error RP {//error handle
 		nError ++;	
-		yyerror("Missing \")\"");
+		yyerror("Missing \"(\"");
 	}
 	;
 VarList : ParamDec COMMA VarList	{
@@ -227,6 +227,10 @@ CompSt : LC DefList StmtList RC	{
 		addChild($$, $3);
 		addChild($$, $4);
 		$$->nType = NonTerminal;
+	}
+	| LC error RC {
+		nError ++;	
+		//yyerror("Missing \"*\"");
 	}
 	;
 StmtList : Stmt StmtList	{
@@ -312,7 +316,7 @@ Def : Specifier DecList SEMI	{
 	}
 	| Specifier DecList error SEMI	{//error handle
 		nError ++;
-		yyerror("Missing \";\"");
+		//yyerror("Missing \";\"");
 		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 	;
@@ -487,10 +491,9 @@ Args : Exp COMMA Args	{
 #include "lex.yy.c"
 
 
-void syntaxError(const char *msg, int lineno)
+void detailedMessage(const char *msg)
 {
-	printf("Error type B at line %d: %s\n",
-			lineno, msg);
+	printf("(%s).\n", msg);
 }
 
 //let yyerror do nothing
