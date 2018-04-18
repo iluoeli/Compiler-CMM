@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 			//print tree
 			if(!nError)
 				printTree(root);
+			//deleteTree(root);
 			root = NULL;
 			nError = 0;
 		}

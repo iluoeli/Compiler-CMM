@@ -180,16 +180,16 @@ while	{
 		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
 		return ID;}
 0[xX][0-9a-zA-Z]+	{
-            printf("Error type A at Line %d: Illegal hexadecimal number \"%s\".\n",
-            yylineno, yytext);
+            printf("#%d Error type A at Line %d: Illegal hexadecimal number \"%s\".\n",
+            nError, yylineno, yytext);
             nError ++;	return INT;}
 0[0-9a-zA-Z]+		{
-            printf("Error type A at Line %d: Illegal octal number \"%s\".\n",
-            yylineno, yytext);
+            printf("#%d Error type A at Line %d: Illegal octal number \"%s\".\n",
+            nError, yylineno, yytext);
             nError ++; return INT;}
 .		{
-			printf("Error type A at Line %d: Mysterious characters \"%s\".\n",
-			yylineno, yytext);
+			printf("#%d Error type A at Line %d: Mysterious characters \"%s\".\n",
+			nError, yylineno, yytext);
 			nError ++;}
 
 %%

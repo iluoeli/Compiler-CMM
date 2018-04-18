@@ -1,6 +1,0 @@
-int gi1 = 1, gi2 = 2;
-float gf = 1.0;
-int main()
-{
-    return 0;
-}

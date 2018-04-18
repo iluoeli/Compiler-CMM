@@ -1,7 +1,0 @@
-int main()
-{
-    float a = 1.5000e-1;
-    float b = 1.000005e9;
-    float c = .50000e-123;
-    float d = .5e-2;
-}

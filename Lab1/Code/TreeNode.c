@@ -16,9 +16,9 @@ struct TreeNode *createNode(char *pstr, int lineno)
 {
 	struct TreeNode *node = newNode();
 	node->lineno = lineno;
-	node->info = (char *)malloc(strlen(pstr));
+	node->info = (char *)malloc(strlen(pstr)+1);
 	strncpy(node->info, pstr, strlen(pstr));
-	//node->info[strlen(pstr)] = '\0';
+	node->info[strlen(pstr)] = '\0';
 
 	return node;
 }
@@ -76,3 +76,14 @@ void printTree(struct TreeNode *root)
 {
 	preOrder(root, 0);
 }
+
+void deleteTree(struct TreeNode *root)
+{
+	if(root != NULL) {
+		int i;
+		for(i = 0; i < root->nChild; i++)
+			deleteTree(root->childs[i]);
+		free(root);
+	}
+}
+

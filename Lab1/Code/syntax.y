@@ -141,8 +141,8 @@ StructSpecifier : STRUCT OptTag LC DefList RC	{
 		$$->nType = NonTerminal;
 	}
 	| STRUCT OptTag error RC {//error handle
-		nError ++;	
 		yyerror("Missing \"{\"");
+		nError ++;	
 	}
 	;
 OptTag : ID	{
@@ -175,8 +175,8 @@ VarDec : ID	{
 		$$->nType = NonTerminal;
 	}
 	| VarDec LB error	{//error handle	
-		nError ++;	
 		yyerror("Missing \"]\"");
+		nError ++;	
 	}
 	;
 FunDec : ID LP VarList RP{
@@ -195,8 +195,8 @@ FunDec : ID LP VarList RP{
 		$$->nType = NonTerminal;
 	}
 	| ID error RP {//error handle
-		nError ++;	
 		yyerror("Missing \"(\"");
+		nError ++;	
 	}
 	;
 VarList : ParamDec COMMA VarList	{
@@ -291,8 +291,8 @@ Stmt : Exp SEMI	{
 		$$->nType = NonTerminal;
 	}
 	| Exp error SEMI	{//error handle
-		nError ++;
 		yyerror("Missing \";\"");
+		nError ++;
 		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 	;
@@ -468,8 +468,8 @@ Exp : Exp ASSIGNOP Exp	{
 		$$->nType = NonTerminal;
 	}
 	| Exp LB error RB	{//error handle 
-		nError ++;
 		yyerror("Missing \"]\"");
+		nError ++;
 	}
 	;
 Args : Exp COMMA Args	{
@@ -507,7 +507,7 @@ void yyerror(char *pstr, ...)
 {
 	//if(newLine) {
 		//printf("Error type B at Line %d: ", yylineno);
-		fprintf(stderr, "Error type B at Line %d: ", yylineno);
+		fprintf(stderr, "#%d Error type B at Line %d: ", nError, yylineno);
 		va_list varList;
 		va_start(varList, pstr);
 		vprintf(pstr, varList);

@@ -1606,8 +1606,8 @@ yyreduce:
   case 15:
 #line 143 "./syntax.y" /* yacc.c:1646  */
     {//error handle
-		nError ++;	
 		yyerror("Missing \"{\"");
+		nError ++;	
 	}
 #line 1613 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1666,8 +1666,8 @@ yyreduce:
   case 21:
 #line 177 "./syntax.y" /* yacc.c:1646  */
     {//error handle	
-		nError ++;	
 		yyerror("Missing \"]\"");
+		nError ++;	
 	}
 #line 1673 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1700,8 +1700,8 @@ yyreduce:
   case 24:
 #line 197 "./syntax.y" /* yacc.c:1646  */
     {//error handle
-		nError ++;	
 		yyerror("Missing \"(\"");
+		nError ++;	
 	}
 #line 1707 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -1860,8 +1860,8 @@ yyreduce:
   case 38:
 #line 293 "./syntax.y" /* yacc.c:1646  */
     {//error handle
-		nError ++;
 		yyerror("Missing \";\"");
+		nError ++;
 		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 #line 1868 "./syntax.tab.c" /* yacc.c:1646  */
@@ -2165,8 +2165,8 @@ yyreduce:
   case 65:
 #line 470 "./syntax.y" /* yacc.c:1646  */
     {//error handle 
-		nError ++;
 		yyerror("Missing \"]\"");
+		nError ++;
 	}
 #line 2172 "./syntax.tab.c" /* yacc.c:1646  */
     break;
@@ -2451,7 +2451,7 @@ void yyerror(char *pstr, ...)
 {
 	//if(newLine) {
 		//printf("Error type B at Line %d: ", yylineno);
-		fprintf(stderr, "Error type B at Line %d: ", yylineno);
+		fprintf(stderr, "#%d Error type B at Line %d: ", nError, yylineno);
 		va_list varList;
 		va_start(varList, pstr);
 		vprintf(pstr, varList);

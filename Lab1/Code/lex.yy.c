@@ -1162,24 +1162,24 @@ case 35:
 YY_RULE_SETUP
 #line 182 "./lexical.l"
 {
-            printf("Error type A at Line %d: Illegal hexadecimal number \"%s\".\n",
-            yylineno, yytext);
+            printf("#%d Error type A at Line %d: Illegal hexadecimal number \"%s\".\n",
+            nError, yylineno, yytext);
             nError ++;	return INT;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 186 "./lexical.l"
 {
-            printf("Error type A at Line %d: Illegal octal number \"%s\".\n",
-            yylineno, yytext);
+            printf("#%d Error type A at Line %d: Illegal octal number \"%s\".\n",
+            nError, yylineno, yytext);
             nError ++; return INT;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 190 "./lexical.l"
 {
-			printf("Error type A at Line %d: Mysterious characters \"%s\".\n",
-			yylineno, yytext);
+			printf("#%d Error type A at Line %d: Mysterious characters \"%s\".\n",
+			nError, yylineno, yytext);
 			nError ++;}
 	YY_BREAK
 case 38:

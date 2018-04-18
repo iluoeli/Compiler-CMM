@@ -36,6 +36,7 @@ struct TreeNode *newNode();
 struct TreeNode *createNode(char *pstr, int lineno);
 void addChild(struct TreeNode *parent, struct TreeNode *child);
 void printTree(struct TreeNode *root);
+void deleteTree(struct TreeNode *root);
 
 
 #endif
