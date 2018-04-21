@@ -7,14 +7,30 @@
 
 
 typedef enum ValueType {
-	T_Int = 1,
-	T_Float,
-	T_Id,
-	T_Type,
-	T_Relop,
+	//value
+	T_Int = 1,	T_Float,	T_Id,
+	T_Type,		
 	T_Token,
 	T_NonTerminal,
-	T_None
+	T_None,
+	//sign
+	T_Semi,		T_Comma,	T_Assignop,
+	T_Relop,	T_Plus,		T_Minus,
+	T_Star,		T_Div,		T_And,
+	T_Or,		T_Dot,		T_Not,
+	T_Lp,		T_Rp,		T_Lb,
+	T_Rb,		T_Lc,		T_Rc,
+	//keyword
+	T_Struct,	T_Return,	T_If,
+	T_Else,		T_While,
+	//nonterminals
+	T_Program,		T_ExtDefList,	T_ExtDef,
+	T_ExtDecList,	T_Specifier,	T_StructSpecifier,
+	T_OptTag,		T_Tag,			T_VarDec,
+	T_FunDec,		T_VarList,		T_ParamDec,
+	T_CompSt,		T_StmtList,		T_Stmt,
+	T_DefList,		T_Def,			T_DecList,
+	T_Dec,			T_Exp,			T_Args
 } ValueType;
 
 

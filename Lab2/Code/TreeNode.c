@@ -34,28 +34,37 @@ void printNode(struct TreeNode *subTree, int depth)
 	int i;
 	for(i=0; i < depth; i++)
 		printf("  ");
-	switch(subTree->nType) {
-		case T_Int:
-			printf("%s: %d\n", subTree->info, subTree->iValue);
-			break;
-		case T_Float:
-			printf("%s: %f\n", subTree->info, subTree->fValue);
-			break;
-		case T_Id:
-			printf("%s: %s\n", subTree->info, subTree->ptr);
-			break;
-		case T_Type:
-			printf("%s: %s\n", subTree->info, subTree->ptr);
-			break;
-		case T_Relop:
-			printf("%s\n", subTree->info);
-			break;
-		case T_Token:
-			printf("%s\n", subTree->info);
-			break;
-		case T_NonTerminal:
-			printf("%s (%d)\n", subTree->info, subTree->lineno);
-			break;
+	if(subTree->nType >= T_Program ) {
+		printf("%s (%d)\n", subTree->info, subTree->lineno);
+	}
+	else if(subTree->nType > T_Type) {
+		printf("%s\n", subTree->info);
+	}
+	else {
+		switch(subTree->nType) {
+			case T_Int:
+				printf("%s: %d\n", subTree->info, subTree->iValue);
+				break;
+			case T_Float:
+				printf("%s: %f\n", subTree->info, subTree->fValue);
+				break;
+			case T_Id:
+				printf("%s: %s\n", subTree->info, subTree->ptr);
+				break;
+			case T_Type:
+				printf("%s: %s\n", subTree->info, subTree->ptr);
+				break;
+	/*		case T_Relop:
+				printf("%s\n", subTree->info);
+				break;
+			case T_Token:
+				printf("%s\n", subTree->info);
+				break;
+			case T_NonTerminal:
+				printf("%s (%d)\n", subTree->info, subTree->lineno);
+				break;
+	*/
+		}
 	}
 }
 
