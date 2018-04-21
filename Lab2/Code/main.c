@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "TreeNode.h"
+#include "debug.h"
 
 extern FILE *yyin;
 extern int yylineno;
@@ -26,9 +27,10 @@ int main(int argc, char **argv)
 			yylineno = 1;
 
 			//print tree
-			if(!nError)
+			if(!nError && root){
 				printTree(root);
-			//deleteTree(root);
+				deleteTree(root);
+			}
 			root = NULL;
 			nError = 0;
 		}
