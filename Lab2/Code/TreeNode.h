@@ -7,28 +7,28 @@
 
 
 typedef enum ValueType {
-	Int = 1,
-	Float,
-	Id,
-	Type,
-	Relop,
-	Token,
-	NonTerminal,
-	None
+	T_Int = 1,
+	T_Float,
+	T_Id,
+	T_Type,
+	T_Relop,
+	T_Token,
+	T_NonTerminal,
+	T_None
 } ValueType;
 
 
 
 typedef struct TreeNode {
-	int lineno;			//line no
-	ValueType nType;			//to explain which type value is,interger or float or id
+	int lineno;	//line no
+	ValueType nType;//to explain which type value is,interger or float or id
 	union {
 		int iValue;
 		float fValue;
 		char *ptr;
 	};
-	char *info;			//other information
-	int nChild;			//childs no
+	char *info;	//other information
+	int nChild;	//childs no
 	struct TreeNode *childs[8];	//childs pointers
 } TreeNode;
 

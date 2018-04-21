@@ -35,25 +35,25 @@ void printNode(struct TreeNode *subTree, int depth)
 	for(i=0; i < depth; i++)
 		printf("  ");
 	switch(subTree->nType) {
-		case Int:
+		case T_Int:
 			printf("%s: %d\n", subTree->info, subTree->iValue);
 			break;
-		case Float:
+		case T_Float:
 			printf("%s: %f\n", subTree->info, subTree->fValue);
 			break;
-		case Id:
+		case T_Id:
 			printf("%s: %s\n", subTree->info, subTree->ptr);
 			break;
-		case Type:
+		case T_Type:
 			printf("%s: %s\n", subTree->info, subTree->ptr);
 			break;
-		case Relop:
+		case T_Relop:
 			printf("%s\n", subTree->info);
 			break;
-		case Token:
+		case T_Token:
 			printf("%s\n", subTree->info);
 			break;
-		case NonTerminal:
+		case T_NonTerminal:
 			printf("%s (%d)\n", subTree->info, subTree->lineno);
 			break;
 	}

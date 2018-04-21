@@ -33,107 +33,107 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 {ws}	{/*white space, do nothing*/}
 0|([+-]?[1-9][0-9]*)	{
 		yylval.pNode = createNode("INT", yylineno); 
-		yylval.pNode->nType = Int;
+		yylval.pNode->nType = T_Int;
 		yylval.pNode->iValue = atoi(yytext);
 		return INT;}
 0[xX][A-Fa-f0-9]+	{
 		yylval.pNode = createNode("INT", yylineno); 
-		yylval.pNode->nType = Int;
+		yylval.pNode->nType = T_Int;
 		yylval.pNode->iValue = strtol(yytext, NULL, 16);
 		return INT;}
 0[0-7]+		{
 		yylval.pNode = createNode("INT", yylineno); 
-		yylval.pNode->nType = Int;
+		yylval.pNode->nType = T_Int;
 		yylval.pNode->iValue = strtol(yytext, NULL, 8);
 		return INT;}
 		/*
 [+-]?({digits}*\.?{digits}|{digits}\.)([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
-		yylval.pNode->nType = Float;
+		yylval.pNode->nType = T_Float;
 		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 		*/
 [+-]?{digits}\.({digits})?([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
-		yylval.pNode->nType = Float;
+		yylval.pNode->nType = T_Float;
 		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 [+-]?\.{digits}([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
-		yylval.pNode->nType = Float;
+		yylval.pNode->nType = T_Float;
 		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 ;		{
 		yylval.pNode = createNode("SEMI", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return SEMI;}
 ,		{
 		yylval.pNode = createNode("COMMA", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return COMMA;}
 =		{
 		yylval.pNode = createNode("ASSIGNOP", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return ASSIGNOP;}
 >|<|(>=)|(<=)|(==)|(!=)	{
 		yylval.pNode = createNode("RELOP", yylineno); 
-		yylval.pNode->nType = Relop;
+		yylval.pNode->nType = T_Relop;
 		return RELOP;}
 \+		{
 		yylval.pNode = createNode("PLUS", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return PLUS;}
 -		{
 		yylval.pNode = createNode("MINUS", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return MINUS;}
 "*"		{
 		yylval.pNode = createNode("STAR", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return STAR;}
 \/		{
 		yylval.pNode = createNode("DIV", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return DIV;}
 &&		{
 		yylval.pNode = createNode("AND", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return AND;}
 "||"	{
 		yylval.pNode = createNode("OR", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return OR;}
 \.		{
 		yylval.pNode = createNode("DOT", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return DOT;}
 !		{
 		yylval.pNode = createNode("NOT", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return NOT;}
 \(		{ 
 		yylval.pNode = createNode("LP", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return LP;}
 \)		{ 
 		yylval.pNode = createNode("RP", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return RP;}
 "["		{
 		yylval.pNode = createNode("LB", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return LB;} 
 \]		{ 
 		yylval.pNode = createNode("RB", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return RB;}
 \{		{ 
 		yylval.pNode = createNode("LC", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return LC;}
 \}		{ 
 		yylval.pNode = createNode("RC", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return RC;}
 "//"	{char c = input(); while (c != EOF && c != '\n') c = input();}
 "/*"	{	char c = input(); 
@@ -149,33 +149,33 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 		}
 (int)|(float)	{
 		yylval.pNode = createNode("TYPE", yylineno); 
-		yylval.pNode->nType = Type;
+		yylval.pNode->nType = T_Type;
 		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
 		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
 		return TYPE;}
 struct	{
 		yylval.pNode = createNode("STRUCT", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return STRUCT;}
 return	{
 		yylval.pNode = createNode("RETURN", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return RETURN;}
 if		{
 		yylval.pNode = createNode("IF", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return IF;}
 else	{
 		yylval.pNode = createNode("ELSE", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return ELSE;}
 while	{
 		yylval.pNode = createNode("WHILE", yylineno); 
-		yylval.pNode->nType = Token;
+		yylval.pNode->nType = T_Token;
 		return WHILE;}
 {letter_}({letter_}|{digit})*		{
 		yylval.pNode = createNode("ID", yylineno); 
-		yylval.pNode->nType = Id;
+		yylval.pNode->nType = T_Id;
 		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
 		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
 		return ID;}

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "TreeNode.h"
 #include "debug.h"
+#include "sym_table.h"
 
 extern FILE *yyin;
 extern int yylineno;

@@ -5,6 +5,7 @@
 typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
 typedef struct Func_* Func;
+typedef struct Symbol_* Symbol;
 
 struct Type_ {
 	enum {BASIC, ARRAY, STRUCTURE} kind;
@@ -24,10 +25,24 @@ struct FieldList_ {
 	FieldList tail;
 };
 
-struct Func {
+struct Func_ {
+	char *name;
 	Type retType;
 	FieldList argList;
-
+	int isDefine;
 };
+
+struct Symbol_ {
+	enum {S_Type, S_Func} kind;	
+	char *name;
+	union {
+		Type type;
+		Func func;
+	} u;
+	Symbol next;
+};
+
+
+#define TABLE_SIZE 0x3fff
 
 #endif
