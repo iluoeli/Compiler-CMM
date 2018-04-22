@@ -2,6 +2,7 @@
 #include "TreeNode.h"
 #include "debug.h"
 #include "sym_table.h"
+#include "common.h"
 
 extern FILE *yyin;
 extern int yylineno;
@@ -30,6 +31,8 @@ int main(int argc, char **argv)
 			//print tree
 			if(!nError && root){
 				printTree(root);
+				initTable();
+				sematicCheck(root);
 				deleteTree(root);
 			}
 			root = NULL;

@@ -1,8 +1,38 @@
-#include "sym_table.h"
-#include <string.h>
+#include "common.h"
 
 Symbol symbolTable[TABLE_SIZE];
 
+Symbol newTypeSymbol(S_TYPE s_type, char *name, Type type)
+{
+	int len = strlen(name);
+	Symbol symbol = malloc(sizeof(struct Symbol_));	
+	symbol->kind = s_type;
+	symbol->type = type;
+	symbol->next = NULL;
+	symbol->name = malloc(len+1);
+	strcpy(symbol->name, name);
+	symbol->name[len] = '\0';
+
+	printSymbol(symbol);
+	printf("\n");
+	return symbol;
+}
+
+
+Symbol newFuncSymbol(S_TYPE s_type, char *name, Func type)
+{
+	int len = strlen(name);
+	Symbol symbol = malloc(sizeof(struct Symbol_));	
+	symbol->kind = s_type;
+	symbol->func = type;
+	symbol->next = NULL;
+	symbol->name = malloc(len+1);
+	strcpy(symbol->name, name);
+	
+	printSymbol(symbol);
+	printf("\n");
+	return symbol;
+}
 
 unsigned int hash_pjw(char *name)
 {
@@ -52,6 +82,79 @@ int insertTable(Symbol symbol)
 		p->next = symbol;
 		symbol->next = NULL;
 	}
+	PRINT_TABLE();
 	return 0;
 }
 
+void printFieldList(FieldList list)
+{
+	if(list == NULL)	return;
+	for(; list->tail; list=list->tail) {
+		printType(list->type);
+		if(list->name != NULL)
+			printf(" %s, ", list->name);
+	}
+	printType(list->type);
+	printf(" %s", list->name);
+}
+
+void printType(Type type)
+{
+	if(type == NULL)	return;
+	switch(type->kind) {
+		case BASIC:
+			if(type->basic == B_INT)	
+				printf("int");
+			else	printf("float");
+			break;
+		case ARRAY:
+			printType(type->array.elem);
+			printf("[%d]", type->array.size);
+			break;
+		case STRUCTURE:
+			printFieldList(type->structure);
+			break;
+	}
+}
+
+void printFunc(Func func)
+{
+	printType(func->retType);	
+	printf(" (");
+	printFieldList(func->argList);
+	printf(")");
+}
+
+void printSymbol(Symbol symbol)
+{
+	if(symbol == NULL) return;
+	if(symbol->kind == S_Type) {
+		printf("Var ");
+		printf("%s: ", symbol->name);
+		printType(symbol->type);
+	}
+	else if(symbol->kind == S_Func){
+		printf("Func ");
+		printf("%s: ", symbol->name);
+		printFunc(symbol->func);
+	}
+	else if(symbol->kind == S_StrucDef) {
+		printf("StrucDef ");
+		printf("%s: ", symbol->name);
+		printType(symbol->type);
+	}
+}
+
+
+void printTable()
+{
+	int i;
+	printf("\n---------------------------------\n");
+	for(i=0; i < TABLE_SIZE; i++){
+		if(symbolTable[i] != NULL) {
+			printSymbol(symbolTable[i]);			
+			printf("\n---------------------------------\n");
+		}
+	}
+
+}

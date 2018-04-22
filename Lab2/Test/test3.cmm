@@ -1,5 +1,15 @@
-int inc()
+struct t_a
+{
+	int a;
+	int b;
+	float c;
+};
+
+struct t_a d;
+
+int inc(int a, float b, int c[6][7][8])
 {
 	int i;
+	float f;
 	i = i + 1;
 }
