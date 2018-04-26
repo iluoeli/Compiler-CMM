@@ -3,6 +3,7 @@
 void sematicCheck(TreeNode *root) 
 {
 	Program(root);
+	checkFunc();
 }
 
 void Program(TreeNode *p)
@@ -38,14 +39,40 @@ void ExtDef(TreeNode *p)
 		TreeNode *funDec = child1;
 		TreeNode *compSt = p->childs[2];
 		Symbol symbol = FunDec(funDec, type);
-		int ret = insertTable(symbol);
-		if(ret == 1) {
-			printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
-					funDec->lineno, symbol->name);
-		}
+		symbol->lineno = p->lineno;
 		curFunc = symbol->func;
-		CompSt(compSt);
-		curFunc = NULL;
+		if(p->childs[2]->nType == T_CompSt) {
+			symbol->func->isDefined = 1;
+			CompSt(compSt);
+			curFunc = NULL;
+		}
+		else {
+			symbol->func->isDefined = 0;
+		}
+		Symbol s = searchTable(symbol->name);
+		if(s != NULL) {
+			if(s->kind == S_Func) {
+				//compare function type 
+				if(compareFunction(s, symbol) == FALSE) {
+					printf("Error type 19 at Line %d: Inconsistent declaration of function \"%s\".\n",
+							funDec->lineno, symbol->name);
+					return;
+				}
+				else if(s->func->isDefined == 0 && symbol->func->isDefined == 1)
+					s->func->isDefined = 1;
+				else if(s->func->isDefined == 1 && symbol->func->isDefined == 1) {
+					printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
+						funDec->lineno, symbol->name);
+				}
+			}
+		}
+		else {
+			int ret = insertTable(symbol);
+			if(ret == 1) {
+				printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
+						funDec->lineno, symbol->name);
+			}
+		}
 	}
 	else if(child1->nType == T_ExtDecList) {
 		//Specifier ExtDecList ;
@@ -124,6 +151,7 @@ Type StructSpecifier(TreeNode *p)
 		//PRINT_FIELD_LIST(structure);
 		structure->tail = DefList(p->childs[3]);
 		//PRINT_FIELD_LIST(structure);
+		checkStructure(structure->tail);
 
 		Type type = malloc(sizeof(struct Type_));
 		type->kind = STRUCTURE;
@@ -176,7 +204,7 @@ Symbol FunDec(TreeNode *funDec, Type retType)
 	funcType->argList = NULL;
 	if(funDec->childs[2]->nType == T_VarList)
 		funcType->argList = VarList(funDec->childs[2]);
-	funcType->isDefine = 1;
+	funcType->isDefined = 1;
 	Symbol symbol = newFuncSymbol(S_Func, funDec->childs[0]->ptr, funcType);
 	LOG("leave FunDec");
 	return symbol;
@@ -244,6 +272,7 @@ void Stmt(TreeNode *stmt)
 {
 	LOG("in Stmt");
 	TreeNode *child = stmt->childs[0];
+	Type type = NULL;
 	switch(child->nType) {
 		case T_Exp:
 			Exp(child);
@@ -253,13 +282,29 @@ void Stmt(TreeNode *stmt)
 			break;
 		case T_Return:
 			//TODO:check return type
+			if(curFunc == NULL) {
+				//undefined error: return in non-function area
+				ASSERT(0);	
+			}
 			if(compareType(curFunc->retType, Exp(stmt->childs[1])) == FALSE) {
 				PRINT_ERROR(8, stmt->lineno, "Type mismatched for return.");
 			}
 			break;
 		case T_If:
+			type = Exp(stmt->childs[2]);
+			if(type != NULL && (type->kind != BASIC || type->basic != B_INT)) {
+				PRINT_ERROR(7, stmt->childs[2]->lineno, "Type mismatched for operands.\n");
+			}
+			Stmt(stmt->childs[4]);
+			if(stmt->childs[6] != NULL && stmt->childs[6]->nType == T_Stmt )
+				Stmt(stmt->childs[6]);
 			break;
 		case T_While:
+			type = Exp(stmt->childs[2]);
+			if(type != NULL && (type->kind != BASIC || type->basic != B_INT)) {
+				PRINT_ERROR(7, stmt->childs[2]->lineno, "Type mismatched for operands.\n");
+			}
+			Stmt(stmt->childs[4]);
 			break;
 		default:
 			ASSERT(0);
@@ -322,6 +367,7 @@ FieldList Dec(TreeNode *dec, Type type)
 	list->tail = NULL;
 	if(dec->nChild == 3) {
 		//TODO:handle exp
+		Exp(dec->childs[2]);
 	}
 
 	LOG("leave Dec");
@@ -347,7 +393,7 @@ Type Exp(TreeNode *exp)
 			lType = Exp(first);
 			if(second->nType == T_Assignop) {
 				LOG("exp = exp");
-				if(isLeftVar(first) == FALSE) {
+				if(lType != NULL && isLeftVar(first) == FALSE) {
 					PRINT_ERROR(6, exp->lineno, "The left-hand side of an assignment must be a variable.");
 					lType = NULL;
 				}
@@ -373,7 +419,7 @@ Type Exp(TreeNode *exp)
 					|| second->nType == T_Relop) {
 				LOG("exp +-*/relop exp");
 				rType = Exp(third);
-				if((lType != NULL && lType->kind != BASIC) || compareType(lType, rType) == FALSE) {
+				if(lType != NULL && (lType->kind != BASIC || compareType(lType, rType) == FALSE)) {
 					PRINT_ERROR(7, exp->lineno, "Type mismatched for operands.");
 					lType = NULL;
 				}
@@ -391,15 +437,29 @@ Type Exp(TreeNode *exp)
 							third->lineno, "nullptr");
 					lType = NULL;
 				}
+				else {
+					lType = rType->array.elem;
+				}
 			}
 			else if(second->nType == T_Dot) {
 				//exp.exp
-				if(lType->kind != STRUCTURE) {
+				LOG("exp.exp");
+				if(lType != NULL && lType->kind != STRUCTURE) {
 					printf("Error type 13 at Line %d: Illegal use of \".\".\n",
 							second->lineno);
 				}
 				else {
-					
+					//rType = Exp(third);
+					char *name = third->ptr;
+					rType = structureField(lType->structure, name);
+					if(rType == NULL) {
+						printf("Error type 14 at Line %d: Non-existent field \"%s\".\n",
+								third->lineno, name);
+						lType = NULL;
+					}
+					else {
+						lType = rType;
+					}
 				}
 			}
 			else {
@@ -481,9 +541,11 @@ BOOL isLeftVar(TreeNode *p)
 	//TODO:more specific type
 	if(p == NULL)	return FALSE;
 	TreeNode *child = p->childs[0];
-	if(p->nType != T_Id)
-		return FALSE;
-	return TRUE;
+	if(p->nType == T_Id ||
+			(p->nType == T_Exp && p->childs[0]->nType == T_Exp 
+			 && (p->childs[1]->nType == T_Lb || p->childs[1]->nType == T_Dot || p->childs[1]->nType == T_Id)))
+		return TRUE;
+	return FALSE;
 }
 
 
@@ -506,8 +568,29 @@ FieldList Args(TreeNode *args)
 }
 
 
-BOOL checkStruture(FieldList list)
+BOOL checkStructure(FieldList list)
 {
-	
+	for(; list->tail; list=list->tail) {
+		FieldList p = list->tail;
+		for(; p; p=p->tail) 
+			if(strcmp(list->name, p->name) == 0) {
+				printf("Error type 15 at Line %d: Redefined field \"%s\".\n",
+						1, p->name);
+			}
+	}	
 	return TRUE;
+}
+
+
+BOOL checkFunc()
+{
+	int i;
+	for(i=0; i < TABLE_SIZE; i++) {
+		if(symbolTable[i] != NULL && symbolTable[i]->kind == S_Func) {
+			if(symbolTable[i]->func->isDefined == 0) {
+				printf("Error type 18 at Line %d: Undefined function \"%s\".\n",
+						symbolTable[i]->lineno, symbolTable[i]->name);
+			}
+		}
+	}	
 }

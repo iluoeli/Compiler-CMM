@@ -43,7 +43,8 @@ FieldList Args(TreeNode *args);
 
 //other check functions
 BOOL isLeftVar(TreeNode *p);
-BOOL checkStruture(FieldList list);
+BOOL checkStructure(FieldList list);
+BOOL checkFunc();
 
 
 #endif

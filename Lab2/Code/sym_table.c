@@ -55,6 +55,16 @@ void initTable()
 	curFunc = NULL;
 }
 
+void clearTable()
+{
+	int i;
+	for(i=0; i < TABLE_SIZE; i++) {
+		if(symbolTable[i] != NULL) {
+			free(symbolTable[i]);
+		}
+	}
+}
+
 Symbol searchTable(char *name)
 {
 	if(name == NULL)	return NULL;
@@ -86,6 +96,15 @@ int insertTable(Symbol symbol)
 	}
 	PRINT_TABLE();
 	return 0;
+}
+
+Type structureField(FieldList st, char *name)
+{
+	for(; st; st=st->tail) {
+		if(strcmp(st->name , name) == 0)
+			return st->type;
+	}
+	return NULL;
 }
 
 
@@ -129,6 +148,14 @@ BOOL compareArgs(FieldList list1, FieldList list2)
 	return compareArgs(list1->tail, list2->tail);
 }
 
+BOOL compareFunction(Symbol f1, Symbol f2)
+{
+	if(f1 == f2)	return TRUE;
+	if(f1 == NULL || f2 == NULL)	return FALSE;
+	if(f1->kind != S_Func || f2->kind != S_Func)	return FALSE;
+	if(compareType(f1->func->retType, f2->func->retType) == FALSE)	return FALSE;
+	return compareArgs(f1->func->argList, f2->func->argList);	
+}
 
 void printFieldList(FieldList list)
 {

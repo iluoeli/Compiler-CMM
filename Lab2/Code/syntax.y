@@ -95,9 +95,16 @@ ExtDef : Specifier ExtDecList SEMI	{
 		addChild($$, $3);
 		$$->nType = T_ExtDef;
 	}
+	| Specifier FunDec SEMI {
+		$$ = createNode("ExtDef", @$.first_line); 
+		addChild($$, $1);
+		addChild($$, $2);
+		addChild($$, $3);
+		$$->nType = T_ExtDef;
+	}
 	| error SEMI {//error recovery
-		nError ++;
 		yyerror("Missing \";\"");
+		nError ++;
 	}
 	;
 ExtDecList : VarDec	{

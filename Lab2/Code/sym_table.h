@@ -13,6 +13,7 @@ typedef struct Func_* Func;
 typedef struct Symbol_* Symbol;
 
 extern Func curFunc;
+extern Symbol symbolTable[TABLE_SIZE];
 
 
 struct Type_ {
@@ -36,13 +37,14 @@ struct FieldList_ {
 struct Func_ {
 	Type retType;
 	FieldList argList;
-	int isDefine;
+	int isDefined;
 };
 
 typedef enum S_TYPE {S_Type, S_Func, S_StrucDef} S_TYPE;
 struct Symbol_ {
 	S_TYPE kind;
 	char *name;
+	int lineno;
 	union {
 		Type type;
 		Func func;
@@ -53,13 +55,17 @@ struct Symbol_ {
 Symbol newTypeSymbol(S_TYPE s_type, char *name, Type type);
 Symbol newFuncSymbol(S_TYPE s_type, char *name, Func type);
 void initTable();
+void clearTable();
 Symbol searchTable(char *name);
 int insertTable(Symbol symbol);
+
+Type structureField(FieldList st, char *name);
 
 //compatr type
 BOOL compareType(Type t1, Type t2);
 BOOL compareStructure(FieldList s1, FieldList s2);
 BOOL compareArgs(FieldList list1, FieldList list2);
+BOOL compareFunction(Symbol f1, Symbol f2);
 
 //output functions
 void printFieldList(FieldList list);
