@@ -25,7 +25,7 @@ struct TreeNode *createNode(char *pstr, int lineno)
 
 void addChild(struct TreeNode *parent, struct TreeNode *child)
 {
-	if(!parent || !child)	return;
+	if(!parent)	return;
 	parent->childs[parent->nChild++] = child;
 }
 

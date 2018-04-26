@@ -10,5 +10,10 @@
 #include "sematic.h"
 
 
+/*
+enum BOOL {
+	FALSE, TRUE
+};
+*/
 
 #endif

@@ -1,6 +1,7 @@
 #include "common.h"
 
 Symbol symbolTable[TABLE_SIZE];
+Func curFunc = NULL;
 
 Symbol newTypeSymbol(S_TYPE s_type, char *name, Type type)
 {
@@ -51,6 +52,7 @@ void initTable()
 	for(i=0; i < TABLE_SIZE; i++) {
 		symbolTable[i] = NULL;
 	}
+	curFunc = NULL;
 }
 
 Symbol searchTable(char *name)
@@ -86,16 +88,62 @@ int insertTable(Symbol symbol)
 	return 0;
 }
 
+
+BOOL compareType(Type t1, Type t2)
+{
+	if(t1 == t2)
+		return TRUE;
+	if(t1 == NULL || t2 == NULL)
+		return FALSE;
+	PRINT_TYPE(t1);
+	PRINT_TYPE(t2);
+	printf("\n");
+	if(t1->kind != t2->kind)
+		return FALSE;
+	if(t1->kind == BASIC)
+		if(t1->basic == t2->basic)	return TRUE;
+		else return FALSE;
+		//return t1->basic == t2->basic;
+	else if(t1->kind == ARRAY)
+		return compareType(t1->array.elem, t2->array.elem);
+	else if(t1->kind == STRUCTURE)
+		return compareStructure(t1->structure, t2->structure);
+	return FALSE;
+}
+
+BOOL compareStructure(FieldList s1, FieldList s2)
+{
+	if(s1 == s2)	return TRUE;
+	if(s1 == NULL || s2 == NULL)	return FALSE;
+	if(strcmp(s1->name, s2->name) == 1)	return FALSE;
+
+	return TRUE;
+}
+
+BOOL compareArgs(FieldList list1, FieldList list2)
+{
+	if(list1 == list2)	return TRUE;
+	if(list1 == NULL || list2 == NULL)	return FALSE;
+	if(compareType(list1->type, list2->type) == FALSE)
+		return FALSE;
+	return compareArgs(list1->tail, list2->tail);
+}
+
+
 void printFieldList(FieldList list)
 {
 	if(list == NULL)	return;
+	printf("(");
 	for(; list->tail; list=list->tail) {
 		printType(list->type);
 		if(list->name != NULL)
-			printf(" %s, ", list->name);
+			printf(" %s", list->name);
+		printf(", ");
 	}
 	printType(list->type);
-	printf(" %s", list->name);
+	if(list->name != NULL)
+		printf(" %s", list->name);
+	printf(")");
 }
 
 void printType(Type type)

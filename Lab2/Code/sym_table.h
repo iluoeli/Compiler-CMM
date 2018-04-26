@@ -1,12 +1,19 @@
 #ifndef _SYM_TABLE_H_
 #define _SYM_TABLE_H_
 
+typedef int BOOL;
+#define FALSE 0
+#define TRUE 1
+
 #define TABLE_SIZE 0x3fff
 
 typedef struct Type_* Type;
 typedef struct FieldList_* FieldList;
 typedef struct Func_* Func;
 typedef struct Symbol_* Symbol;
+
+extern Func curFunc;
+
 
 struct Type_ {
 	enum {BASIC, ARRAY, STRUCTURE} kind;
@@ -49,7 +56,12 @@ void initTable();
 Symbol searchTable(char *name);
 int insertTable(Symbol symbol);
 
+//compatr type
+BOOL compareType(Type t1, Type t2);
+BOOL compareStructure(FieldList s1, FieldList s2);
+BOOL compareArgs(FieldList list1, FieldList list2);
 
+//output functions
 void printFieldList(FieldList list);
 void printType(Type type);
 void printFunc(Func func);

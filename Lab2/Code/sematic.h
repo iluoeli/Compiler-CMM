@@ -36,6 +36,15 @@ FieldList Def(TreeNode *def);
 FieldList DecList(TreeNode *decList, Type type);
 FieldList Dec(TreeNode *dec, Type type);
 
+//Expressions
+Type Exp(TreeNode *exp);
+FieldList Args(TreeNode *args);
+
+
+//other check functions
+BOOL isLeftVar(TreeNode *p);
+BOOL checkStruture(FieldList list);
+
 
 #endif
 

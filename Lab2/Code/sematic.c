@@ -38,8 +38,14 @@ void ExtDef(TreeNode *p)
 		TreeNode *funDec = child1;
 		TreeNode *compSt = p->childs[2];
 		Symbol symbol = FunDec(funDec, type);
-		insertTable(symbol);
+		int ret = insertTable(symbol);
+		if(ret == 1) {
+			printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
+					funDec->lineno, symbol->name);
+		}
+		curFunc = symbol->func;
 		CompSt(compSt);
+		curFunc = NULL;
 	}
 	else if(child1->nType == T_ExtDecList) {
 		//Specifier ExtDecList ;
@@ -100,6 +106,9 @@ Type StructSpecifier(TreeNode *p)
 		Symbol symbol = searchTable(p->childs[1]->childs[0]->ptr);
 		if(symbol == NULL || symbol->kind != S_StrucDef) {
 			//error:not defined structure
+			printf("Error type 17 at Line %d: Undefined structure \"%s\".\n",
+					p->childs[1]->childs[0]->lineno, p->childs[1]->childs[0]->ptr);
+			return NULL;
 		}
 		
 		return symbol->type;
@@ -112,20 +121,21 @@ Type StructSpecifier(TreeNode *p)
 			structure->name = malloc(len+1);
 			strcpy(structure->name, optTag->childs[0]->ptr);
 		}
-		PRINT_FIELD_LIST(structure);
+		//PRINT_FIELD_LIST(structure);
 		structure->tail = DefList(p->childs[3]);
-		LOG("1");
-		printFieldList(structure);
+		//PRINT_FIELD_LIST(structure);
 
 		Type type = malloc(sizeof(struct Type_));
 		type->kind = STRUCTURE;
 		type->structure = structure;
-		LOG("1");
 		PRINT_TYPE(type);
 		
-		LOG("1");
 		Symbol symbol = newTypeSymbol(S_StrucDef, structure->name, type);
-		insertTable(symbol);
+		int ret = insertTable(symbol);
+		if(ret == 1) {
+			printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",
+					p->lineno, symbol->name);
+		}
 		LOG("add structure to table");
 			
 		return type;
@@ -149,7 +159,7 @@ Symbol VarDec(Type type, TreeNode *p)
 		arrType->array.elem = childSymbol->type;
 		arrType->array.size = p->childs[2]->iValue;
 		symbol = newTypeSymbol(S_Type, childSymbol->name, arrType);
-		free(childSymbol);
+		//free(childSymbol);
 	}
 	else {
 		ASSERT(0);
@@ -168,6 +178,7 @@ Symbol FunDec(TreeNode *funDec, Type retType)
 		funcType->argList = VarList(funDec->childs[2]);
 	funcType->isDefine = 1;
 	Symbol symbol = newFuncSymbol(S_Func, funDec->childs[0]->ptr, funcType);
+	LOG("leave FunDec");
 	return symbol;
 }
 
@@ -178,6 +189,7 @@ FieldList VarList(TreeNode *varList)
 	if(varList->nChild > 1) {
 		list->tail = VarList(varList->childs[2]);	
 	}
+	LOG("leave VarList");
 	return list;
 }
 
@@ -205,20 +217,54 @@ void CompSt(TreeNode *compSt)
 	FieldList fList = DefList(compSt->childs[1]);		
 	for(; fList; fList=fList->tail) {
 		Symbol symbol = newTypeSymbol(S_Type, fList->name, fList->type);
-		insertTable(symbol);
+		int ret = insertTable(symbol);
+		if(ret == 1) {
+			//TODO:cant make sure lineno
+			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
+					compSt->lineno, symbol->name);
+		}
 	}	
+
 
 	StmtList(compSt->childs[2]);
 }
 
 void StmtList(TreeNode *stmtList)
 {
-
+	if(stmtList == NULL)	return;
+	LOG("in StmtList");
+	if(stmtList->nChild == 2) {
+		Stmt(stmtList->childs[0]);
+		StmtList(stmtList->childs[1]);
+	}
+	LOG("leave StmtList");
 }
 
 void Stmt(TreeNode *stmt)
 {
-
+	LOG("in Stmt");
+	TreeNode *child = stmt->childs[0];
+	switch(child->nType) {
+		case T_Exp:
+			Exp(child);
+			break;
+		case T_CompSt:
+			CompSt(child);
+			break;
+		case T_Return:
+			//TODO:check return type
+			if(compareType(curFunc->retType, Exp(stmt->childs[1])) == FALSE) {
+				PRINT_ERROR(8, stmt->lineno, "Type mismatched for return.");
+			}
+			break;
+		case T_If:
+			break;
+		case T_While:
+			break;
+		default:
+			ASSERT(0);
+	}
+	LOG("leave Stmt");
 
 }
 
@@ -282,3 +328,186 @@ FieldList Dec(TreeNode *dec, Type type)
 	return list;
 }
 
+
+
+/*
+ **********Expressions*********
+*/
+Type Exp(TreeNode *exp)
+{
+	if(exp == NULL)	return NULL;
+	LOG("in Exp");
+	TreeNode *first = exp->childs[0];
+	TreeNode *second = exp->childs[1];
+	TreeNode *third = exp->childs[2];
+	Type lType = NULL;
+	Type rType = NULL;
+	switch(first->nType) {
+		case T_Exp:
+			lType = Exp(first);
+			if(second->nType == T_Assignop) {
+				LOG("exp = exp");
+				if(isLeftVar(first) == FALSE) {
+					PRINT_ERROR(6, exp->lineno, "The left-hand side of an assignment must be a variable.");
+					lType = NULL;
+				}
+				else {
+					rType = Exp(third);
+					if(lType != NULL && rType != NULL && compareType(lType, rType) == FALSE) {
+						PRINT_ERROR(5, exp->lineno, "Type mismatched for assignment.");
+						lType = NULL;
+					}
+				}	
+				
+			}
+			else if(second->nType == T_And || second->nType == T_Or) {
+				LOG("exp &&/|| exp");
+				rType = Exp(third);
+				if((lType != NULL && lType->kind != BASIC) || (rType != NULL && rType->kind != BASIC)) {
+					PRINT_ERROR(7, exp->lineno, "Type mismatched for operands.");
+					lType = NULL;
+				}
+			}
+			else if(second->nType == T_Plus || second->nType == T_Minus
+					|| second->nType == T_Star || second->nType == T_Div
+					|| second->nType == T_Relop) {
+				LOG("exp +-*/relop exp");
+				rType = Exp(third);
+				if((lType != NULL && lType->kind != BASIC) || compareType(lType, rType) == FALSE) {
+					PRINT_ERROR(7, exp->lineno, "Type mismatched for operands.");
+					lType = NULL;
+				}
+			}
+			else if(second->nType == T_Lb) {
+				//exp[exp]
+				rType = Exp(third);
+				if(lType->kind != ARRAY) {
+					printf("Error type 10 at Line %d: \"%s\" is not an aaray.\n",
+							first->lineno, "nullptr");
+					lType = NULL;
+				}
+				else if(rType != NULL && (rType->kind != BASIC || rType->basic != B_INT)) {
+					printf("Error type 12 at Line %d: \"%s\" is not an integer.\n",
+							third->lineno, "nullptr");
+					lType = NULL;
+				}
+			}
+			else if(second->nType == T_Dot) {
+				//exp.exp
+				if(lType->kind != STRUCTURE) {
+					printf("Error type 13 at Line %d: Illegal use of \".\".\n",
+							second->lineno);
+				}
+				else {
+					
+				}
+			}
+			else {
+				ASSERT(0);
+				return NULL;
+			}		
+			break;
+	case T_Id:
+			if(second == NULL) {
+				LOG("ID");
+				Symbol symbol = searchTable(first->ptr);
+				if(symbol == NULL) {
+					printf("Error type 1 at Line %d: Undefined variale \"%s\".\n", 
+							exp->lineno, first->ptr);
+					lType = NULL;
+				}
+				else {
+					if(symbol->kind == S_Func) 
+						lType = symbol->func->retType;
+					else
+						lType = symbol->type;
+				}
+			}	
+			else if(second->nType == T_Lp) {
+				//function call
+				Symbol func = searchTable(first->ptr);
+				if(func == NULL) {
+					printf("Error type 2 at Line %d:Undefined function \"%s\".\n",
+							exp->lineno, first->ptr);
+					lType = NULL;
+				}
+				else if(func->kind != S_Func) {
+					printf("Error type 11 at Line %d: \"%s\" is not a function.\n",
+							first->lineno, func->name);
+					lType = NULL;
+				}
+				else {
+					FieldList argList = NULL;
+					if(third->nType == T_Args) {
+						LOG("ID LP Args RP");
+						//with args
+						argList = Args(exp->childs[2]);	
+					}
+					else {
+						LOG("ID LP RP");
+						//without args
+					}
+					if(compareArgs(argList, func->func->argList) == FALSE) {
+						printf("Error type 9 at Line %d: Function \"", first->lineno);
+						printFunc(func->func);
+						printf("\" is not applicable for arguments\"");
+						printFieldList(argList);
+						printf("\".\n");
+					}
+				}
+			}
+			break;
+	case T_Int:
+			LOG("INT");
+			lType = malloc(sizeof(struct Type_));
+			lType->kind = BASIC;
+			lType->basic = B_INT;
+			break;
+	case T_Float:
+			LOG("FLOAT");
+			lType = malloc(sizeof(struct Type_));
+			lType->kind = BASIC;
+			lType->basic = B_FLOAT;
+			break;
+	}
+	LOG("leave Exp");
+	PRINT_TYPE(lType);
+	return lType;
+}
+
+
+BOOL isLeftVar(TreeNode *p)
+{
+	//TODO:more specific type
+	if(p == NULL)	return FALSE;
+	TreeNode *child = p->childs[0];
+	if(p->nType != T_Id)
+		return FALSE;
+	return TRUE;
+}
+
+
+FieldList Args(TreeNode *args)
+{
+	FieldList list = malloc(sizeof(struct FieldList_));
+	list->name = NULL;
+	list->tail = NULL;
+	if(args->nChild == 1) {
+		list->type = Exp(args->childs[0]);
+	}
+	else if(args->nChild == 3) {
+		list->type = Exp(args->childs[0]);
+		list->tail = Args(args->childs[2]);
+	}
+	else {
+		ASSERT(0);
+	}
+	return list; 
+}
+
+
+BOOL checkStruture(FieldList list)
+{
+	
+	return TRUE;
+}
