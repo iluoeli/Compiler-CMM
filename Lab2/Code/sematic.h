@@ -18,9 +18,9 @@ Type StructSpecifier(TreeNode *p);
 
 //Declarators
 Symbol VarDec(Type type, TreeNode *p);
-Symbol FunDec(TreeNode *funcDec, Type retType);
-FieldList VarList(TreeNode *varList);
-FieldList ParamDec(TreeNode *paramDec);
+Symbol FunDec(TreeNode *funcDec, Type retType, BOOL isdec);
+FieldList VarList(TreeNode *varList, BOOL addTable);
+FieldList ParamDec(TreeNode *paramDec, BOOL addTable);
 
 
 //Statements
@@ -31,10 +31,10 @@ void Stmt(TreeNode *stmt);
 
 
 //Local Definitions
-FieldList DefList(TreeNode *defList);
-FieldList Def(TreeNode *def);
-FieldList DecList(TreeNode *decList, Type type);
-FieldList Dec(TreeNode *dec, Type type);
+FieldList DefList(TreeNode *defList, BOOL addTable);
+FieldList Def(TreeNode *def, BOOL addTable);
+FieldList DecList(TreeNode *decList, Type type, BOOL addTable);
+FieldList Dec(TreeNode *dec, Type type, BOOL addTable);
 
 //Expressions
 Type Exp(TreeNode *exp);

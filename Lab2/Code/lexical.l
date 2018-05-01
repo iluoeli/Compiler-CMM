@@ -169,6 +169,7 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 		yylval.pNode->nType = T_Type;
 		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
 		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
+		yylval.pNode->ptr[strlen(yytext)] = '\0';
 		return TYPE;}
 struct	{
 		yylval.pNode = createNode("STRUCT", yylineno); 
@@ -200,6 +201,7 @@ while	{
 		yylval.pNode->nType = T_Id;
 		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
 		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
+		yylval.pNode->ptr[strlen(yytext)] = '\0';
 		return ID;}
 0[xX][0-9a-zA-Z]+	{
             printf("#%d Error type A at Line %d: Illegal hexadecimal number \"%s\".\n",

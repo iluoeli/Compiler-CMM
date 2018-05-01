@@ -1,0 +1,16 @@
+struct Complex
+{
+    int real
+    int image;
+};
+
+struct Complex
+{
+    float r
+    float i;
+};
+
+int main()
+{
+
+}

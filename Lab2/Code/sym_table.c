@@ -63,6 +63,7 @@ void clearTable()
 			free(symbolTable[i]);
 		}
 	}
+	curFunc = NULL;
 }
 
 Symbol searchTable(char *name)
@@ -81,6 +82,9 @@ int insertTable(Symbol symbol)
 {
 	if(symbol == NULL || symbol->name == NULL)	return -1;
 	unsigned int hashValue = hash_pjw(symbol->name);
+	printf("hash=%d ", hashValue);
+	printSymbol(symbol);
+	PRINT_TABLE();
 
 	//first in this place
 	if(symbolTable[hashValue] == NULL) {

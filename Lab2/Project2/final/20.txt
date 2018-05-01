@@ -1,0 +1,11 @@
+int sum(int a, int b);
+int sum(int a, int b)
+{
+    return a + b;
+}
+int main()
+{
+    int i = 1;
+    int j = 2;
+    int k = sum(i, j);
+}

@@ -1,0 +1,14 @@
+struct A
+{ 
+    int x; 
+    float y; 
+}
+struct B
+{
+    int a;
+    float b;
+}
+int main()
+{
+    return 0;
+}

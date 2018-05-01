@@ -38,17 +38,17 @@ void ExtDef(TreeNode *p)
 		//specifier FunDec CompSt
 		TreeNode *funDec = child1;
 		TreeNode *compSt = p->childs[2];
-		Symbol symbol = FunDec(funDec, type);
-		symbol->lineno = p->lineno;
-		curFunc = symbol->func;
+		Symbol symbol = NULL;
 		if(p->childs[2]->nType == T_CompSt) {
-			symbol->func->isDefined = 1;
+			symbol = FunDec(funDec, type, TRUE);
+			curFunc = symbol->func;
 			CompSt(compSt);
 			curFunc = NULL;
 		}
 		else {
-			symbol->func->isDefined = 0;
+			symbol = FunDec(funDec, type, FALSE);
 		}
+		symbol->lineno = p->lineno;
 		Symbol s = searchTable(symbol->name);
 		if(s != NULL) {
 			if(s->kind == S_Func) {
@@ -58,8 +58,9 @@ void ExtDef(TreeNode *p)
 							funDec->lineno, symbol->name);
 					return;
 				}
-				else if(s->func->isDefined == 0 && symbol->func->isDefined == 1)
-					s->func->isDefined = 1;
+				else if(s->func->isDefined == 0 && symbol->func->isDefined == 1) {
+					s->func->isDefined = 1;		
+				}
 				else if(s->func->isDefined == 1 && symbol->func->isDefined == 1) {
 					printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
 						funDec->lineno, symbol->name);
@@ -89,7 +90,11 @@ void ExtDecList(Type type, TreeNode *p)
 	LOG("in ExtDecList");
 	TreeNode* varDec = p->childs[0];
 	Symbol symbol =  VarDec(type, varDec);
-	insertTable(symbol);
+	int ret = insertTable(symbol);
+	if(ret == 1) {
+		printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
+				symbol->lineno, symbol->name);
+	}
 
 	if(p->nChild > 1) {
 		ExtDecList(type, p->childs[2]);
@@ -100,7 +105,7 @@ Type Specifier(TreeNode *specifier)
 {
 	LOG("in Specifier");
 	TreeNode *child = specifier->childs[0];
-	Type type;
+	Type type = NULL;
 	if(child->nType == T_Type) {
 		type = malloc(sizeof(struct Type_));
 		type->kind = BASIC;
@@ -108,8 +113,10 @@ Type Specifier(TreeNode *specifier)
 			type->basic = B_INT;
 		else if(strcmp(child->ptr, "float") == 0)
 			type->basic = B_FLOAT;
-		else
+		else {
+			printTree(specifier);
 			ASSERT(0);
+		}
 	}
 	else if(child->nType == T_StructSpecifier) {
 		//TODO:genarate struct	
@@ -149,7 +156,7 @@ Type StructSpecifier(TreeNode *p)
 			strcpy(structure->name, optTag->childs[0]->ptr);
 		}
 		//PRINT_FIELD_LIST(structure);
-		structure->tail = DefList(p->childs[3]);
+		structure->tail = DefList(p->childs[3], FALSE);
 		//PRINT_FIELD_LIST(structure);
 		checkStructure(structure->tail);
 
@@ -175,9 +182,10 @@ Symbol VarDec(Type type, TreeNode *p)
 {
 	LOG("in VarDec");
 	TreeNode *child = p->childs[0];
-	Symbol symbol;
+	Symbol symbol = NULL;
 	if(child->nType == T_Id) {
 		symbol = newTypeSymbol(S_Type, child->ptr, type);
+		symbol->lineno = p->lineno;
 	}
 	else if(child->nType == T_VarDec) {
 		//array type
@@ -196,43 +204,53 @@ Symbol VarDec(Type type, TreeNode *p)
 	return symbol;	
 }
 
-Symbol FunDec(TreeNode *funDec, Type retType)
+Symbol FunDec(TreeNode *funDec, Type retType, BOOL isDef)
 {
 	LOG("in FunDec");
 	Func funcType = malloc(sizeof(struct Func_));
 	funcType->retType = retType;
 	funcType->argList = NULL;
+	if(isDef == TRUE)
+		funcType->isDefined = 1;
+	else 
+		funcType->isDefined = 0;
 	if(funDec->childs[2]->nType == T_VarList)
-		funcType->argList = VarList(funDec->childs[2]);
-	funcType->isDefined = 1;
+		funcType->argList = VarList(funDec->childs[2], isDef);
 	Symbol symbol = newFuncSymbol(S_Func, funDec->childs[0]->ptr, funcType);
 	LOG("leave FunDec");
 	return symbol;
 }
 
-FieldList VarList(TreeNode *varList)
+FieldList VarList(TreeNode *varList, BOOL addTable)
 {
 	LOG("in VarList");
-	FieldList list = ParamDec(varList->childs[0]);
+	FieldList list = ParamDec(varList->childs[0], addTable);
 	if(varList->nChild > 1) {
-		list->tail = VarList(varList->childs[2]);	
+		list->tail = VarList(varList->childs[2], addTable);	
 	}
 	LOG("leave VarList");
 	return list;
 }
 
-FieldList ParamDec(TreeNode *paramDec)
+FieldList ParamDec(TreeNode *paramDec, BOOL addTable)
 {
 	LOG("in ParamDec");
 	Type type = Specifier(paramDec->childs[0]);
 	Symbol symbol = VarDec(type, paramDec->childs[1]);
+	if(addTable == TRUE) {
+		int ret = insertTable(symbol);
+		if(ret == 1) {
+			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
+				symbol->lineno, symbol->name);
+		}
+	}
 	FieldList list = malloc(sizeof(struct FieldList_));
 	int len = strlen(symbol->name);
 	list->name = malloc(len+1);
 	strcpy(list->name, symbol->name);
 	list->type = symbol->type;
 	list->tail = NULL;
-	free(symbol);
+	//free(symbol);
 	return list;
 }
 
@@ -242,17 +260,17 @@ FieldList ParamDec(TreeNode *paramDec)
 */
 void CompSt(TreeNode *compSt)
 {
-	FieldList fList = DefList(compSt->childs[1]);		
-	for(; fList; fList=fList->tail) {
+	FieldList fList = DefList(compSt->childs[1], TRUE);		
+/*	for(; fList; fList=fList->tail) {
 		Symbol symbol = newTypeSymbol(S_Type, fList->name, fList->type);
 		int ret = insertTable(symbol);
 		if(ret == 1) {
 			//TODO:cant make sure lineno
 			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
-					compSt->lineno, symbol->name);
+					compSt->childs[1]->lineno, symbol->name);
 		}
 	}	
-
+*/
 
 	StmtList(compSt->childs[2]);
 }
@@ -318,16 +336,16 @@ void Stmt(TreeNode *stmt)
 /*
  *------Local Definitions------
 */
-FieldList DefList(TreeNode *defList)
+FieldList DefList(TreeNode *defList, BOOL addTable)
 {
 	LOG("in DefList");
 	if(defList == NULL)	return NULL;
-	FieldList list = Def(defList->childs[0]);
+	FieldList list = Def(defList->childs[0], addTable);
 	printFieldList(list);
 	if(defList->nChild == 2) {
 		FieldList tail = list;
 		for(; tail->tail; tail=tail->tail);
-		tail->tail = DefList(defList->childs[1]);
+		tail->tail = DefList(defList->childs[1], addTable);
 	}
 
 	printFieldList(list);
@@ -335,39 +353,49 @@ FieldList DefList(TreeNode *defList)
 	return list;
 }
 
-FieldList Def(TreeNode *def)
+FieldList Def(TreeNode *def, BOOL addTable)
 {
 	LOG("in Def");
 	Type type = Specifier(def->childs[0]);
 	
 	LOG("leave Def");
-	return DecList(def->childs[1], type);
+	return DecList(def->childs[1], type, addTable);
 }
 
-FieldList DecList(TreeNode *decList, Type type)
+FieldList DecList(TreeNode *decList, Type type, BOOL addTable)
 {
 	LOG("in DecList");
-	FieldList list = Dec(decList->childs[0], type);	
+	FieldList list = Dec(decList->childs[0], type, addTable);	
 	if(decList->nChild == 3) {
-		list->tail = DecList(decList->childs[2], type);
+		list->tail = DecList(decList->childs[2], type, addTable);
 	}
 	printFieldList(list);
 	LOG("leave DecList");
 	return list;
 }
 
-FieldList Dec(TreeNode *dec, Type type)
+FieldList Dec(TreeNode *dec, Type type, BOOL addTable)
 {
 	LOG("in Dec");
 	TreeNode *varDec = dec->childs[0];
 	Symbol symbol = VarDec(type, varDec);
+	if(addTable == TRUE) {
+		int ret = insertTable(symbol);
+		if(ret == 1) {
+			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
+				symbol->lineno, symbol->name);
+		}
+	}
 	FieldList list = malloc(sizeof(struct FieldList_));
 	list->name = symbol->name;
 	list->type = symbol->type;
 	list->tail = NULL;
 	if(dec->nChild == 3) {
 		//TODO:handle exp
-		Exp(dec->childs[2]);
+		Type rType = Exp(dec->childs[2]);
+		if(compareType(type, rType) == FALSE) {
+			PRINT_ERROR(5, dec->lineno, "Type mismatched for assignment.");
+		}
 	}
 
 	LOG("leave Dec");
@@ -394,6 +422,7 @@ Type Exp(TreeNode *exp)
 			if(second->nType == T_Assignop) {
 				LOG("exp = exp");
 				if(lType != NULL && isLeftVar(first) == FALSE) {
+					PRINT_TYPE(lType);
 					PRINT_ERROR(6, exp->lineno, "The left-hand side of an assignment must be a variable.");
 					lType = NULL;
 				}
@@ -428,13 +457,13 @@ Type Exp(TreeNode *exp)
 				//exp[exp]
 				rType = Exp(third);
 				if(lType->kind != ARRAY) {
-					printf("Error type 10 at Line %d: \"%s\" is not an aaray.\n",
-							first->lineno, "nullptr");
+					printf("Error type 10 at Line %d: var is not an aaray.\n",
+							first->lineno);
 					lType = NULL;
 				}
 				else if(rType != NULL && (rType->kind != BASIC || rType->basic != B_INT)) {
-					printf("Error type 12 at Line %d: \"%s\" is not an integer.\n",
-							third->lineno, "nullptr");
+					printf("Error type 12 at Line %d: operand is not an integer.\n",
+							third->lineno);
 					lType = NULL;
 				}
 				else {
@@ -539,12 +568,21 @@ Type Exp(TreeNode *exp)
 BOOL isLeftVar(TreeNode *p)
 {
 	//TODO:more specific type
-	if(p == NULL)	return FALSE;
+	if(p == NULL)	return TRUE;
+	LOG("is left var");
+	printTree(p);
 	TreeNode *child = p->childs[0];
-	if(p->nType == T_Id ||
-			(p->nType == T_Exp && p->childs[0]->nType == T_Exp 
-			 && (p->childs[1]->nType == T_Lb || p->childs[1]->nType == T_Dot || p->childs[1]->nType == T_Id)))
+	if(p->nType == T_Id || (p->nType == T_Exp && (p->childs[0]->nType == T_Id))){
+		Symbol symbol = searchTable(p->ptr);
+		if(symbol != NULL && symbol->kind == S_Type)
 		return TRUE;
+	}
+	else if(p->nType == T_Exp && p->childs[0]->nType == T_Exp 
+		 && (p->childs[1]->nType == T_Lb || p->childs[1]->nType == T_Dot || p->childs[1]->nType == T_Id))
+		return TRUE;
+	else {
+		printTree(p);
+	}
 	return FALSE;
 }
 

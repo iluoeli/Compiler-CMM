@@ -1,0 +1,9 @@
+int func()
+{
+    return 1;
+}
+int main()
+{
+    int i = 1;
+    func() = i;
+}
