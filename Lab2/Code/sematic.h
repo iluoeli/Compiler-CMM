@@ -31,10 +31,10 @@ void Stmt(TreeNode *stmt);
 
 
 //Local Definitions
-FieldList DefList(TreeNode *defList, BOOL addTable);
-FieldList Def(TreeNode *def, BOOL addTable);
-FieldList DecList(TreeNode *decList, Type type, BOOL addTable);
-FieldList Dec(TreeNode *dec, Type type, BOOL addTable);
+FieldList DefList(TreeNode *defList, BOOL addTable, FieldList list);
+FieldList Def(TreeNode *def, BOOL addTable, FieldList list);
+FieldList DecList(TreeNode *decList, Type type, BOOL addTable, FieldList list);
+FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list);
 
 //Expressions
 Type Exp(TreeNode *exp);

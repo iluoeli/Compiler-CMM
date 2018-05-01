@@ -152,9 +152,10 @@ Type StructSpecifier(TreeNode *p)
 			strcpy(structure->name, optTag->childs[0]->ptr);
 		}
 		//PRINT_FIELD_LIST(structure);
-		structure->tail = DefList(p->childs[3], FALSE);
+		//structure->tail = DefList(p->childs[3], FALSE);
+		DefList(p->childs[3], FALSE, structure);
 		//PRINT_FIELD_LIST(structure);
-		checkStructure(structure->tail);
+		//checkStructure(structure->tail);
 
 		Type type = malloc(sizeof(struct Type_));
 		type->kind = STRUCTURE;
@@ -252,7 +253,12 @@ FieldList ParamDec(TreeNode *paramDec, BOOL addTable)
 */
 void CompSt(TreeNode *compSt)
 {
-	FieldList fList = DefList(compSt->childs[1], TRUE);		
+	//FieldList fList = DefList(compSt->childs[1], TRUE);		
+	FieldList fList = malloc(sizeof(struct FieldList_));
+	fList->tail = NULL;
+	fList->type = NULL;
+	fList->name = NULL;
+	DefList(compSt->childs[1], TRUE, fList);		
 /*	for(; fList; fList=fList->tail) {
 		Symbol symbol = newTypeSymbol(S_Type, fList->name, fList->type);
 		int ret = insertTable(symbol);
@@ -328,16 +334,18 @@ void Stmt(TreeNode *stmt)
 /*
  *------Local Definitions------
 */
-FieldList DefList(TreeNode *defList, BOOL addTable)
+FieldList DefList(TreeNode *defList, BOOL addTable, FieldList list)
 {
 	
 	if(defList == NULL)	return NULL;
-	FieldList list = Def(defList->childs[0], addTable);
+	//FieldList list = 
+	Def(defList->childs[0], addTable, list);
 	//printFieldList(list);
 	if(defList->nChild == 2) {
 		FieldList tail = list;
 		for(; tail->tail; tail=tail->tail);
-		tail->tail = DefList(defList->childs[1], addTable);
+		//tail->tail = 
+		DefList(defList->childs[1], addTable, list);
 	}
 
 	//printFieldList(list);
@@ -345,28 +353,29 @@ FieldList DefList(TreeNode *defList, BOOL addTable)
 	return list;
 }
 
-FieldList Def(TreeNode *def, BOOL addTable)
+FieldList Def(TreeNode *def, BOOL addTable, FieldList list)
 {
 	
 	Type type = Specifier(def->childs[0]);
 	
 	
-	return DecList(def->childs[1], type, addTable);
+	return DecList(def->childs[1], type, addTable, list);
 }
 
-FieldList DecList(TreeNode *decList, Type type, BOOL addTable)
+FieldList DecList(TreeNode *decList, Type type, BOOL addTable, FieldList list)
 {
 	
-	FieldList list = Dec(decList->childs[0], type, addTable);	
+	FieldList l = Dec(decList->childs[0], type, addTable, list);	
 	if(decList->nChild == 3) {
-		list->tail = DecList(decList->childs[2], type, addTable);
+		//l->tail = 
+		DecList(decList->childs[2], type, addTable, list);
 	}
 	//printFieldList(list);
 	
 	return list;
 }
 
-FieldList Dec(TreeNode *dec, Type type, BOOL addTable)
+FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 {
 	
 	TreeNode *varDec = dec->childs[0];
@@ -378,10 +387,21 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable)
 				symbol->lineno, symbol->name);
 		}
 	}
-	FieldList list = malloc(sizeof(struct FieldList_));
-	list->name = symbol->name;
-	list->type = symbol->type;
-	list->tail = NULL;
+	FieldList l = malloc(sizeof(struct FieldList_));
+	l->name = symbol->name;
+	l->type = symbol->type;
+	l->tail = NULL;
+	FieldList tail = list;
+	if(addTable == FALSE && tail != NULL) {
+		while(tail->tail) {
+			if(strcmp(tail->name, symbol->name) == 0) {
+				printf("Error type 15 at Line %d: Redefined field \"%s\".\n",
+						symbol->lineno, symbol->name);
+			}
+			tail = tail->tail;	
+		}
+		tail->tail = l;
+	}
 	if(dec->nChild == 3) {
 		//TODO:handle exp
 		Type rType = Exp(dec->childs[2]);
