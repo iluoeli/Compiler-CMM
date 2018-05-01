@@ -14,8 +14,8 @@ Symbol newTypeSymbol(S_TYPE s_type, char *name, Type type)
 	strcpy(symbol->name, name);
 	symbol->name[len] = '\0';
 
-	printSymbol(symbol);
-	printf("\n");
+	//printSymbol(symbol);
+	//printf("\n");
 	return symbol;
 }
 
@@ -30,8 +30,8 @@ Symbol newFuncSymbol(S_TYPE s_type, char *name, Func type)
 	symbol->name = malloc(len+1);
 	strcpy(symbol->name, name);
 	
-	printSymbol(symbol);
-	printf("\n");
+	//printSymbol(symbol);
+	//printf("\n");
 	return symbol;
 }
 
@@ -82,9 +82,9 @@ int insertTable(Symbol symbol)
 {
 	if(symbol == NULL || symbol->name == NULL)	return -1;
 	unsigned int hashValue = hash_pjw(symbol->name);
-	printf("hash=%d ", hashValue);
-	printSymbol(symbol);
-	PRINT_TABLE();
+	//printf("hash=%d ", hashValue);
+	//printSymbol(symbol);
+	//PRINT_TABLE();
 
 	//first in this place
 	if(symbolTable[hashValue] == NULL) {
@@ -98,7 +98,7 @@ int insertTable(Symbol symbol)
 		p->next = symbol;
 		symbol->next = NULL;
 	}
-	PRINT_TABLE();
+	//PRINT_TABLE();
 	return 0;
 }
 
@@ -118,9 +118,9 @@ BOOL compareType(Type t1, Type t2)
 		return TRUE;
 	if(t1 == NULL || t2 == NULL)
 		return FALSE;
-	PRINT_TYPE(t1);
-	PRINT_TYPE(t2);
-	printf("\n");
+	//PRINT_TYPE(t1);
+	//PRINT_TYPE(t2);
+	//printf("\n");
 	if(t1->kind != t2->kind)
 		return FALSE;
 	if(t1->kind == BASIC)
@@ -138,9 +138,9 @@ BOOL compareStructure(FieldList s1, FieldList s2)
 {
 	if(s1 == s2)	return TRUE;
 	if(s1 == NULL || s2 == NULL)	return FALSE;
-	if(strcmp(s1->name, s2->name) == 1)	return FALSE;
+	if(strcmp(s1->name, s2->name) == 0)	return TRUE;
 
-	return TRUE;
+	return FALSE;
 }
 
 BOOL compareArgs(FieldList list1, FieldList list2)
@@ -201,6 +201,20 @@ void printFunc(Func func)
 	printType(func->retType);	
 	printf(" (");
 	printFieldList(func->argList);
+	printf(")");
+}
+
+void printFuncType(Symbol func) 
+{
+	printf("%s", func->name);
+	printf("(");
+	FieldList p = func->func->argList;
+	while(p && p->tail) {
+		printType(p->type);
+		printf(",");
+		p = p->tail;
+	}
+	printType(p->type);
 	printf(")");
 }
 

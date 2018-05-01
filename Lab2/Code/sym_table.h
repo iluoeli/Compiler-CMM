@@ -71,6 +71,7 @@ BOOL compareFunction(Symbol f1, Symbol f2);
 void printFieldList(FieldList list);
 void printType(Type type);
 void printFunc(Func func);
+void printFuncType(Symbol func); 
 void printSymbol(Symbol symbol);
 void printTable();
 
