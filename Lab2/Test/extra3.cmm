@@ -1,4 +1,11 @@
+int func()
+{
+	int i = 10;
+	return i;
+}
+
 int main()
 {
-	float i = 1.05e-4;
+	int i;
+	i = func();
 }

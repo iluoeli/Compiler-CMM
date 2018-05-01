@@ -1,5 +1,12 @@
+struct Position
+{
+	float x,y;
+};
+
+int func(int a);
+
+int func(struct Position p);
+
 int main()
 {
-	int i = 09;
-	int j = 0x3G;
 }

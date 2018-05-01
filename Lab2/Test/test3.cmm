@@ -1,15 +1,5 @@
-struct t_a
+int main()
 {
-	int a;
-	int b;
-	float c;
-};
-
-struct t_a d;
-
-int inc(int a, float b, int c[6][7][8])
-{
+	int i, j;
 	int i;
-	float f;
-	i = i + 1;
 }
