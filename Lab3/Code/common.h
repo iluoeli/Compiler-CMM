@@ -8,6 +8,7 @@
 #include "debug.h"
 #include "sym_table.h"
 #include "sematic.h"
+#include "ir.h"
 
 
 /*

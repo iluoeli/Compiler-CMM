@@ -34,7 +34,11 @@ int main(int argc, char **argv)
 				printTree(root);
 #endif
 				initTable();
+				preprocessTable();	
 				sematicCheck(root);
+				printTable();
+				generate_ir(root);
+
 				deleteTree(root);
 				clearTable();
 			}

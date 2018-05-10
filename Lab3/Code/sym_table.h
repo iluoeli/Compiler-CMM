@@ -58,6 +58,7 @@ void initTable();
 void clearTable();
 Symbol searchTable(char *name);
 int insertTable(Symbol symbol);
+void preprocessTable();
 
 Type structureField(FieldList st, char *name);
 

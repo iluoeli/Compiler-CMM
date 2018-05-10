@@ -5,6 +5,7 @@
 #define EN_PRINT_TREE 0
 #define SEMATIC_DEBUG 1
 #define EN_ASSERT 1
+#define IR_DEBUG 1
 
 
 #if SEMATIC_DEBUG

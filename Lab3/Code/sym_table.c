@@ -102,6 +102,37 @@ int insertTable(Symbol symbol)
 	return 0;
 }
 
+void preprocessTable()
+{
+	//int read()
+	Func read_func = malloc(sizeof(struct Func_));		
+	read_func->retType = malloc(sizeof(struct Type_));
+	read_func->retType->kind = BASIC;
+	read_func->retType->basic = B_INT;
+	read_func->argList = NULL;
+	read_func->isDefined = 1;	
+	Symbol read_symbol = newFuncSymbol(S_Func, "read", read_func);
+	read_symbol->lineno = 0;
+	insertTable(read_symbol);
+
+	//int write(int)
+	Func write_func = malloc(sizeof(struct Func_));
+	write_func->retType = malloc(sizeof(struct Type_));
+	write_func->retType->kind = BASIC;
+	write_func->retType->basic = B_INT;
+	write_func->argList = malloc(sizeof(struct FieldList_));
+	write_func->argList->name = NULL;
+	write_func->argList->tail = NULL;
+	write_func->argList->type = malloc(sizeof(struct Type_));
+	write_func->argList->type->kind = BASIC;
+	write_func->argList->type->basic = B_INT;
+	write_func->isDefined = 1;
+	Symbol write_symbol = newFuncSymbol(S_Func, "write", write_func);
+	write_symbol->lineno = 0;
+	insertTable(write_symbol);
+}
+
+
 Type structureField(FieldList st, char *name)
 {
 	for(; st; st=st->tail) {
@@ -164,7 +195,7 @@ BOOL compareFunction(Symbol f1, Symbol f2)
 void printFieldList(FieldList list)
 {
 	if(list == NULL)	return;
-	printf("(");
+	//printf("(");
 	for(; list->tail; list=list->tail) {
 		printType(list->type);
 		if(list->name != NULL)
@@ -174,7 +205,7 @@ void printFieldList(FieldList list)
 	printType(list->type);
 	if(list->name != NULL)
 		printf(" %s", list->name);
-	printf(")");
+	//printf(")");
 }
 
 void printType(Type type)
