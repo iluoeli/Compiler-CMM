@@ -31,7 +31,7 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 
 \n		{ yycolumn = 1;	newLine = 1;}
 {ws}	{/*white space, do nothing*/}
-0|([+-]?[1-9][0-9]*)	{
+0|([1-9][0-9]*)	{
 		yylval.pNode = createNode("INT", yylineno); 
 		yylval.pNode->nType = T_Int;
 		yylval.pNode->iValue = atoi(yytext);
@@ -53,12 +53,12 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
 		*/
-[+-]?{digits}\.({digits})?([Ee][+-]?{digits})?	{
+{digits}\.({digits})?([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = T_Float;
 		yylval.pNode->fValue = atof(yytext);
 		return FLOAT;}
-[+-]?\.{digits}([Ee][+-]?{digits})?	{
+\.{digits}([Ee][+-]?{digits})?	{
 		yylval.pNode = createNode("FLOAT", yylineno); 
 		yylval.pNode->nType = T_Float;
 		yylval.pNode->fValue = atof(yytext);
