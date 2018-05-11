@@ -132,6 +132,27 @@ void preprocessTable()
 	insertTable(write_symbol);
 }
 
+int typeSize(Type type)
+{
+	int size = 0;
+	FieldList p;
+	switch(type->kind) {
+		case BASIC:
+			size = 4;
+			break;
+		case ARRAY:
+			size = typeSize(type->array.elem) * type->array.size;
+			break;
+		case STRUCTURE:
+			p = type->structure;
+			while(p != NULL) {
+				size += typeSize(p->type);
+				p = p->tail;
+			}
+			break;
+	}
+	return size;
+}
 
 Type structureField(FieldList st, char *name)
 {

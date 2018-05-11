@@ -17,4 +17,6 @@ enum BOOL {
 };
 */
 
+#define NEW_OP(type, ptr)	newOp(type, (void *)ptr)
+
 #endif

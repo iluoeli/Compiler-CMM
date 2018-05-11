@@ -81,6 +81,9 @@ number	{digits}(\.{digits})?(E[+-]?{digit})?
 >|<|(>=)|(<=)|(==)|(!=)	{
 		yylval.pNode = createNode("RELOP", yylineno); 
 		yylval.pNode->nType = T_Relop;
+		yylval.pNode->ptr = (char *)malloc(strlen(yytext));
+		strncpy(yylval.pNode->ptr, yytext, strlen(yytext));
+		yylval.pNode->ptr[strlen(yytext)] = '\0';
 		return RELOP;}
 \+		{
 		yylval.pNode = createNode("PLUS", yylineno); 
