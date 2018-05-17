@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 				perror(argv[1]);
 				return 1;
 			}
-			//printf("\n\nparsering file: %s......\n", argv[i]);
+			printf("\n\nparsering file: %s......\n", argv[i]);
 			yyrestart(fp);
 			yyparse();
 			fclose(fp);
@@ -36,8 +36,8 @@ int main(int argc, char **argv)
 				initTable();
 				preprocessTable();	
 				sematicCheck(root);
-				printTable();
-				generate_ir(root);
+			//	printTable();
+			//	generate_ir(root);
 
 				deleteTree(root);
 				clearTable();

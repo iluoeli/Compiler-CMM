@@ -456,10 +456,8 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 	TreeNode* child = stmt->childs[0];
 	InterCodes *codes = NULL;
 	if(child->nType == T_Exp) {
-		LOG("2");
 		//FIXME
 		codes = translate_Exp(child, NULL);	
-		LOG("3");
 	}
 	else if(child->nType == T_CompSt) {
 		codes = translate_CompSt(child);
@@ -471,7 +469,6 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 		codes = addTail(code1, code2);
 	}
 	else if(child->nType == T_If && stmt->nChild == 5) {
-		printTree(stmt);
 		Operand label1 = newLabel();
 		Operand label2 = newLabel();
 		InterCodes *code1 = translate_Cond(stmt->childs[2], label1, label2);
@@ -486,7 +483,6 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 		codes = code1;
 	}
 	else if(child->nType == T_If && stmt->nChild == 7) {
-		printTree(stmt);
 		Operand label1 = newLabel();
 		Operand label2 = newLabel();
 		Operand label3 = newLabel();
@@ -615,6 +611,9 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		code1 = addTail(code1, code2);
 		codes = code1;
 	}
+	else if(first->nType == T_Lp) {
+		codes = translate_Exp(second, place);
+	}
 	else if(first->nType == T_Minus) {
 		Operand t1 = newTemp();
 		InterCodes *code1 = translate_Exp(second, t1);
@@ -649,9 +648,9 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		codes = code0;
 	}
 	else if(first->nType == T_Id && exp->nChild == 1) {
-		LOG("4");
 		Symbol sym = searchTable(first->ptr);
 		ASSERT(sym != NULL);
+
 		Operand op1 = place;
 		Operand op2 = newOperand();
 		op2->kind = VARIABLE;
@@ -708,6 +707,10 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	}
 	else if(first->nType == T_Float) {
 		ASSERT(0);	
+	}
+	else if(first->nType == T_Exp && second->nType == T_Dot) {
+		//TODO:3.1	
+
 	}
 	else {
 		ASSERT(0);

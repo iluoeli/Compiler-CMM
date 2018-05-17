@@ -40,9 +40,6 @@ void ExtDef(TreeNode *p)
 		Symbol symbol = NULL;
 		if(p->childs[2]->nType == T_CompSt) {
 			symbol = FunDec(funDec, type, TRUE);
-			curFunc = symbol->func;
-			CompSt(compSt);
-			curFunc = NULL;
 		}
 		else {
 			symbol = FunDec(funDec, type, FALSE);
@@ -72,6 +69,11 @@ void ExtDef(TreeNode *p)
 				printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
 						funDec->lineno, symbol->name);
 			}
+		}
+		if(p->childs[2]->nType == T_CompSt) {
+			curFunc = symbol->func;
+			CompSt(p->childs[2]);
+			curFunc = NULL;
 		}
 	}
 	else if(child1->nType == T_ExtDecList) {
@@ -481,12 +483,11 @@ Type Exp(TreeNode *exp)
 					lType = NULL;
 				}
 				else {
-					lType = rType->array.elem;
+					lType = lType->array.elem;
 				}
 			}
 			else if(second->nType == T_Dot) {
 				//exp.exp
-				
 				if(lType != NULL && lType->kind != STRUCTURE) {
 					printf("Error type 13 at Line %d: Illegal use of \".\".\n",
 							second->lineno);
