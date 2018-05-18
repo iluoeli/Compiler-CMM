@@ -72,6 +72,14 @@ void printOperand(Operand op, FILE *fp)
 		case LABEL:
 			fprintf(fp, "label%d", op->value);
 			break;
+		case REF:
+			fprintf(fp, "&");
+			printOperand(op->op, fp);
+			break;
+		case DEREF:
+			fprintf(fp, "*");
+			printOperand(op->op, fp);
+			break;
 		default:
 			fprintf(fp, "%d", op->value);
 	}
@@ -124,7 +132,8 @@ int printInterCodes(InterCodes *codes, FILE *fp)
 				printOperand(codes->code.binop.op2, fp);
 				break;
 			case IC_DEC:
-				fprintf(fp, "DEC %s", codes->code.binop.op1->name);
+				fprintf(fp, "DEC ");
+				printOperand(codes->code.binop.op1, fp);
 				if(codes->code.binop.op2 != NULL)
 					fprintf(fp, " %d", codes->code.binop.op2->value);
 				break;
@@ -132,7 +141,8 @@ int printInterCodes(InterCodes *codes, FILE *fp)
 				fprintf(fp, "FUNCTION %s :", codes->code.binop.op1->name);
 				break;
 			case IC_PARAM:
-				fprintf(fp, "PARAM %s", codes->code.binop.op1->name);
+				fprintf(fp, "PARAM ");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_LABEL:
 				fprintf(fp, "LABEL ");
@@ -256,6 +266,8 @@ Operand newOp(OP_TYPE type, void *ptr)
 	op->kind = type;
 	if(type == VARIABLE) 
 		op->name = ptr;
+	else if(type == REF || type == DEREF) 
+		op->op = (Operand)ptr;
 	else
 		op->value = (int)ptr;
 
@@ -353,16 +365,17 @@ InterCodes *translate_VarDec(TreeNode *varDec)
 	ASSERT(sym != NULL);
 
 	if(sym->kind == S_Type && sym->type->kind != BASIC) {
-		codes = malloc(sizeof(struct InterCodes));
-		memset(codes, sizeof(struct InterCodes), 0);
-		codes->code.kind = IC_DEC;
-		codes->code.binop.op1 = malloc(sizeof(struct Operand_));
-		codes->code.binop.op1->kind = VARIABLE;
-		codes->code.binop.op1->name = name;
-		codes->code.binop.op2 = NULL;
-		codes->code.binop.op2 = malloc(sizeof(struct Operand_));
-		codes->code.binop.op2->kind = CONSTANT;
-		codes->code.binop.op2->value = typeSize(sym->type);
+		int size = typeSize(sym->type);
+		Operand op1 = newTemp();
+		Operand op2 = NEW_OP(CONSTANT, size);
+		InterCodes *code1 = newIC(IC_DEC, NULL, op1, op2);
+
+		//TODO:improment
+		Operand op3 = NEW_OP(VARIABLE, name);
+		Operand op4 = NEW_OP(REF, op1);
+		InterCodes *code2 = newIC(IC_ASSIGN, op3, op4, NULL);
+
+		codes = ADD_TAIL(code1, code2);
 	}
 	
 	return codes;
@@ -603,16 +616,18 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			
 			Operand t2 = newTemp();
 			Operand op1 = NEW_OP(CONSTANT, offset);
-			InterCodes *code2 = newIC(IC_ADD, t1, t2, op1);
+			InterCodes *code2 = newIC(IC_ADD, t2, t1, op1);
 			
 			Operand t3 = newTemp();
 			InterCodes *code3 = translate_Exp(third, t3);
 
-			InterCodes *code4 = newIC(IC_DEREF, t2, t3, NULL);
+			Operand t4 = NEW_OP(DEREF, t2);
+			InterCodes *code4 = newIC(IC_ASSIGN, t4, t3, NULL);
 
-			InterCodes *code5 = newIC(IC_ASSIGN, place, t3, NULL);
-			
-			ADD_TAIL(code4, code5);
+			if(place != NULL) {
+				InterCodes *code5 = newIC(IC_ASSIGN, place, t4, NULL);
+				ADD_TAIL(code4, code5);
+			}
 			ADD_TAIL(code3, code4);
 			ADD_TAIL(code2, code3);
 			codes = ADD_TAIL(code1, code2);
@@ -796,19 +811,14 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		Operand op2 = newTemp();
 		InterCodes *code1 = newIC(IC_ASSIGN, op2, op1, NULL);		
 		
-		//tmp2 := ADDR(st);
+		//tmp2 := st + tmp1;
 		Operand op3 = NEW_OP(VARIABLE, sym->name);
 		Operand op4 = newTemp();
-		InterCodes *code2 = newIC(IC_REF, op4, op3, NULL);
+		InterCodes *code2 = newIC(IC_ADD, op4, op3, op2);
 		
-		//tmp3 := tmp2 + tmp1;
-		Operand op5 = newTemp();
-		InterCodes *code3 = newIC(IC_ADD, op5, op4, op2);
+		//place := *tmp2;
+		InterCodes *code3 = newIC(IC_DEREF, place, op4, NULL);
 		
-		//place := *tmp3;
-		InterCodes *code4 = newIC(IC_DEREF, place, op5, NULL);
-		
-		code3 = addTail(code3, code4);
 		code2 = addTail(code2, code3);
 		code1 = addTail(code1, code2);
 		codes = code1;
