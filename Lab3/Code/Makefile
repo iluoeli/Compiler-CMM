@@ -37,8 +37,8 @@ test:
 #	./parser ~/compiler/test-2/testA-[1-9].cmm
 #	./parser ~/compiler/test-2/testA-1[0-9].cmm
 #	./parser ~/compiler/test-2/testA-2[0-9].cmm
-	./parser ~/compiler/test-2/testB-[1-9].cmm
-#./parser ../Test2/test1.txt
+#./parser ~/compiler/test-2/testB-[1-9].cmm
+	./parser ../Test2/test2.txt
 #	./parser ../Test/test[1-9].cmm ../Test/test1[0-9].cmm ../Test/extra*.cmm
 #./parser ../Test/test1[0-9].cmm
 #	./parser ../Test/extra*.cmm

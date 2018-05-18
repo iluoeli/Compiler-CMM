@@ -36,8 +36,8 @@ int main(int argc, char **argv)
 				initTable();
 				preprocessTable();	
 				sematicCheck(root);
-			//	printTable();
-			//	generate_ir(root);
+				printTable();
+				generate_ir(root);
 
 				deleteTree(root);
 				clearTable();

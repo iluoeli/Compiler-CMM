@@ -82,7 +82,8 @@ int printInterCodes(InterCodes *codes)
 		printf("null\n");
 		return 0;
 	}
-
+	
+	FILE *fp = NULL;
 	int cnt = 0;
 	while(codes) {
 		switch(codes->code.kind) {
@@ -193,6 +194,10 @@ int printInterCodes(InterCodes *codes)
 				break;
 			case IC_ARG:
 				printf("ARG ");
+				printOperand(codes->code.binop.op1);
+				break;
+			case IC_CALL:
+				printf("CALL ");
 				printOperand(codes->code.binop.op1);
 				break;
 			case IC_READ:
@@ -327,17 +332,19 @@ InterCodes *translate_ExtDecList(TreeNode *extDecList)
 
 InterCodes *translate_VarDec(TreeNode *varDec)
 {
-	InterCodes *codes = malloc(sizeof(struct InterCodes));
-	memset(codes, sizeof(struct InterCodes), 0);
+	InterCodes *codes = NULL;
 	char *name = varDec->childs[0]->ptr;
 	Symbol sym = searchTable(name);
 	ASSERT(sym != NULL);
-	codes->code.kind = IC_DEC;
-	codes->code.binop.op1 = malloc(sizeof(struct Operand_));
-	codes->code.binop.op1->kind = VARIABLE;
-	codes->code.binop.op1->name = name;
-	codes->code.binop.op2 = NULL;
+
 	if(sym->kind == S_Type && sym->type->kind != BASIC) {
+		codes = malloc(sizeof(struct InterCodes));
+		memset(codes, sizeof(struct InterCodes), 0);
+		codes->code.kind = IC_DEC;
+		codes->code.binop.op1 = malloc(sizeof(struct Operand_));
+		codes->code.binop.op1->kind = VARIABLE;
+		codes->code.binop.op1->name = name;
+		codes->code.binop.op2 = NULL;
 		codes->code.binop.op1 = malloc(sizeof(struct Operand_));
 		codes->code.binop.op2->kind = CONSTANT;
 		codes->code.binop.op2->value = typeSize(sym->type);
@@ -691,6 +698,9 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 				InterCodes *code3 = newIC(IC_ARG, NULL, p->op, NULL);
 				code2 = addTail(code2, code3);
 			}
+			Operand *op1 = NEW_OP(VARIABLE, sym->name);
+			InterCodes *code3 = newIC(IC_CALL, NULL, op1, NULL);
+			code2 = addTail(code2, code3);
 			code1 = addTail(code1, code2);
 		}
 		codes = code1;
