@@ -37,7 +37,14 @@ int main(int argc, char **argv)
 				preprocessTable();	
 				sematicCheck(root);
 				printTable();
-				generate_ir(root);
+				
+				char fileName[128];
+				strcpy(fileName, argv[i]);
+				strcat(fileName, ".ir");
+				FILE *fp = fopen(fileName, "w");
+				ASSERT(fp);
+				generate_ir(root, fp);
+				fclose(fp);
 
 				deleteTree(root);
 				clearTable();

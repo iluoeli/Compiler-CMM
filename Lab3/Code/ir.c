@@ -52,166 +52,181 @@ Operand newLabel()
 	return op;
 }
 
-void printOperand(Operand op)
+void printOperand(Operand op, FILE *fp)
 {
 	if(!op) {
 		printf("null op\n");
 		return ;
 	}
+
 	switch(op->kind) {
 		case VARIABLE:
-			printf("%s", op->name);
+			fprintf(fp, "%s", op->name);
 			break;
 		case CONSTANT:
-			printf("#%d", op->value);
+			fprintf(fp, "#%d", op->value);
 			break;
 		case TEMP:
-			printf("t%d", op->value);
+			fprintf(fp, "t%d", op->value);
 			break;
 		case LABEL:
-			printf("label%d", op->value);
+			fprintf(fp, "label%d", op->value);
 			break;
 		default:
-			printf("%d", op->value);
+			fprintf(fp, "%d", op->value);
 	}
 }
 
-int printInterCodes(InterCodes *codes)
+int printInterCodes(InterCodes *codes, FILE *fp)
 {
 	if(codes == NULL) {
 		printf("null\n");
 		return 0;
 	}
 	
-	FILE *fp = NULL;
+	if(!fp)
+		fp = stdout;
+
 	int cnt = 0;
 	while(codes) {
 		switch(codes->code.kind) {
 			case IC_ASSIGN:
-				printOperand(codes->code.binop.rlt);
-				printf(" := ");
-				printOperand(codes->code.binop.op1);
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := ");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_ADD:
-				printOperand(codes->code.binop.rlt);
-				printf(" := ");
-				printOperand(codes->code.binop.op1);
-				printf(" + ");
-				printOperand(codes->code.binop.op2);
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " + ");
+				printOperand(codes->code.binop.op2, fp);
 				break;
 			case IC_SUB:
-				printOperand(codes->code.binop.rlt);
-				printf(" := ");
-				printOperand(codes->code.binop.op1);
-				printf(" - ");
-				printOperand(codes->code.binop.op2);
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " - ");
+				printOperand(codes->code.binop.op2, fp);
 				break;
 			case IC_MUL:
-				printOperand(codes->code.binop.rlt);
-				printf(" := ");
-				printOperand(codes->code.binop.op1);
-				printf(" * ");
-				printOperand(codes->code.binop.op2);
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " * ");
+				printOperand(codes->code.binop.op2, fp);
 				break;
 			case IC_DIV:
-				printOperand(codes->code.binop.rlt);
-				printf(" := ");
-				printOperand(codes->code.binop.op1);
-				printf(" / ");
-				printOperand(codes->code.binop.op2);
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " / ");
+				printOperand(codes->code.binop.op2, fp);
 				break;
 			case IC_DEC:
-				printf("DEC %s", codes->code.binop.op1->name);
+				fprintf(fp, "DEC %s", codes->code.binop.op1->name);
 				if(codes->code.binop.op2 != NULL)
-					printf(" %d", codes->code.binop.op2->value);
+					fprintf(fp, " %d", codes->code.binop.op2->value);
 				break;
 			case IC_FUNCTION:
-				printf("FUNCTION %s :", codes->code.binop.op1->name);
+				fprintf(fp, "FUNCTION %s :", codes->code.binop.op1->name);
 				break;
 			case IC_PARAM:
-				printf("PARAM %s", codes->code.binop.op1->name);
+				fprintf(fp, "PARAM %s", codes->code.binop.op1->name);
 				break;
 			case IC_LABEL:
-				printf("LABEL ");
-				printOperand(codes->code.binop.op1);
-				printf(" :");
+				fprintf(fp, "LABEL ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " :");
 				break;
 			case IC_RETURN:
-				printf("RETURN ");
-				printOperand(codes->code.binop.op1);
+				fprintf(fp, "RETURN ");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_GOTO:
-				printf("GOTO ");
-				printOperand(codes->code.binop.op1);
+				fprintf(fp, "GOTO ");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_JL:
-				printf("IF ");
-				printOperand(codes->code.binop.op1);
-				printf(" < ");
-				printOperand(codes->code.binop.op2);
-				printf(" GOTO ");
-				printOperand(codes->code.binop.rlt);
+				fprintf(fp, "IF ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " < ");
+				printOperand(codes->code.binop.op2, fp);
+				fprintf(fp, " GOTO ");
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_JG:
-				printf("IF ");
-				printOperand(codes->code.binop.op1);
-				printf(" > ");
-				printOperand(codes->code.binop.op2);
-				printf(" GOTO ");
-				printOperand(codes->code.binop.rlt);
+				fprintf(fp, "IF ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " > ");
+				printOperand(codes->code.binop.op2, fp);
+				fprintf(fp, " GOTO ");
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_JGE:
-				printf("IF ");
-				printOperand(codes->code.binop.op1);
-				printf(" >= ");
-				printOperand(codes->code.binop.op2);
-				printf(" GOTO ");
-				printOperand(codes->code.binop.rlt);
+				fprintf(fp, "IF ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " >= ");
+				printOperand(codes->code.binop.op2, fp);
+				fprintf(fp, " GOTO ");
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_JLE:
-				printf("IF ");
-				printOperand(codes->code.binop.op1);
-				printf(" <= ");
-				printOperand(codes->code.binop.op2);
-				printf(" GOTO ");
-				printOperand(codes->code.binop.rlt);
+				fprintf(fp, "IF ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " <= ");
+				printOperand(codes->code.binop.op2, fp);
+				fprintf(fp, " GOTO ");
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_JE:
-				printf("IF ");
-				printOperand(codes->code.binop.op1);
-				printf(" == ");
-				printOperand(codes->code.binop.op2);
-				printf(" GOTO ");
-				printOperand(codes->code.binop.rlt);
+				fprintf(fp, "IF ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " == ");
+				printOperand(codes->code.binop.op2, fp);
+				fprintf(fp, " GOTO ");
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_JNE:
-				printf("IF ");
-				printOperand(codes->code.binop.op1);
-				printf(" != ");
-				printOperand(codes->code.binop.op2);
-				printf(" GOTO ");
-				printOperand(codes->code.binop.rlt);
+				fprintf(fp, "IF ");
+				printOperand(codes->code.binop.op1, fp);
+				fprintf(fp, " != ");
+				printOperand(codes->code.binop.op2, fp);
+				fprintf(fp, " GOTO ");
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_ARG:
-				printf("ARG ");
-				printOperand(codes->code.binop.op1);
+				fprintf(fp, "ARG ");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_CALL:
-				printf("CALL ");
-				printOperand(codes->code.binop.op1);
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := CALL ");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_READ:
-				printf("READ ");	
-				printOperand(codes->code.binop.op1);
+				fprintf(fp, "READ ");	
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			case IC_WRITE:
-				printf("WRITE ");
-				printOperand(codes->code.binop.op1);
+				fprintf(fp, "WRITE ");
+				printOperand(codes->code.binop.op1, fp);
+				break;
+			case IC_REF:
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := &");
+				printOperand(codes->code.binop.op1, fp);
+				break;
+			case IC_DEREF:
+				printOperand(codes->code.binop.rlt, fp);
+				fprintf(fp, " := *");
+				printOperand(codes->code.binop.op1, fp);
 				break;
 			default:
 				printf("code");
 		}	
-		printf("\n");
+		fprintf(fp, "\n");
+		cnt ++;
 		codes = codes->next;
 	}
 	LOG("00");
@@ -275,12 +290,12 @@ IC_TYPE getRelop(TreeNode *relop)
 	return type;
 }
 
-InterCodes *generate_ir(TreeNode *root)
+InterCodes *generate_ir(TreeNode *root, FILE *fp)
 {
 	if(root == NULL)	return NULL;
 	InterCodes *codes = translate_Program(root);
 	
-	printInterCodes(codes);
+	printInterCodes(codes, fp);
 
 	return codes;
 }
@@ -345,7 +360,7 @@ InterCodes *translate_VarDec(TreeNode *varDec)
 		codes->code.binop.op1->kind = VARIABLE;
 		codes->code.binop.op1->name = name;
 		codes->code.binop.op2 = NULL;
-		codes->code.binop.op1 = malloc(sizeof(struct Operand_));
+		codes->code.binop.op2 = malloc(sizeof(struct Operand_));
 		codes->code.binop.op2->kind = CONSTANT;
 		codes->code.binop.op2->value = typeSize(sym->type);
 	}
@@ -384,7 +399,7 @@ InterCodes *translate_FunDec(TreeNode *funDec)
 	//InterCodes *argListCodes = translate_VarList(funDec->childs[2]);
 	//codes = addTail(codes, argListCodes);
 	LOG("leave FunDec");
-	printInterCodes(codes);
+	printInterCodes(codes, NULL);
 	return codes;
 }
 
@@ -403,7 +418,7 @@ InterCodes *translate_CompSt(TreeNode *compSt)
 	codes1 = addTail(codes1, codes2);
 
 	LOG("leave COmpSt");
-	printInterCodes(codes1);
+	printInterCodes(codes1, NULL);
 	return codes1;
 }
 
@@ -532,7 +547,7 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 	}
 
 	LOG("leave Stmt");
-	printInterCodes(codes);
+	printInterCodes(codes, NULL);
 	return codes;
 }
 
@@ -545,26 +560,69 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	TreeNode *third = exp->childs[2];
 	InterCodes *codes = NULL;
 	if(first->nType == T_Exp && second->nType == T_Assignop) {
-		char *name = first->childs[0]->ptr;
-		Symbol sym = searchTable(name);
-		ASSERT(sym);
+		if(first->childs[0]->nType == T_Id) {
+			char *name = first->childs[0]->ptr;
+			Symbol sym = searchTable(name);
+			ASSERT(sym);
 
-		Operand t1 = newTemp();
-		InterCodes *codes1 = translate_Exp(third, t1);
+			Operand t1 = newTemp();
+			InterCodes *codes1 = translate_Exp(third, t1);
 		
-		InterCodes *codes2 = newInterCodes();
-		codes2->code.kind = IC_ASSIGN;
-		Operand left = newOperand();
-		left->kind = VARIABLE;
-		left->name = name;
-		codes2->code.binop.rlt = left;
-		codes2->code.binop.op1 = t1;
+			InterCodes *codes2 = newInterCodes();
+			codes2->code.kind = IC_ASSIGN;
+			Operand left = newOperand();
+			left->kind = VARIABLE;
+			left->name = name;
+			codes2->code.binop.rlt = left;
+			codes2->code.binop.op1 = t1;
 
-		if(place != NULL) {
-			InterCodes *codes3 = newIC(IC_ASSIGN, place, left, NULL);	
-			codes2 = addTail(codes2, codes3);
+			if(place != NULL) {
+				InterCodes *codes3 = newIC(IC_ASSIGN, place, left, NULL);	
+				codes2 = addTail(codes2, codes3);
+			}
+			codes = addTail(codes1, codes2);
 		}
-		codes = addTail(codes1, codes2);
+		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Dot) {
+			/*TODO: exp1.exp2 := exp3*/
+			char *name = first->childs[0]->childs[0]->ptr;	
+			Symbol sym = searchTable(name);
+			ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
+
+			//for exp1 may be a array or structure 
+			Operand t1 = newTemp();
+			InterCodes *code1 = translate_Exp(first->childs[0], t1);	
+			
+			int offset = 0;
+			char *fieldName = first->childs[2]->ptr;
+			FieldList list = sym->type->structure;
+			while(list && safe_strcmp(list->name, fieldName) != 0) {
+				offset += typeSize(list->type);
+				list = list->tail;
+			}
+			ASSERT(list);
+			
+			Operand t2 = newTemp();
+			Operand op1 = NEW_OP(CONSTANT, offset);
+			InterCodes *code2 = newIC(IC_ADD, t1, t2, op1);
+			
+			Operand t3 = newTemp();
+			InterCodes *code3 = translate_Exp(third, t3);
+
+			InterCodes *code4 = newIC(IC_DEREF, t2, t3, NULL);
+
+			InterCodes *code5 = newIC(IC_ASSIGN, place, t3, NULL);
+			
+			ADD_TAIL(code4, code5);
+			ADD_TAIL(code3, code4);
+			ADD_TAIL(code2, code3);
+			codes = ADD_TAIL(code1, code2);
+		}
+		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Lb) {
+			/*TODO:exp[exp]*/
+		}
+		else {
+			ASSERT(0);
+		}
 	}	
 	else if(first->nType == T_Exp && second->nType == T_Plus) {
 		Operand t1 = newTemp();
@@ -677,7 +735,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		}
 		else {
 			Operand op1 = newOp(VARIABLE, sym->name);
-			InterCodes *code1 = newIC(IC_CALL, NULL, op1, NULL);
+			InterCodes *code1 = newIC(IC_CALL, place, op1, NULL);
 			codes = code1;
 		}
 	}
@@ -698,8 +756,8 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 				InterCodes *code3 = newIC(IC_ARG, NULL, p->op, NULL);
 				code2 = addTail(code2, code3);
 			}
-			Operand *op1 = NEW_OP(VARIABLE, sym->name);
-			InterCodes *code3 = newIC(IC_CALL, NULL, op1, NULL);
+			Operand op1 = NEW_OP(VARIABLE, sym->name);
+			InterCodes *code3 = newIC(IC_CALL, place, op1, NULL);
 			code2 = addTail(code2, code3);
 			code1 = addTail(code1, code2);
 		}
@@ -720,14 +778,47 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	}
 	else if(first->nType == T_Exp && second->nType == T_Dot) {
 		//TODO:3.1	
+		Symbol sym = searchTable(first->childs[0]->ptr);	
+		ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
 
+		char *fieldName = third->ptr;
+		FieldList list = sym->type->structure;
+
+		int offset = 0;
+		while(list && safe_strcmp(list->name, fieldName) != 0) {
+			offset += typeSize(list->type);
+			list = list->tail;
+		}
+		ASSERT(list);
+
+		//tmp1 := offset;
+		Operand op1 = NEW_OP(CONSTANT, offset);
+		Operand op2 = newTemp();
+		InterCodes *code1 = newIC(IC_ASSIGN, op2, op1, NULL);		
+		
+		//tmp2 := ADDR(st);
+		Operand op3 = NEW_OP(VARIABLE, sym->name);
+		Operand op4 = newTemp();
+		InterCodes *code2 = newIC(IC_REF, op4, op3, NULL);
+		
+		//tmp3 := tmp2 + tmp1;
+		Operand op5 = newTemp();
+		InterCodes *code3 = newIC(IC_ADD, op5, op4, op2);
+		
+		//place := *tmp3;
+		InterCodes *code4 = newIC(IC_DEREF, place, op5, NULL);
+		
+		code3 = addTail(code3, code4);
+		code2 = addTail(code2, code3);
+		code1 = addTail(code1, code2);
+		codes = code1;
 	}
 	else {
 		ASSERT(0);
 	}
 			
 	LOG("leave Exp");
-	printInterCodes(codes);
+	printInterCodes(codes, NULL);
 	return codes;
 }
 
@@ -817,6 +908,6 @@ InterCodes *translate_Cond(TreeNode *exp, Operand label_true, Operand label_fals
 	}
 
 	LOG("leave Cond");
-	printInterCodes(codes);
+	printInterCodes(codes, NULL);
 	return codes;	
 }

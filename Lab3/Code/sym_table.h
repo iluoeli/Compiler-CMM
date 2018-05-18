@@ -77,4 +77,7 @@ void printFuncType(Symbol func);
 void printSymbol(Symbol symbol);
 void printTable();
 
+//safe str functions
+int safe_strcmp(const char *s1, const char *s2);
+
 #endif

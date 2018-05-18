@@ -135,6 +135,8 @@ void preprocessTable()
 int typeSize(Type type)
 {
 	int size = 0;
+	if(!type) return size;
+
 	FieldList p;
 	switch(type->kind) {
 		case BASIC:
@@ -302,4 +304,11 @@ void printTable()
 		}
 	}
 
+}
+
+int safe_strcmp(const char *s1, const char *s2)
+{
+	if(s1 == s2)	return 0;
+	else if(s1 == NULL || s2 == NULL )	return -1;
+	else return strcmp(s1, s2);
 }
