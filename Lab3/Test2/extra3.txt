@@ -29,7 +29,7 @@ int main()
 	code.op1.o2 = 2;
 	code.op2.o1 = 3;
 	code.op2.o2 = 4;
-	n = add2(code);
+	n = add(code.op2);
 	write(n);
 	return 0;
 }

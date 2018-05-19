@@ -61,11 +61,12 @@ t60 := t61 + #16
 t62 := t60 + #4
 t63 := #4
 *t62 := t63
-t65 := code
+t66 := code
+t65 := t66 + #16
 ARG t65
-t64 := CALL add2
+t64 := CALL add
 n := t64
-t66 := n
-WRITE t66
-t67 := #0
-RETURN t67
+t67 := n
+WRITE t67
+t68 := #0
+RETURN t68

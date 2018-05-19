@@ -364,22 +364,28 @@ InterCodes *translate_ExtDecList(TreeNode *extDecList)
 InterCodes *translate_VarDec(TreeNode *varDec)
 {
 	InterCodes *codes = NULL;
-	char *name = varDec->childs[0]->ptr;
-	Symbol sym = searchTable(name);
-	ASSERT(sym != NULL);
 
-	if(sym->kind == S_Type && sym->type->kind != BASIC) {
-		int size = typeSize(sym->type);
-		Operand op1 = newTemp();
-		Operand op2 = NEW_OP(CONSTANT, size);
-		InterCodes *code1 = newIC(IC_DEC, NULL, op1, op2);
+	if(varDec->childs[0]->nType == T_Id) {
+		char *name = varDec->childs[0]->ptr;
+		Symbol sym = searchTable(name);
+		ASSERT(sym != NULL);
 
-		//TODO:improment
-		Operand op3 = NEW_OP(VARIABLE, name);
-		Operand op4 = NEW_OP(REF, op1);
-		InterCodes *code2 = newIC(IC_ASSIGN, op3, op4, NULL);
+		if(sym->kind == S_Type && sym->type->kind != BASIC) {
+			int size = typeSize(sym->type);
+			Operand op1 = newTemp();
+			Operand op2 = NEW_OP(CONSTANT, size);
+			InterCodes *code1 = newIC(IC_DEC, NULL, op1, op2);
 
-		codes = ADD_TAIL(code1, code2);
+			//TODO:improment
+			Operand op3 = NEW_OP(VARIABLE, name);
+			Operand op4 = NEW_OP(REF, op1);
+			InterCodes *code2 = newIC(IC_ASSIGN, op3, op4, NULL);
+
+			codes = ADD_TAIL(code1, code2);
+		}
+	}
+	else {
+		codes = translate_VarDec(varDec->childs[0]);
 	}
 	
 	return codes;
@@ -599,8 +605,12 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			}
 			codes = addTail(codes1, codes2);
 		}
-		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Dot) {
-			/*TODO: <exp.id> := exp*/
+		else if(first->childs[0]->nType == T_Exp && 
+				(first->childs[1]->nType == T_Dot || 
+				 first->childs[1]->nType == T_Lb)) {
+			/*TODO: <exp.id> := exp
+			 *		<id[exp]> := exp
+			 */
 			Operand t1 = newTemp();
 			InterCodes *code1 = translate_Exp(first, t1);
 
@@ -657,17 +667,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		}
 		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Lb) {
 			/*TODO:exp -> exp lb exp lb*/
-			if(first->nChild == 4 && first->childs[1]->nType == T_Lb) {
-				printf("Cannot translate: Code contains variables of multi-dimensional array type or parameters of array type\n");
-				ASSERT(0);
-			}
-
-			Operand t1 = newTemp();	
-			InterCodes *code1= translate_Exp(first, t1);
-			
-			Operand t2 = newTemp();
-			InterCodes *code2 = translate_Exp(third, t2);
-			
+			ASSERT(0);	
 			//int elemSize = typeSize();
 		}
 		else {
@@ -829,6 +829,9 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	else if(first->nType == T_Exp && second->nType == T_Dot) {
 		codes = translate_Structure(exp, place, NULL);
 	}
+	else if(first->nType == T_Exp && second->nType == T_Lb) {
+		codes =translate_Array(exp, place, NULL);
+	}
 	else {
 		ASSERT(0);
 	}
@@ -868,9 +871,14 @@ InterCodes *translate_Structure(TreeNode *exp, Operand place, Type *pType)
 		ASSERT(type && type->kind == STRUCTURE);
 		list = type->structure;
 	}
-	/*<id[exp].id>*/
+	/*<exp[exp]>.id*/
 	else if(first->childs[1]->nType == T_Lb){
-		ASSERT(0);
+		Type type = NULL;
+		stAddr = newTemp();
+		code1 = translate_Array(first, stAddr, &type);
+
+		ASSERT(type && type->kind == STRUCTURE);
+		list = type->structure;
 	}
 
 	ASSERT(third->nType == T_Id);
@@ -911,11 +919,79 @@ InterCodes *translate_Structure(TreeNode *exp, Operand place, Type *pType)
 	return codes;
 }
 
-InterCodes *translate_Array(TreeNode *st, Operand place, Type *type)
+InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 {
+	TreeNode *first = exp->childs[0];
+	TreeNode *second= exp->childs[1];
+	TreeNode *third = exp->childs[2];
+	InterCodes *codes = NULL;
+	InterCodes *code1 = NULL;
+	Operand stAddr = NULL;
+	Type arrayType = NULL;
 
-	return NULL;
+	/*id[int]*/
+	if(first->childs[0]->nType == T_Id) {
+		Symbol sym = searchTable(first->childs[0]->ptr);
+		ASSERT(sym && sym->kind == S_Type && sym->type->kind == ARRAY);
+		arrayType = sym->type;
+		
+		stAddr = newTemp();
+		Operand op1 = NEW_OP(VARIABLE, sym->name);
+		code1 = newIC(IC_ASSIGN, stAddr, op1, NULL);;
+	}
+	/*<id.id>[int]*/	
+	else if(first->childs[1]->nType == T_Dot) {
+		Type type = NULL;;
+		stAddr = newTemp();
+		code1 = translate_Structure(first, stAddr, &type);
+
+		ASSERT(type && type->kind == ARRAY);
+		arrayType = type;
+	}
+	/*<id[exp][int]>*/
+	else if(first->childs[1]->nType == T_Lb){
+		ASSERT(0);
+	}
+
+	if(pType)	*pType = arrayType->array.elem;
+
+	/*t2 := exp*/
+	Operand t2 = newTemp();
+	InterCodes *code2 = translate_Exp(third, t2);	
+	/*offset := elem_size * t2*/
+	int elemSize = typeSize(arrayType->array.elem);
+	Operand op1 = NEW_OP(CONSTANT, elemSize);
+	Operand opOffset = newTemp();
+	InterCodes *code3 = newIC(IC_MUL, opOffset, op1, t2);
+
+	if(arrayType->array.elem->kind == BASIC) {
+		/*return the value of BASIC type
+		 *t3 := st + offset;
+		 *place := *t3;
+		 */
+		Operand t3 = newTemp();
+		InterCodes *code4 = newIC(IC_ADD, t3, stAddr, opOffset);		
+		
+		place->kind = DEREF;
+		place->op = t3;
+	
+		ADD_TAIL(code3, code4);
+		ADD_TAIL(code2, code3);
+		codes = ADD_TAIL(code1, code2);
+	}
+	else {
+		/*return the header address of structure/array type
+		 *place := st + offset;
+		 */
+		InterCodes *code4 = newIC(IC_ADD, place, stAddr, opOffset);
+		ADD_TAIL(code3, code4);
+		ADD_TAIL(code2, code3);
+		codes = ADD_TAIL(code1, code2);
+	}
+
+	return codes;
 }
+
 
 InterCodes *translate_Args(TreeNode *args, ArgList *argList) 
 {
