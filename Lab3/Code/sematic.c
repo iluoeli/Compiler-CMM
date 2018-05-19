@@ -586,7 +586,11 @@ Type Exp(TreeNode *exp)
 	case T_Lp:
 			lType = Exp(second);
 			break;
+	case T_Minus:
+			lType = Exp(second);
+			break;
 	default:
+			printTree(exp);
 			ASSERT(0);
 	}
 	

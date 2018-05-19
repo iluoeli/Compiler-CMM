@@ -16,6 +16,16 @@ InterCodes *addTail(InterCodes *head1, InterCodes *head2)
 void delInterCodes(InterCodes *code)
 {
 	//TODO:implement	
+	ASSERT(0);
+}
+
+void clearInterCodes(InterCodes *codes)
+{
+	while(codes) {
+		InterCodes *tmp = codes;
+		codes = codes->next;
+		free(tmp);
+	}	
 }
 
 int newParm()
@@ -309,11 +319,7 @@ IC_TYPE getRelop(TreeNode *relop)
 InterCodes *generate_ir(TreeNode *root, FILE *fp)
 {
 	if(root == NULL)	return NULL;
-	InterCodes *codes = translate_Program(root);
-	
-	printInterCodes(codes, fp);
-
-	return codes;
+	return translate_Program(root);
 }
 
 InterCodes *translate_Program(TreeNode *program)
@@ -393,36 +399,25 @@ InterCodes *translate_VarDec(TreeNode *varDec)
 
 InterCodes *translate_FunDec(TreeNode *funDec)
 {
-	LOG("translate FunDec");
 	char *name = funDec->childs[0]->ptr;
 	Symbol sym = searchTable(funDec->childs[0]->ptr);
 	ASSERT(sym != NULL && sym->kind == S_Func);
 	
-	InterCodes *codes = malloc(sizeof(struct InterCodes));
-	memset(codes, sizeof(struct InterCodes), 0);
-	codes->code.kind = IC_FUNCTION;
-	codes->code.binop.op1 = malloc(sizeof(struct Operand_));
-	codes->code.binop.op1->kind = VARIABLE;
-	codes->code.binop.op1->name = name;
-	codes->code.binop.op2 = NULL;
+	Operand op1 = NEW_OP(VARIABLE, sym->name);
+	InterCodes *codes = newIC(IC_FUNCTION, NULL, op1, NULL);;
 
 	InterCodes *argListCodes = NULL;
 	FieldList argList = sym->func->argList;
 	for(; argList; argList=argList->tail) {
-		InterCodes *a = newInterCodes();	
-		a->code.kind = IC_PARAM;
-		Operand op = newOperand();
-		op->kind = VARIABLE;
-		op->name = argList->name;
-		a->code.binop.op1 = op;
-		argListCodes = addTail(argListCodes, a);
+		Operand op2 = NEW_OP(VARIABLE, argList->name);
+		InterCodes *code1 = newIC(IC_PARAM, NULL, op2, NULL);
+
+		argListCodes = addTail(argListCodes, code1);
 	}
 	codes = addTail(codes, argListCodes);
 	
 	//InterCodes *argListCodes = translate_VarList(funDec->childs[2]);
 	//codes = addTail(codes, argListCodes);
-	LOG("leave FunDec");
-	printInterCodes(codes, NULL);
 	return codes;
 }
 
@@ -434,14 +429,11 @@ InterCodes *translate_VarList(TreeNode *varList)
 
 InterCodes *translate_CompSt(TreeNode *compSt)
 {
-	LOG("translate COmpSt");
 	InterCodes *codes1 = translate_DefList(compSt->childs[1]);
 	InterCodes *codes2 = translate_StmtList(compSt->childs[2]);
 
 	codes1 = addTail(codes1, codes2);
 
-	LOG("leave COmpSt");
-	printInterCodes(codes1, NULL);
 	return codes1;
 }
 
@@ -514,7 +506,6 @@ InterCodes *translate_StmtList(TreeNode *stmtList)
 
 InterCodes *translate_Stmt(TreeNode *stmt)
 {
-	LOG("translate Stmt");
 	TreeNode* child = stmt->childs[0];
 	InterCodes *codes = NULL;
 	if(child->nType == T_Exp) {
@@ -586,14 +577,11 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 		codes = code3;
 	}
 
-	LOG("leave Stmt");
-	printInterCodes(codes, NULL);
 	return codes;
 }
 
 InterCodes *translate_Exp(TreeNode *exp, Operand place)
 {
-	LOG("translate Exp");
 	TreeNode *first = exp->childs[0];
 	TreeNode *second = exp->childs[1];
 	TreeNode *third = exp->childs[2];
@@ -645,47 +633,6 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			}
 
 			codes = code1;
-
-		/*	char *name = first->childs[0]->childs[0]->ptr;	
-			Symbol sym = searchTable(name);
-			ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
-
-			//for exp1 may be a array or structure 
-			Operand t1 = newTemp();
-			InterCodes *code1 = translate_Exp(first->childs[0], t1);	
-			
-			int offset = 0;
-			char *fieldName = first->childs[2]->ptr;
-			FieldList list = sym->type->structure;
-			while(list && safe_strcmp(list->name, fieldName) != 0) {
-				offset += typeSize(list->type);
-				list = list->tail;
-			}
-			ASSERT(list);
-			
-			Operand t2 = newTemp();
-			Operand op1 = NEW_OP(CONSTANT, offset);
-			InterCodes *code2 = newIC(IC_ADD, t2, t1, op1);
-			
-			Operand t3 = newTemp();
-			InterCodes *code3 = translate_Exp(third, t3);
-
-			Operand t4 = NEW_OP(DEREF, t2);
-			InterCodes *code4 = newIC(IC_ASSIGN, t4, t3, NULL);
-
-			if(place != NULL) {
-				InterCodes *code5 = newIC(IC_ASSIGN, place, t4, NULL);
-				ADD_TAIL(code4, code5);
-			}
-			ADD_TAIL(code3, code4);
-			ADD_TAIL(code2, code3);
-			codes = ADD_TAIL(code1, code2);
-		*/
-		}
-		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Lb) {
-			/*TODO:exp -> exp lb exp lb*/
-			ASSERT(0);	
-			//int elemSize = typeSize();
 		}
 		else {
 			ASSERT(0);
@@ -1045,7 +992,6 @@ InterCodes *translate_Args(TreeNode *args, ArgList *argList)
 
 InterCodes *translate_Cond(TreeNode *exp, Operand label_true, Operand label_false)
 {
-	LOG("translate Cond");
 	ASSERT(exp && exp->nType == T_Exp);
 
 	InterCodes *codes = NULL;
@@ -1104,8 +1050,6 @@ InterCodes *translate_Cond(TreeNode *exp, Operand label_true, Operand label_fals
 		codes = code1;
 	}
 
-	LOG("leave Cond");
-	printInterCodes(codes, NULL);
 	return codes;	
 }
 

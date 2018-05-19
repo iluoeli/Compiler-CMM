@@ -1,64 +1,64 @@
 FUNCTION add :
 PARAM temp
-t4 := temp
-t5 := t4 + #0
-t6 := temp
-t7 := t6 + #0
-t1 := *t5 + *t7
-RETURN t1
+t144 := temp
+t145 := t144 + #0
+t146 := temp
+t147 := t146 + #0
+t141 := *t145 + *t147
+RETURN t141
 FUNCTION main :
-DEC t8 144
-op := &t8
-t9 := #1
-i := t9
-t10 := #0
-n := t10
-LABEL label1 :
-t11 := i
-t12 := #10
-IF t11 < t12 GOTO label2
-GOTO label3
-LABEL label2 :
-t16 := op
-t17 := #2
-t18 := #48 * t17
-t15 := t16 + t18
-t14 := t15 + #8
-t19 := i
-t20 := #4 * t19
-t21 := t14 + t20
-t22 := i
-*t21 := t22
-t24 := i
-t25 := #1
-t23 := t24 + t25
-i := t23
-GOTO label1
-LABEL label3 :
-LABEL label4 :
-t26 := i
-t27 := #0
-IF t26 >= t27 GOTO label5
-GOTO label6
-LABEL label5 :
-t29 := i
-t30 := #1
-t28 := t29 - t30
-i := t28
-t32 := n
-t36 := op
-t37 := #2
-t38 := #48 * t37
-t35 := t36 + t38
-t34 := t35 + #8
-t39 := i
-t40 := #4 * t39
-t41 := t34 + t40
-t31 := t32 + *t41
-n := t31
-GOTO label4
-LABEL label6 :
-t42 := n
-WRITE t42
-t43 := #0
-RETURN t43
+DEC t148 144
+op := &t148
+t149 := #1
+i := t149
+t150 := #0
+n := t150
+LABEL label7 :
+t151 := i
+t152 := #10
+IF t151 < t152 GOTO label8
+GOTO label9
+LABEL label8 :
+t156 := op
+t157 := #2
+t158 := #48 * t157
+t155 := t156 + t158
+t154 := t155 + #8
+t159 := i
+t160 := #4 * t159
+t161 := t154 + t160
+t162 := i
+*t161 := t162
+t164 := i
+t165 := #1
+t163 := t164 + t165
+i := t163
+GOTO label7
+LABEL label9 :
+LABEL label10 :
+t166 := i
+t167 := #0
+IF t166 >= t167 GOTO label11
+GOTO label12
+LABEL label11 :
+t169 := i
+t170 := #1
+t168 := t169 - t170
+i := t168
+t172 := n
+t176 := op
+t177 := #2
+t178 := #48 * t177
+t175 := t176 + t178
+t174 := t175 + #8
+t179 := i
+t180 := #4 * t179
+t181 := t174 + t180
+t171 := t172 + *t181
+n := t171
+GOTO label10
+LABEL label12 :
+t182 := n
+WRITE t182
+t183 := #0
+RETURN t183

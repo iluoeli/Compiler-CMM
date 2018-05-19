@@ -43,11 +43,13 @@ int main(int argc, char **argv)
 				strcat(fileName, ".ir");
 				FILE *fp = fopen(fileName, "w");
 				ASSERT(fp);
-				generate_ir(root, fp);
+				InterCodes *codes = generate_ir(root, fp);
+				printInterCodes(codes, fp);
 				fclose(fp);
 
 				deleteTree(root);
 				clearTable();
+				clearInterCodes(codes);
 			}
 			root = NULL;
 			nError = 0;
