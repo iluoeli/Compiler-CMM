@@ -253,7 +253,6 @@ int printInterCodes(InterCodes *codes, FILE *fp)
 		cnt ++;
 		codes = codes->next;
 	}
-	LOG("00");
 	return cnt;
 }
 
@@ -589,7 +588,6 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	if(first->nType == T_Exp && second->nType == T_Assignop) {
 		if(first->childs[0]->nType == T_Id) {
 			char *name = first->childs[0]->ptr;
-			printf("%s\n", name);
 			Symbol sym = searchTable(name);
 			ASSERT(sym);
 
@@ -800,8 +798,6 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		ASSERT(0);
 	}
 			
-	LOG("leave Exp");
-	printInterCodes(codes, NULL);
 	return codes;
 }
 
@@ -1002,12 +998,9 @@ InterCodes *translate_Cond(TreeNode *exp, Operand label_true, Operand label_fals
 		InterCodes *code1 = translate_Exp(exp->childs[0], t1);
 		InterCodes *code2 = translate_Exp(exp->childs[2], t2);
 			
-		LOG("1");
 		IC_TYPE op = getRelop(exp->childs[1]);	
-		LOG("1");
 		InterCodes *code3 = newIC(op, label_true, t1, t2);
 		InterCodes *code4 = newIC(IC_GOTO, NULL, label_false, NULL);
-		LOG("1");
 		
 		code3 = addTail(code3, code4);
 		code2 = addTail(code2, code3);

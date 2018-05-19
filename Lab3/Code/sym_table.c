@@ -144,7 +144,7 @@ int typeSize(Type type)
 			break;
 		case ARRAY:
 			size = typeSize(type->array.elem) * type->array.size;
-			printf("size: %d = %d * elem_size\n", size, type->array.size);
+			//printf("size: %d = %d * elem_size\n", size, type->array.size);
 			break;
 		case STRUCTURE:
 			p = type->structure;
