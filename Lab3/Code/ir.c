@@ -13,6 +13,10 @@ InterCodes *addTail(InterCodes *head1, InterCodes *head2)
 	return head1;
 }
 
+void delInterCodes(InterCodes *code)
+{
+	//TODO:implement	
+}
 
 int newParm()
 {
@@ -633,7 +637,19 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			codes = ADD_TAIL(code1, code2);
 		}
 		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Lb) {
-			/*TODO:exp[exp]*/
+			/*TODO:exp -> exp lb exp lb*/
+			if(first->nChild == 4 && first->childs[1]->nType == T_Lb) {
+				printf("Cannot translate: Code contains variables of multi-dimensional array type or parameters of array type\n");
+				ASSERT(0);
+			}
+
+			Operand t1 = newTemp();	
+			InterCodes *code1= translate_Exp(first, t1);
+			
+			Operand t2 = newTemp();
+			InterCodes *code2 = translate_Exp(third, t2);
+			
+			//int elemSize = typeSize();
 		}
 		else {
 			ASSERT(0);
@@ -796,6 +812,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		Symbol sym = searchTable(first->childs[0]->ptr);	
 		ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
 
+		ASSERT(third->nType == T_Id);
 		char *fieldName = third->ptr;
 		FieldList list = sym->type->structure;
 

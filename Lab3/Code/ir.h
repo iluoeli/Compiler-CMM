@@ -72,6 +72,7 @@ InterCodes *newInterCodes();
 Operand newOperand();
 Operand newOp(OP_TYPE type, void *ptr);
 InterCodes* newIC(IC_TYPE, Operand rlt1, Operand op1, Operand op2);
+void deleteInterCodes(InterCodes *code);
 
 IC_TYPE getRelop(TreeNode *relop);
 
