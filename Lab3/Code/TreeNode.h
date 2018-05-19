@@ -44,6 +44,7 @@ typedef struct TreeNode {
 		char *ptr;
 	};
 	char *info;	//other information
+//	Type type;	//type of the node/exp
 	int nChild;	//childs no
 	struct TreeNode *childs[8];	//childs pointers
 } TreeNode;

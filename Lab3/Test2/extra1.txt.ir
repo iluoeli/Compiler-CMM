@@ -1,11 +1,11 @@
 FUNCTION add :
 PARAM temp
-t4 := #0
-t5 := temp + t4
-t2 := *t5
-t6 := #4
-t7 := temp + t6
-t3 := *t7
+t4 := temp
+t5 := t4 + #0
+t2 := t5
+t6 := temp
+t7 := t6 + #4
+t3 := t7
 t1 := t2 + t3
 RETURN t1
 FUNCTION main :

@@ -97,6 +97,9 @@ InterCodes *translate_CompSt(TreeNode *compSt);
 InterCodes *translate_Stmt(TreeNode *stmt);
 InterCodes *translate_Exp(TreeNode *exp, Operand place);
 
+InterCodes *translate_Structure(TreeNode *st, Operand place, Type *type);
+InterCodes *translate_Array(TreeNode *st, Operand place, Type *type);
+
 InterCodes *translate_Cond(TreeNode *exp, Operand label1, Operand Label2);
 InterCodes *translate_Args(TreeNode *args, ArgList *argList); 
 

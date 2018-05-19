@@ -304,7 +304,8 @@ void Stmt(TreeNode *stmt)
 				PRINT_ERROR(8, stmt->lineno, "Type mismatched for return.");
 				ASSERT(0);	
 			}
-			if(compareType(curFunc->retType, Exp(stmt->childs[1])) == FALSE) {
+			type = Exp(stmt->childs[1]);
+			if(compareType(curFunc->retType, type) == FALSE) {
 				PRINT_ERROR(8, stmt->lineno, "Type mismatched for return.");
 			}
 			break;
@@ -574,6 +575,11 @@ Type Exp(TreeNode *exp)
 			lType->kind = BASIC;
 			lType->basic = B_FLOAT;
 			break;
+	case T_Lp:
+			lType = Exp(second);
+			break;
+	default:
+			ASSERT(0);
 	}
 	
 	//PRINT_TYPE(lType);

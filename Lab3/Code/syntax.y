@@ -132,7 +132,13 @@ Specifier : TYPE	{
 		$$->nType =T_Specifier;
 	}
 	;
-StructSpecifier : STRUCT OptTag LC DefList RC	{
+StructSpecifier : STRUCT Tag	{
+		$$ = createNode("StructSpecifier", @$.first_line); 
+		addChild($$, $1);
+		addChild($$, $2);
+		$$->nType =T_StructSpecifier;
+	}
+	| STRUCT OptTag LC DefList RC	{
 		$$ = createNode("StructSpecifier", @$.first_line); 
 		addChild($$, $1);
 		addChild($$, $2);
@@ -141,13 +147,7 @@ StructSpecifier : STRUCT OptTag LC DefList RC	{
 		addChild($$, $5);
 		$$->nType =T_StructSpecifier;
 	}
-	| STRUCT Tag	{
-		$$ = createNode("StructSpecifier", @$.first_line); 
-		addChild($$, $1);
-		addChild($$, $2);
-		$$->nType =T_StructSpecifier;
-	}
-	| STRUCT OptTag error RC {//error handle
+	| STRUCT OptTag LC error RC {//error handle
 		yyerror("Missing \"{\"");
 		nError ++;	
 	}

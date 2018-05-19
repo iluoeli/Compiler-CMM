@@ -1,0 +1,31 @@
+struct Operands
+{
+	int o1;
+	int o2;
+}arr[10];
+
+struct InterCodes
+{
+	struct Operands rlt;
+};
+
+int add(struct Operands temp)
+{
+	return (temp.o1 + temp.o2);
+}
+
+int add2(struct InterCodes temp2)
+{
+	return (temp2.rlt.o1 + temp2.rlt.o2);
+}
+
+int main()
+{
+	int n;
+	struct InterCodes code;
+	code.rlt.o1 = 1;
+	code.rlt.o2 = 2;
+	n = add2(code);
+	write(n);
+	return 0;
+}

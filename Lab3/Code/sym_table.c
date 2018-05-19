@@ -159,8 +159,13 @@ int typeSize(Type type)
 Type structureField(FieldList st, char *name)
 {
 	for(; st; st=st->tail) {
-		if(strcmp(st->name , name) == 0)
+		if(safe_strcmp(st->name , name) == 0) {
+		/*	printf("%s.type=", name);
+			printType(st->type);
+			printf("\n");
+		*/
 			return st->type;
+		}
 	}
 	return NULL;
 }

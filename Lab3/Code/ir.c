@@ -808,37 +808,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		ASSERT(0);	
 	}
 	else if(first->nType == T_Exp && second->nType == T_Dot) {
-		//TODO:3.1	
-		Symbol sym = searchTable(first->childs[0]->ptr);	
-		ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
-
-		ASSERT(third->nType == T_Id);
-		char *fieldName = third->ptr;
-		FieldList list = sym->type->structure;
-
-		int offset = 0;
-		while(list && safe_strcmp(list->name, fieldName) != 0) {
-			offset += typeSize(list->type);
-			list = list->tail;
-		}
-		ASSERT(list);
-
-		//tmp1 := offset;
-		Operand op1 = NEW_OP(CONSTANT, offset);
-		Operand op2 = newTemp();
-		InterCodes *code1 = newIC(IC_ASSIGN, op2, op1, NULL);		
-		
-		//tmp2 := st + tmp1;
-		Operand op3 = NEW_OP(VARIABLE, sym->name);
-		Operand op4 = newTemp();
-		InterCodes *code2 = newIC(IC_ADD, op4, op3, op2);
-		
-		//place := *tmp2;
-		InterCodes *code3 = newIC(IC_DEREF, place, op4, NULL);
-		
-		code2 = addTail(code2, code3);
-		code1 = addTail(code1, code2);
-		codes = code1;
+		codes = translate_Structure(exp, place, NULL);
 	}
 	else {
 		ASSERT(0);
@@ -847,6 +817,86 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	LOG("leave Exp");
 	printInterCodes(codes, NULL);
 	return codes;
+}
+
+InterCodes *translate_Structure(TreeNode *exp, Operand place, Type *pType)
+{
+	/*TODO:3.1*/	
+	TreeNode *first = exp->childs[0];
+	TreeNode *second= exp->childs[1];
+	TreeNode *third = exp->childs[2];
+	InterCodes *codes = NULL;
+	InterCodes *code1 = NULL;
+	FieldList list = NULL;
+	Operand stAddr = NULL;
+
+	/*id.id*/
+	if(first->childs[0]->nType == T_Id) {
+		Symbol sym = searchTable(first->childs[0]->ptr);
+		ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
+		list = sym->type->structure;
+		
+		stAddr = newTemp();
+		Operand op1 = NEW_OP(VARIABLE, sym->name);
+		code1 = newIC(IC_ASSIGN, stAddr, op1, NULL);;
+	}
+	/*<id.id>.id*/	
+	else if(first->childs[1]->nType == T_Dot) {
+		Type type = NULL;;
+		Operand t1 = newTemp();
+		code1 = translate_Structure(first, t1, &type);
+
+		ASSERT(type && type->kind == STRUCTURE);
+		list = type->structure;
+	}
+	/*<id[exp].id>*/
+	else if(first->childs[1]->nType == T_Lb){
+		ASSERT(0);
+	}
+
+	ASSERT(third->nType == T_Id);
+	char *fieldName = third->ptr;
+
+	int offset = 0;
+	while(list && safe_strcmp(list->name, fieldName) != 0) {
+		offset += typeSize(list->type);
+		list = list->tail;
+	}
+	ASSERT(list);
+
+	if(pType)	*pType = list->type;
+
+	Operand opOffset = NEW_OP(CONSTANT, offset);
+
+	if(list->type->kind == BASIC) {
+		/*return the value of BASIC type
+		 *t2 := st + offset;
+		 *place := *t2;
+		 */
+		Operand t2 = newTemp();
+		InterCodes *code2 = newIC(IC_ADD, t2, stAddr, opOffset);		
+
+		Operand opValue = NEW_OP(DEREF, t2);
+		InterCodes *code3 = newIC(IC_ASSIGN, place, t2, NULL);
+
+		ADD_TAIL(code2, code3);
+		codes = ADD_TAIL(code1, code2);
+	}
+	else {
+		/*return the header address of structure/array type
+		 *place := st + offset;
+		 */
+		InterCodes *code2 = newIC(IC_ADD, place, stAddr, opOffset);
+		codes = ADD_TAIL(code1, code2);
+	}
+
+	return codes;
+}
+
+InterCodes *translate_Array(TreeNode *st, Operand place, Type *type)
+{
+
+	return NULL;
 }
 
 InterCodes *translate_Args(TreeNode *args, ArgList *argList) 
@@ -938,3 +988,4 @@ InterCodes *translate_Cond(TreeNode *exp, Operand label_true, Operand label_fals
 	printInterCodes(codes, NULL);
 	return codes;	
 }
+
