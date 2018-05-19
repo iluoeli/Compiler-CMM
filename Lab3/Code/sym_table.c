@@ -152,6 +152,8 @@ int typeSize(Type type)
 				p = p->tail;
 			}
 			break;
+		default:
+			ASSERT(0);
 	}
 	return size;
 }

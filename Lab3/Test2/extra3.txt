@@ -2,11 +2,11 @@ struct Operands
 {
 	int o1;
 	int o2;
-}arr[10];
+};
 
 struct InterCodes
 {
-	struct Operands rlt;
+	struct Operands rlt, op1, op2;
 };
 
 int add(struct Operands temp)
@@ -16,6 +16,8 @@ int add(struct Operands temp)
 
 int add2(struct InterCodes temp2)
 {
+	temp2.rlt.o1 = temp2.op1.o1 + temp2.op2.o1;
+	temp2.rlt.o2 = temp2.op1.o2 + temp2.op2.o2;
 	return (temp2.rlt.o1 + temp2.rlt.o2);
 }
 
@@ -23,8 +25,10 @@ int main()
 {
 	int n;
 	struct InterCodes code;
-	code.rlt.o1 = 1;
-	code.rlt.o2 = 2;
+	code.op1.o1 = 1;
+	code.op1.o2 = 2;
+	code.op2.o1 = 3;
+	code.op2.o2 = 4;
 	n = add2(code);
 	write(n);
 	return 0;

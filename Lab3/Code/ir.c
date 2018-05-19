@@ -600,8 +600,26 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			codes = addTail(codes1, codes2);
 		}
 		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Dot) {
-			/*TODO: exp1.exp2 := exp3*/
-			char *name = first->childs[0]->childs[0]->ptr;	
+			/*TODO: <exp.id> := exp*/
+			Operand t1 = newTemp();
+			InterCodes *code1 = translate_Exp(first, t1);
+
+			Operand t2 = newTemp();
+			InterCodes *code2 = translate_Exp(third, t2);
+
+			InterCodes *code3 = newIC(IC_ASSIGN, t1, t2, NULL);
+			
+			ADD_TAIL(code2, code3);
+			ADD_TAIL(code1, code2);
+		
+			if(place != NULL) {
+				InterCodes *code4 = newIC(IC_ASSIGN, place, t1, NULL);
+				ADD_TAIL(code1, code4);
+			}
+
+			codes = code1;
+
+		/*	char *name = first->childs[0]->childs[0]->ptr;	
 			Symbol sym = searchTable(name);
 			ASSERT(sym && sym->kind == S_Type && sym->type->kind == STRUCTURE);
 
@@ -635,6 +653,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			ADD_TAIL(code3, code4);
 			ADD_TAIL(code2, code3);
 			codes = ADD_TAIL(code1, code2);
+		*/
 		}
 		else if(first->childs[0]->nType == T_Exp && first->childs[1]->nType == T_Lb) {
 			/*TODO:exp -> exp lb exp lb*/
@@ -843,8 +862,8 @@ InterCodes *translate_Structure(TreeNode *exp, Operand place, Type *pType)
 	/*<id.id>.id*/	
 	else if(first->childs[1]->nType == T_Dot) {
 		Type type = NULL;;
-		Operand t1 = newTemp();
-		code1 = translate_Structure(first, t1, &type);
+		stAddr = newTemp();
+		code1 = translate_Structure(first, stAddr, &type);
 
 		ASSERT(type && type->kind == STRUCTURE);
 		list = type->structure;
@@ -875,11 +894,10 @@ InterCodes *translate_Structure(TreeNode *exp, Operand place, Type *pType)
 		 */
 		Operand t2 = newTemp();
 		InterCodes *code2 = newIC(IC_ADD, t2, stAddr, opOffset);		
-
-		Operand opValue = NEW_OP(DEREF, t2);
-		InterCodes *code3 = newIC(IC_ASSIGN, place, t2, NULL);
-
-		ADD_TAIL(code2, code3);
+		
+		place->kind = DEREF;
+		place->op = t2;
+	
 		codes = ADD_TAIL(code1, code2);
 	}
 	else {
