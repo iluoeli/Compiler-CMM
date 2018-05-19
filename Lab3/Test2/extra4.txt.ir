@@ -7,73 +7,58 @@ t7 := t6 + #0
 t1 := *t5 + *t7
 RETURN t1
 FUNCTION main :
-DEC t8 24
+DEC t8 144
 op := &t8
-t11 := op
-t12 := #0
-t13 := #8 * t12
-t10 := t11 + t13
-t14 := t10 + #0
-t15 := #1
-*t14 := t15
-t18 := op
-t19 := #0
-t20 := #8 * t19
-t17 := t18 + t20
-t21 := t17 + #4
-t22 := #1
+t9 := #1
+i := t9
+t10 := #0
+n := t10
+LABEL label1 :
+t11 := i
+t12 := #10
+IF t11 < t12 GOTO label2
+GOTO label3
+LABEL label2 :
+t16 := op
+t17 := #2
+t18 := #48 * t17
+t15 := t16 + t18
+t14 := t15 + #8
+t19 := i
+t20 := #4 * t19
+t21 := t14 + t20
+t22 := i
 *t21 := t22
-t25 := op
-t26 := #1
-t27 := #8 * t26
-t24 := t25 + t27
-t28 := t24 + #0
-t29 := #1
-*t28 := t29
-t32 := op
-t33 := #1
-t34 := #8 * t33
-t31 := t32 + t34
-t35 := t31 + #4
-t36 := #1
-*t35 := t36
-t39 := op
-t40 := #2
-t41 := #8 * t40
-t38 := t39 + t41
-t42 := t38 + #0
-t45 := op
-t46 := #0
-t47 := #8 * t46
-t44 := t45 + t47
-ARG t44
-t43 := CALL add
-*t42 := t43
-t50 := op
-t51 := #2
-t52 := #8 * t51
-t49 := t50 + t52
-t53 := t49 + #4
-t56 := op
-t57 := #1
-t58 := #8 * t57
-t55 := t56 + t58
-ARG t55
-t54 := CALL add
-*t53 := t54
-t63 := op
-t64 := #2
-t65 := #8 * t64
-t62 := t63 + t65
-t66 := t62 + #0
-t68 := op
-t69 := #2
-t70 := #8 * t69
-t67 := t68 + t70
-t71 := t67 + #4
-t59 := *t66 + *t71
-n := t59
-t72 := n
-WRITE t72
-t73 := #0
-RETURN t73
+t24 := i
+t25 := #1
+t23 := t24 + t25
+i := t23
+GOTO label1
+LABEL label3 :
+LABEL label4 :
+t26 := i
+t27 := #0
+IF t26 >= t27 GOTO label5
+GOTO label6
+LABEL label5 :
+t29 := i
+t30 := #1
+t28 := t29 - t30
+i := t28
+t32 := n
+t36 := op
+t37 := #2
+t38 := #48 * t37
+t35 := t36 + t38
+t34 := t35 + #8
+t39 := i
+t40 := #4 * t39
+t41 := t34 + t40
+t31 := t32 + *t41
+n := t31
+GOTO label4
+LABEL label6 :
+t42 := n
+WRITE t42
+t43 := #0
+RETURN t43

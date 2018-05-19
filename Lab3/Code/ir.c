@@ -474,10 +474,28 @@ InterCodes *translate_DecList(TreeNode *decList)
 
 InterCodes *translate_Dec(TreeNode *dec)
 {
-	InterCodes *codes = translate_VarDec(dec->childs[0]);
-	if(dec->nChild == 3) {
-		//InterCodes *codes1 = translate_Exp(dec->childs[2]);
-		//
+	InterCodes *codes = NULL;
+	/*Dec -> VarDec*/
+	if(dec->nChild == 1) {
+		codes = translate_VarDec(dec->childs[0]);
+	}
+	/*Dec -> VarDec ASSIGNOP Exp*/
+	else if(dec->nChild == 3) {
+		/*only basic type can be initilize*/
+		ASSERT(dec->childs[0]->childs[0]->nType == T_Id);
+		Symbol sym = searchTable(dec->childs[0]->childs[0]->ptr);
+		ASSERT(sym && sym->kind == BASIC);
+
+		Operand t1 = newTemp();
+		InterCodes *code1 = translate_Exp(dec->childs[2], t1);
+
+		Operand op1 = NEW_OP(VARIABLE, sym->name);
+		InterCodes *code2 = newIC(IC_ASSIGN, op1, t1, NULL);
+		
+		codes = ADD_TAIL(code1, code2);
+	}
+	else {
+		ASSERT(0);
 	}
 
 	return codes;
@@ -585,6 +603,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 	if(first->nType == T_Exp && second->nType == T_Assignop) {
 		if(first->childs[0]->nType == T_Id) {
 			char *name = first->childs[0]->ptr;
+			printf("%s\n", name);
 			Symbol sym = searchTable(name);
 			ASSERT(sym);
 
@@ -950,7 +969,10 @@ InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 	}
 	/*<id[exp][int]>*/
 	else if(first->childs[1]->nType == T_Lb){
+		/*TODO: implement 3.2*/
+		printf("Cannot translate: Code contains variable of multi-dimensional array type or parameters of array type.");
 		ASSERT(0);
+		
 	}
 
 	if(pType)	*pType = arrayType->array.elem;
