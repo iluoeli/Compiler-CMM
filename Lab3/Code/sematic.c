@@ -187,13 +187,21 @@ Symbol VarDec(Type type, TreeNode *p)
 	}
 	else if(child->nType == T_VarDec) {
 		//array type
+		Type newType = malloc(sizeof(struct Type_));
+		newType->kind = ARRAY;
+		newType->array.elem = type;
+		newType->array.size = p->childs[2]->iValue;
+
+		symbol = VarDec(newType, child);
+		/*
 		Symbol childSymbol = VarDec(type, child);
 		Type arrType = malloc(sizeof(struct Type_));
 		arrType->kind = ARRAY;
+	
 		arrType->array.elem = childSymbol->type;
 		arrType->array.size = p->childs[2]->iValue;
 		symbol = newTypeSymbol(S_Type, childSymbol->name, arrType);
-		//free(childSymbol);
+		*/
 	}
 	else {
 		ASSERT(0);

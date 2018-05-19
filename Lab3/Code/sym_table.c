@@ -144,6 +144,7 @@ int typeSize(Type type)
 			break;
 		case ARRAY:
 			size = typeSize(type->array.elem) * type->array.size;
+			printf("size: %d = %d * elem_size\n", size, type->array.size);
 			break;
 		case STRUCTURE:
 			p = type->structure;
@@ -248,8 +249,8 @@ void printType(Type type)
 			else	printf("float");
 			break;
 		case ARRAY:
-			printType(type->array.elem);
 			printf("[%d]", type->array.size);
+			printType(type->array.elem);
 			break;
 		case STRUCTURE:
 			printFieldList(type->structure);

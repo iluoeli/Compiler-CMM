@@ -515,7 +515,6 @@ InterCodes *translate_StmtList(TreeNode *stmtList)
 InterCodes *translate_Stmt(TreeNode *stmt)
 {
 	LOG("translate Stmt");
-	printTree(stmt);
 	TreeNode* child = stmt->childs[0];
 	InterCodes *codes = NULL;
 	if(child->nType == T_Exp) {
@@ -595,7 +594,6 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 InterCodes *translate_Exp(TreeNode *exp, Operand place)
 {
 	LOG("translate Exp");
-	printTree(exp);
 	TreeNode *first = exp->childs[0];
 	TreeNode *second = exp->childs[1];
 	TreeNode *third = exp->childs[2];
@@ -948,7 +946,7 @@ InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 	Operand stAddr = NULL;
 	Type arrayType = NULL;
 
-	/*id[int]*/
+	/*id[exp]*/
 	if(first->childs[0]->nType == T_Id) {
 		Symbol sym = searchTable(first->childs[0]->ptr);
 		ASSERT(sym && sym->kind == S_Type && sym->type->kind == ARRAY);
@@ -958,7 +956,7 @@ InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 		Operand op1 = NEW_OP(VARIABLE, sym->name);
 		code1 = newIC(IC_ASSIGN, stAddr, op1, NULL);;
 	}
-	/*<id.id>[int]*/	
+	/*<id.id>[exp]*/	
 	else if(first->childs[1]->nType == T_Dot) {
 		Type type = NULL;;
 		stAddr = newTemp();
@@ -967,12 +965,18 @@ InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 		ASSERT(type && type->kind == ARRAY);
 		arrayType = type;
 	}
-	/*<id[exp][int]>*/
+	/*<exp[exp]>[exp]*/
 	else if(first->childs[1]->nType == T_Lb){
 		/*TODO: implement 3.2*/
 		printf("Cannot translate: Code contains variable of multi-dimensional array type or parameters of array type.");
-		ASSERT(0);
-		
+		//ASSERT(0);
+	
+		Type type = NULL;
+		stAddr = newTemp();
+		code1 = translate_Array(first, stAddr, &type);
+
+		ASSERT(type && type->kind == ARRAY);
+		arrayType = type;
 	}
 
 	if(pType)	*pType = arrayType->array.elem;
