@@ -738,6 +738,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		codes->code.binop.rlt = op1;
 		codes->code.binop.op1 = op2;
 	}
+	/*ID()*/
 	else if(first->nType == T_Id && second && exp->nChild == 3) {
 		Symbol sym = searchTable(first->ptr);
 		ASSERT(sym);
@@ -747,6 +748,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 			codes = code1;
 		}
 		else {
+			/*FIXME: what if function return void?*/
 			Operand op1 = newOp(VARIABLE, sym->name);
 			InterCodes *code1 = newIC(IC_CALL, place, op1, NULL);
 			codes = code1;

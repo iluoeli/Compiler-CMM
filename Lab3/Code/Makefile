@@ -17,6 +17,7 @@ YFC = $(shell find ./ -name "*.y" | sed s/[^/]*\\.y/syntax.tab.c/)
 LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 
+
 parser: syntax $(filter-out $(LFO),$(OBJS))
 	$(CC) -o parser $(filter-out $(LFO),$(OBJS)) -lfl -ly
 
@@ -34,10 +35,10 @@ syntax-c: $(YFILE)
 # 定义的一些伪目标
 .PHONY: clean test
 test:
-	./parser ~/compiler/test-2/testA-[1-9].cmm
-	./parser ~/compiler/test-2/testA-1[0-9].cmm
-	./parser ~/compiler/test-2/testA-2[0-9].cmm
-	./parser ~/compiler/test-2/testB-[1-9].cmm
+#	./parser ~/compiler/test-2/testA-[1-9].cmm
+#	./parser ~/compiler/test-2/testA-1[0-9].cmm
+#	./parser ~/compiler/test-2/testA-2[0-9].cmm
+#	./parser ~/compiler/test-2/testB-[1-9].cmm
 	./parser ../Test2/*.txt
 #	./parser ../Test/test[1-9].cmm ../Test/test1[0-9].cmm ../Test/extra*.cmm
 #./parser ../Test/test1[0-9].cmm
