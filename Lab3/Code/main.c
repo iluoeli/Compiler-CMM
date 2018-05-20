@@ -8,6 +8,7 @@ extern FILE *yyin;
 extern int yylineno;
 extern struct TreeNode *root;
 extern int nError;
+InterCodes *codes = NULL;
 void yyrestart(FILE *);
 void yyparse();
 
@@ -29,29 +30,32 @@ int main(int argc, char **argv)
 			yylineno = 1;
 
 			//print tree
-			if(!nError && root){
+			if(nError || !root) {
+				continue;
+			}
 #if EN_PRINT_TREE
-				printTree(root);
+			printTree(root);
 #endif
-				initTable();
-				preprocessTable();	
-				sematicCheck(root);
-				printTable();
-				
+			initTable();
+			preprocessTable();	
+			sematicCheck(root);
+			//printTable();
+			
+			if(!nError) {
 				char fileName[128];
 				strcpy(fileName, argv[i]);
 				strcat(fileName, ".ir");
 				FILE *fp = fopen(fileName, "w");
 				ASSERT(fp);
-				InterCodes *codes = generate_ir(root, fp);
+				codes = generate_ir(root, fp);
 				test_ir(codes);
 				printInterCodes(codes, fp);
 				fclose(fp);
-
-				deleteTree(root);
-				clearTable();
-				clearInterCodes(codes);
 			}
+
+			deleteTree(root);
+			clearTable();
+			clearInterCodes(codes);
 			root = NULL;
 			nError = 0;
 		}

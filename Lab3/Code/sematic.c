@@ -1,5 +1,8 @@
 #include "common.h"
 
+
+extern int nError;
+
 void sematicCheck(TreeNode *root) 
 {
 	Program(root);
@@ -50,10 +53,12 @@ void ExtDef(TreeNode *p)
 			if(s->kind == S_Func) {
 				//compare function type 
 				if(s->func->isDefined == 1 && symbol->func->isDefined == 1) {
+					nError++;
 					printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
 						funDec->lineno, symbol->name);
 				}
 				else if(compareFunction(s, symbol) == FALSE) {
+					nError++;
 					printf("Error type 19 at Line %d: Inconsistent declaration of function \"%s\".\n",
 							funDec->lineno, symbol->name);
 					return;
@@ -66,6 +71,7 @@ void ExtDef(TreeNode *p)
 		else {
 			int ret = insertTable(symbol);
 			if(ret == 1) {
+				nError++;
 				printf("Error type 4 at Line %d: Redefined function \"%s\".\n",
 						funDec->lineno, symbol->name);
 			}
@@ -92,6 +98,7 @@ void ExtDecList(Type type, TreeNode *p)
 	Symbol symbol =  VarDec(type, varDec);
 	int ret = insertTable(symbol);
 	if(ret == 1) {
+		nError++;
 		printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
 				symbol->lineno, symbol->name);
 	}
@@ -138,6 +145,7 @@ Type StructSpecifier(TreeNode *p)
 		Symbol symbol = searchTable(p->childs[1]->childs[0]->ptr);
 		if(symbol == NULL || symbol->kind != S_StrucDef) {
 			//error:not defined structure
+			nError++;
 			printf("Error type 17 at Line %d: Undefined structure \"%s\".\n",
 					p->childs[1]->childs[0]->lineno, p->childs[1]->childs[0]->ptr);
 			return NULL;
@@ -167,6 +175,7 @@ Type StructSpecifier(TreeNode *p)
 		Symbol symbol = newTypeSymbol(S_StrucDef, structure->name, type);
 		int ret = insertTable(symbol);
 		if(ret == 1) {
+			nError++;
 			printf("Error type 16 at Line %d: Duplicated name \"%s\".\n",
 					p->lineno, symbol->name);
 		}
@@ -243,6 +252,7 @@ FieldList ParamDec(TreeNode *paramDec, BOOL addTable)
 	if(addTable == TRUE) {
 		int ret = insertTable(symbol);
 		if(ret == 1) {
+			nError++;
 			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
 				symbol->lineno, symbol->name);
 		}
@@ -309,17 +319,20 @@ void Stmt(TreeNode *stmt)
 			//TODO:check return type
 			if(curFunc == NULL) {
 				//undefined error: return in non-function area
+				nError++;
 				PRINT_ERROR(8, stmt->lineno, "Type mismatched for return.");
 				ASSERT(0);	
 			}
 			type = Exp(stmt->childs[1]);
 			if(compareType(curFunc->retType, type) == FALSE) {
+				nError++;
 				PRINT_ERROR(8, stmt->lineno, "Type mismatched for return.");
 			}
 			break;
 		case T_If:
 			type = Exp(stmt->childs[2]);
 			if(type != NULL && (type->kind != BASIC || type->basic != B_INT)) {
+				nError++;
 				PRINT_ERROR(7, stmt->childs[2]->lineno, "Type mismatched for operands.\n");
 			}
 			Stmt(stmt->childs[4]);
@@ -329,6 +342,7 @@ void Stmt(TreeNode *stmt)
 		case T_While:
 			type = Exp(stmt->childs[2]);
 			if(type != NULL && (type->kind != BASIC || type->basic != B_INT)) {
+				nError++;
 				PRINT_ERROR(7, stmt->childs[2]->lineno, "Type mismatched for operands.\n");
 			}
 			Stmt(stmt->childs[4]);
@@ -394,6 +408,7 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 	if(addTable == TRUE) {
 		int ret = insertTable(symbol);
 		if(ret == 1) {
+			nError++;
 			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
 				symbol->lineno, symbol->name);
 		}
@@ -406,6 +421,7 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 	if(addTable == FALSE && tail != NULL) {
 		while(tail->tail) {
 			if(strcmp(tail->name, symbol->name) == 0) {
+				nError++;
 				printf("Error type 15 at Line %d: Redefined field \"%s\".\n",
 						symbol->lineno, symbol->name);
 			}
@@ -417,9 +433,11 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 		//TODO:handle exp
 		Type rType = Exp(dec->childs[2]);
 		if(compareType(type, rType) == FALSE) {
+			nError++;
 			PRINT_ERROR(5, dec->lineno, "Type mismatched for assignment.");
 		}
 		if(addTable == FALSE) {
+			nError++;
 			PRINT_ERROR(15, dec->lineno, "Illegal initializatio for structure filed");	
 		}
 	}
@@ -448,12 +466,14 @@ Type Exp(TreeNode *exp)
 			if(second->nType == T_Assignop) {
 				if(lType != NULL && isLeftVar(first) == FALSE) {
 					//PRINT_TYPE(lType);
+					nError++;
 					PRINT_ERROR(6, exp->lineno, "The left-hand side of an assignment must be a variable.");
 					lType = NULL;
 				}
 				else {
 					rType = Exp(third);
 					if(lType != NULL && rType != NULL && compareType(lType, rType) == FALSE) {
+						nError++;
 						PRINT_ERROR(5, exp->lineno, "Type mismatched for assignment.");
 						lType = NULL;
 					}
@@ -464,6 +484,7 @@ Type Exp(TreeNode *exp)
 				
 				rType = Exp(third);
 				if((lType != NULL && lType->kind != BASIC) || (rType != NULL && rType->kind != BASIC)) {
+					nError++;
 					PRINT_ERROR(7, exp->lineno, "Type mismatched for operands.");
 					lType = NULL;
 				}
@@ -474,6 +495,7 @@ Type Exp(TreeNode *exp)
 				
 				rType = Exp(third);
 				if(lType != NULL && (lType->kind != BASIC || compareType(lType, rType) == FALSE)) {
+					nError++;
 					PRINT_ERROR(7, exp->lineno, "Type mismatched for operands.");
 					lType = NULL;
 				}
@@ -482,11 +504,13 @@ Type Exp(TreeNode *exp)
 				//exp[exp]
 				rType = Exp(third);
 				if(lType->kind != ARRAY) {
+					nError++;
 					printf("Error type 10 at Line %d: variable is not an aaray.\n",
 							first->lineno);
 					lType = NULL;
 				}
 				else if(rType != NULL && (rType->kind != BASIC || rType->basic != B_INT)) {
+					nError++;
 					printf("Error type 12 at Line %d: array index is not an integer.\n",
 							third->lineno);
 					lType = NULL;
@@ -498,6 +522,7 @@ Type Exp(TreeNode *exp)
 			else if(second->nType == T_Dot) {
 				//exp.exp
 				if(lType != NULL && lType->kind != STRUCTURE) {
+					nError++;
 					printf("Error type 13 at Line %d: Illegal use of \".\".\n",
 							second->lineno);
 				}
@@ -506,6 +531,7 @@ Type Exp(TreeNode *exp)
 					char *name = third->ptr;
 					rType = structureField(lType->structure, name);
 					if(rType == NULL) {
+						nError++;
 						printf("Error type 14 at Line %d: Non-existent field \"%s\".\n",
 								third->lineno, name);
 						lType = NULL;
@@ -525,6 +551,7 @@ Type Exp(TreeNode *exp)
 				
 				Symbol symbol = searchTable(first->ptr);
 				if(symbol == NULL) {
+					nError++;
 					printf("Error type 1 at Line %d: Undefined variale \"%s\".\n", 
 							exp->lineno, first->ptr);
 					lType = NULL;
@@ -540,11 +567,13 @@ Type Exp(TreeNode *exp)
 				//function call
 				Symbol func = searchTable(first->ptr);
 				if(func == NULL) {
+					nError++;
 					printf("Error type 2 at Line %d: Undefined function \"%s\".\n",
 							exp->lineno, first->ptr);
 					lType = NULL;
 				}
 				else if(func->kind != S_Func) {
+					nError++;
 					printf("Error type 11 at Line %d: \"%s\" is not a function.\n",
 							first->lineno, func->name);
 					lType = NULL;
@@ -562,6 +591,7 @@ Type Exp(TreeNode *exp)
 						//without args
 					}
 					if(compareArgs(argList, func->func->argList) == FALSE) {
+						nError++;
 						printf("Error type 9 at Line %d: Function \"", first->lineno);
 						printFuncType(func);
 						//printType(func->func->retType);
@@ -651,6 +681,7 @@ BOOL checkStructure(FieldList list)
 		FieldList p = list->tail;
 		for(; p; p=p->tail) 
 			if(strcmp(list->name, p->name) == 0) {
+				nError++;
 				printf("Error type 15 at Line %d: Redefined field \"%s\".\n",
 						1, p->name);
 			}
@@ -665,6 +696,7 @@ BOOL checkFunc()
 	for(i=0; i < TABLE_SIZE; i++) {
 		if(symbolTable[i] != NULL && symbolTable[i]->kind == S_Func) {
 			if(symbolTable[i]->func->isDefined == 0) {
+				nError++;
 				printf("Error type 18 at Line %d: Undefined function \"%s\".\n",
 						symbolTable[i]->lineno, symbolTable[i]->name);
 			}
