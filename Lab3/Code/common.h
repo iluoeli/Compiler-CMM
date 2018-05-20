@@ -9,6 +9,7 @@
 #include "sym_table.h"
 #include "sematic.h"
 #include "ir.h"
+#include "test.h"
 
 
 /*

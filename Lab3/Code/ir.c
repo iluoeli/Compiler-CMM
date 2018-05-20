@@ -1,7 +1,6 @@
 #include "common.h"
 
 
-
 InterCodes *addTail(InterCodes *head1, InterCodes *head2)
 {
 	if(NULL == head1) return head2;
@@ -9,6 +8,8 @@ InterCodes *addTail(InterCodes *head1, InterCodes *head2)
 	while(NULL != p->next)
 		p=p->next;
 	p->next = head2;
+	if(head2 != NULL)
+		head2->prev = p;
 	
 	return head1;
 }

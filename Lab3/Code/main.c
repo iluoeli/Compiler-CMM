@@ -44,6 +44,7 @@ int main(int argc, char **argv)
 				FILE *fp = fopen(fileName, "w");
 				ASSERT(fp);
 				InterCodes *codes = generate_ir(root, fp);
+				test_ir(codes);
 				printInterCodes(codes, fp);
 				fclose(fp);
 
