@@ -454,6 +454,7 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 Type Exp(TreeNode *exp)
 {
 	if(exp == NULL)	return NULL;
+	//printTree(exp);
 	
 	TreeNode *first = exp->childs[0];
 	TreeNode *second = exp->childs[1];
@@ -521,10 +522,14 @@ Type Exp(TreeNode *exp)
 			}
 			else if(second->nType == T_Dot) {
 				//exp.exp
+				printTree(exp);
 				if(lType != NULL && lType->kind != STRUCTURE) {
 					nError++;
 					printf("Error type 13 at Line %d: Illegal use of \".\".\n",
 							second->lineno);
+				}
+				else if(lType == NULL) {
+					lType = NULL;
 				}
 				else {
 					//rType = Exp(third);
