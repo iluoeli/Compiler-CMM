@@ -70,7 +70,7 @@ Operand newLabel()
 void printOperand(Operand op, FILE *fp)
 {
 	if(!op) {
-		printf("null op");
+		printf("NULL_OP");
 		return ;
 	}
 
@@ -103,7 +103,7 @@ void printOperand(Operand op, FILE *fp)
 int printInterCodes(InterCodes *codes, FILE *fp)
 {
 	if(codes == NULL) {
-		printf("null ic\n");
+		printf("NULL_IR\n");
 		return 0;
 	}
 	

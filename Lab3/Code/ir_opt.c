@@ -49,9 +49,11 @@ DAGNode findSign(Operand target)
 			}
 		}
 	}
+	/*
 	printf("not find sign: ");
 	printOperand(target, stdout);
 	printf("\n");
+	*/
 	return NULL;
 }
 
@@ -62,9 +64,11 @@ DAGNode findLeaf(Operand target)
 		if(nodeMap[i]->isLeaf && compareOperand(target, nodeMap[i]->op) == TRUE)
 			return nodeMap[i];
 	}
+	/*
 	printf("not find leaf: ");
 	printOperand(target, stdout);
 	printf("\n");
+	*/
 	return NULL;
 }
 
@@ -125,7 +129,7 @@ DAGNode insertNode(Operand op, BOOL isWrite)
 	}
 	*/
 	/*create new DAGNode for Leaf*/
-	LOG("insertNode");
+	//LOG("insertNode");
 	DAGNode node = NULL;
 	if(!isWrite) {
 		node = createDAGNode(op, isWrite);
@@ -157,38 +161,48 @@ void insertTuple(InterCode *code)
 	ASSERT(nodex != NULL);
 
 	if(code->binop.op2 != NULL) {
-	if(!(nodey=findSign(code->binop.op2))) {
-		if(!(nodey=findLeaf(code->binop.op2))) {
-			nodey = insertNode(code->binop.op2, FALSE);	
-		}		
-	}
+		if(!(nodey=findSign(code->binop.op2))) {
+			if(!(nodey=findLeaf(code->binop.op2))) {
+				nodey = insertNode(code->binop.op2, FALSE);	
+			}		
+		}
 	}
 
 	if(code->binop.rlt != NULL) {
-	nodez = findSign(code->binop.rlt);
-	if(nodez) {
-		removeSign(nodez, code->binop.rlt);	
-	}
+		nodez = findSign(code->binop.rlt);
+		if(nodez) {
+			removeSign(nodez, code->binop.rlt);	
+		}
 	}
 
 	if(code->kind == IC_ASSIGN) {
 		nodex->signList[nodex->signSize++] = code->binop.rlt;
 	}
-	else {
-	nodeop = findOp(code->kind, code->binop.op1, code->binop.op2);
-	if(!nodeop) {
+	else if(IC_JL <= code->kind && code->kind <= IC_JNE) {
+		/*if op1 relop op2 GOTO rlt is 3-tuple*/	
 		nodeop = malloc(sizeof(struct DAGNode_));
 		memset(nodeop, 0, sizeof(struct DAGNode_));
 		nodeop->kind = code->kind;
 		nodeop->left = nodex;
 		nodeop->right = nodey;
+		nodeop->activeSign = code->binop.rlt;
 		nodeMap[curSize++] = nodeop;
-		if(code->binop.rlt)
-			nodeop->signList[nodeop->signSize++] = code->binop.rlt;	
 	}
 	else {
-		nodeop->signList[nodeop->signSize++] = code->binop.rlt;
-	}
+		nodeop = findOp(code->kind, code->binop.op1, code->binop.op2);
+		if(!nodeop) {
+			nodeop = malloc(sizeof(struct DAGNode_));
+			memset(nodeop, 0, sizeof(struct DAGNode_));
+			nodeop->kind = code->kind;
+			nodeop->left = nodex;
+			nodeop->right = nodey;
+			nodeMap[curSize++] = nodeop;
+			if(code->binop.rlt)
+				nodeop->signList[nodeop->signSize++] = code->binop.rlt;	
+		}
+		else {
+			nodeop->signList[nodeop->signSize++] = code->binop.rlt;
+		}
 	}
 }
 
@@ -213,7 +227,7 @@ InterCodes *DAG2ir()
 					ADD_TAIL(head, code);
 				}
 				else {
-					Operand left, right=NULL;
+					Operand left, right;
 					left = (node->left) ? node->left->activeSign: NULL;	 
 					right = (node->right) ? node->right->activeSign: NULL;	 
 
@@ -226,8 +240,24 @@ InterCodes *DAG2ir()
 		}
 		if(cnt == 0 && node->signSize > 0) {
 			LOG("activeSign is a tmp");
-				
-			ASSERT(0);	
+			Operand left, right;
+			left = (node->left) ? node->left->activeSign: NULL;	 
+			right = (node->right) ? node->right->activeSign: NULL;	 
+			node->activeSign = node->signList[0];
+
+			InterCodes *code = newIC(node->kind, node->activeSign, left, right);
+			ADD_TAIL(head, code);
+			//ASSERT(0);	
+		}
+		else if(node->signSize == 0) {
+			/*IC_FUNCTION, IC_PARAM e.t.*/
+			Operand left, right;
+			left = (node->left) ? node->left->activeSign: NULL;	 
+			right = (node->right) ? node->right->activeSign: NULL;	 
+			//node->activeSign = node->signList[0];
+
+			InterCodes *code = newIC(node->kind, node->activeSign, left, right);
+			ADD_TAIL(head, code);
 		}
 	}
 	//printInterCodes(head, stdout);
