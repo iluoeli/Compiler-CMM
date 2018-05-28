@@ -1,0 +1,17 @@
+FUNCTION test_param :
+PARAM x
+PARAM y
+PARAM z
+t2 := x * y
+t1 := t2 - z
+RETURN t1
+FUNCTION main :
+a := #1
+b := #2
+c := #3
+ARG c
+ARG b
+ARG a
+n := CALL test_param
+WRITE n
+RETURN #0

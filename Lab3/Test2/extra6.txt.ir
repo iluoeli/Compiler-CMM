@@ -2,30 +2,30 @@ FUNCTION test_param :
 PARAM x
 PARAM y
 PARAM z
-t236 := x
-t237 := y
-t234 := t236 * t237
-t235 := z
-t233 := t234 - t235
-RETURN t233
+t4 := x
+t5 := y
+t2 := t4 * t5
+t3 := z
+t1 := t2 - t3
+RETURN t1
 FUNCTION main :
-t238 := #1
-a := t238
-t239 := #2
-b := t239
-t240 := #3
-c := t240
-t241 := #0
-n := t241
-t243 := a
-t244 := b
-t245 := c
-ARG t245
-ARG t244
-ARG t243
-t242 := CALL test_param
-n := t242
-t246 := n
-WRITE t246
-t247 := #0
-RETURN t247
+t6 := #1
+a := t6
+t7 := #2
+b := t7
+t8 := #3
+c := t8
+t9 := #0
+n := t9
+t11 := a
+t12 := b
+t13 := c
+ARG t13
+ARG t12
+ARG t11
+t10 := CALL test_param
+n := t10
+t14 := n
+WRITE t14
+t15 := #0
+RETURN t15

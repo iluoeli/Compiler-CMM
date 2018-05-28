@@ -122,13 +122,6 @@ DAGNode createDAGNode(Operand op, BOOL isWrite)
 
 DAGNode insertNode(Operand op, BOOL isWrite)
 {
-	/*
-	DAGNode node = findNode(op, isWrite);
-	if(node == NULL) {
-		node = createDAGNode();	
-	}
-	*/
-	/*create new DAGNode for Leaf*/
 	//LOG("insertNode");
 	DAGNode node = NULL;
 	if(!isWrite) {
@@ -152,8 +145,24 @@ void insertTuple(InterCode *code)
 	nodex = nodey = nodez = nodeop = NULL;
 	
 	/*handle special case*/
-
-
+	/*	
+	if(IC_ADD <= code->kind <= IC_DIV && code->binop.op1->kind == CONSTANT
+		&& code->binop.op2->kind == CONSTANT) {
+		int rlt;
+		if(code->kind == IC_ADD) 
+			rlt = code->binop.op1->value + code->binop.op2->value;
+		else if(code->kind == IC_SUB) 
+			rlt = code->binop.op1->value - code->binop.op2->value;
+		else if(code->kind == IC_MUL) 
+			rlt = code->binop.op1->value * code->binop.op2->value;
+		else
+			rlt = code->binop.op1->value / code->binop.op2->value;
+		Operand op = NEW_OP(CONSTANT, rlt);
+		InterCodes *new_code = newIC(IC_ASSIGN, code->binop.rlt, op, NULL);
+		code = &new_code->code;
+	}
+	*/
+	
 	/*首先在DAGNode的关联符号中寻找*/
 	if(!(nodex=findSign(code->binop.op1))) {
 		/*在叶子节点中找*/
@@ -252,7 +261,7 @@ InterCodes *DAG2ir()
 			}
 		}
 		if(cnt == 0 && node->signSize > 0) {
-			LOG("activeSign is a tmp");
+			//LOG("activeSign is a tmp");
 			Operand left, right;
 			left = (node->left) ? node->left->activeSign: NULL;	 
 			right = (node->right) ? node->right->activeSign: NULL;	 
@@ -295,13 +304,13 @@ InterCodes *opt_block(InterCodes *start, InterCodes *end)
 			//printMap();
 		}
 	}	
-	
+/*	
 	printf("\n");
 	printMap();
 	printf("\n");
-
+*/
 	head = DAG2ir();
-	printInterCodes(head, stdout);
+//	printInterCodes(head, stdout);
 
 	return head;
 }
@@ -315,8 +324,7 @@ InterCodes *opt_ir(InterCodes *head)
 
 	for(; p; p = p->next) {
 		switch(p->code.kind) {
-			case IC_FUNCTION:
-			case IC_LABEL:
+			case IC_FUNCTION:	case IC_LABEL:
 				if(cnt == 0) {
 					start = p;
 					cnt ++;
@@ -330,15 +338,10 @@ InterCodes *opt_ir(InterCodes *head)
 					start = p;
 				}
 				break;
-			case IC_GOTO:
-			case IC_JL:
-			case IC_JG:
-			case IC_JGE:	 
-			case IC_JLE:
-			case IC_JE:
-			case IC_JNE:
-			case IC_RETURN:
-				/*block start*/
+			case IC_GOTO:	case IC_RETURN:
+			case IC_JL:		case IC_JG:
+			case IC_JGE:	case IC_JLE:
+			case IC_JE:		case IC_JNE:
 				cnt++;
 				ASSERT(cnt > 0);
 				end = p;	
@@ -346,27 +349,44 @@ InterCodes *opt_ir(InterCodes *head)
 				ADD_TAIL(opt_codes, block);
 				cnt = 0;
 				start = end->next;
-				//end = NULL;
 				break;
+	/*	
 			case IC_ADD:
+				if(p->code.binop.op1->kind == CONSTANT 
+					&& p->code.binop.op1->value == 0) {
+					p->code.kind = IC_ASSIGN;
+					p->code.binop.op1 = p->code.binop.op2;
+				}	
+				else if(p->code.binop.op2->kind == CONSTANT 
+					&& p->code.binop.op2->value == 0) {
+					p->code.kind = IC_ASSIGN;
+				}	
+				cnt ++;
+				break;
 			case IC_SUB:
+				if(p->code.binop.op1->kind == CONSTANT 
+					&& p->code.binop.op1->value == 0) {
+					p->code.kind = IC_ASSIGN;
+					p->code.binop.op2->value = -p->code.binop.op2->value;
+					p->code.binop.op1 = p->code.binop.op2;
+				}	
+				else if(p->code.binop.op2->kind == CONSTANT 
+					&& p->code.binop.op2->value == 0) {
+					p->code.kind = IC_ASSIGN;
+				}	
+				cnt ++;
+				break;
 			case IC_MUL:
 			case IC_DIV:
+
 			case IC_ASSIGN:
-			case IC_DEC:
-			case IC_PARAM:
-			case IC_CALL:
-			case IC_ARG:
-			case IC_READ:
-			case IC_WRITE:
-			case IC_REF:
-			case IC_DEREF:
+			case IC_DEC:	case IC_PARAM:
+			case IC_CALL:	case IC_ARG:
+			case IC_READ:	case IC_WRITE:
+			case IC_REF:	case IC_DEREF:
+	*/
+			default:
 				cnt ++;
-				//insertTuple(&start->code);
-				//printMap();
-				//printf("\n\n");
-			//default:
-				
 		}
 	}
 
