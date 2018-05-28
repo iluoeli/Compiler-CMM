@@ -16,6 +16,7 @@ BOOL compareDAGNode(DAGNode node1, DAGNode node2)
 
 BOOL existSign(DAGNode node, Operand op)
 {
+	if(node == NULL)	return FALSE;
 	int i;
 	for(i=0; i < node->signSize; i++) {
 		if(TRUE == compareOperand(op, node->signList[i]))
@@ -172,8 +173,9 @@ void insertTuple3(InterCode *code)
 		nodeop->kind = code->kind;
 		nodeop->left = nodex;
 		nodeop->right = nodey;
-		nodeop->signList[nodeop->signSize++] = code->binop.rlt;	
 		nodeMap[curSize++] = nodeop;
+		if(code->binop.rlt)
+			nodeop->signList[nodeop->signSize++] = code->binop.rlt;	
 	}
 	else {
 		nodeop->signList[nodeop->signSize++] = code->binop.rlt;
@@ -182,10 +184,56 @@ void insertTuple3(InterCode *code)
 }
 
 
+InterCodes *DAG2ir()
+{
+	InterCodes *head = NULL;
+	int i, j;
+	for(i=0; i < curSize; i++) {
+		DAGNode node = nodeMap[i];
+		if(nodeMap[i]->isLeaf)
+			continue;
+		int cnt = 0;
+		for(j=0; j < node->signSize; j++) {
+			Operand sign = node->signList[j];
+			/*NOTE: every inner node must be related to a variable*/
+			if(sign->kind == VARIABLE) {
+				if(cnt > 0) {
+					InterCodes *code = newIC(IC_ASSIGN, sign, node->activeNode, NULL);
+					ADD_TAIL(head, code);
+				}
+				else {
+					Operand left=NULL, right=NULL;
+					if(node->left) {
+						if(node->left->isLeaf) {
+							left = node->left->op;
+						}
+						else {
+							left = node->left->activeNode;	 
+						}
+					}
+					if(node->right) {
+						if(node->right->isLeaf) {
+							right = node->right->op;
+						}
+						else {
+							right = node->right->activeNode;	 
+						}
+					}
+					InterCodes *code = newIC(node->kind, sign, left, right);
+					ADD_TAIL(head, code);
+					node->activeNode = sign;
+				}
+				cnt ++;
+			}
+		}
+		if(cnt == 0 && node->signSize > 0) {
+			ASSERT(0);	
+		}
+	}
+	printInterCodes(head, stdout);
+	return head;
+}
 
-/*
- *战略性放弃构造DAG基本块优化
- */
 InterCodes *opt_ir(InterCodes *head)
 {
 	InterCodes* start = head, *end;
@@ -227,6 +275,7 @@ InterCodes *opt_ir(InterCodes *head)
 	
 	
 	}
+	DAG2ir();
 }
 
 

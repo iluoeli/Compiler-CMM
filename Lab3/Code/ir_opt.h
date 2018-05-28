@@ -11,11 +11,12 @@ typedef struct DAGNode_* DAGNode;
 struct DAGNode_
 {
 	BOOL isLeaf;
-	IC_TYPE kind;		
+	IC_TYPE kind;		//inner node use
 	Operand signList[SIGN_SIZE];
 	int signSize;
-	Operand op;
+	Operand op;			//leaf use
 	DAGNode left, right;
+	Operand activeNode;	//variable or first tmp
 };
 
 BOOL compareDAGNode(DAGNode node1, DAGNode node2);
