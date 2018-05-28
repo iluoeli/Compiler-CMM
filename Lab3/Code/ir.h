@@ -64,6 +64,7 @@ typedef struct InterCodes InterCodes;
 InterCodes *addTail(InterCodes *head1, InterCodes *head2);
 #define ADD_TAIL(head1, head2) head1 = addTail(head1, head2)
 InterCodes *copyInterCodes(InterCodes *start, InterCodes *end);
+void clearInterCodes(InterCodes *codes);
 
 int newParm();
 int newArg();
@@ -84,7 +85,7 @@ int printInterCodes(InterCodes *codes, FILE *fp);
 
 
 /*translate functions*/
-InterCodes *generate_ir(TreeNode *root, FILE *fp);
+InterCodes *generate_ir(TreeNode *root);
 
 InterCodes *translate_Program(TreeNode *program);
 InterCodes *translate_ExtDefList(TreeNode *extDefList);

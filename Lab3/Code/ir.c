@@ -341,7 +341,7 @@ int compareOperand(Operand op1, Operand op2)
 	return FALSE;
 }
 
-InterCodes *generate_ir(TreeNode *root, FILE *fp)
+InterCodes *generate_ir(TreeNode *root)
 {
 	if(root == NULL)	return NULL;
 	return translate_Program(root);

@@ -9,6 +9,7 @@ extern int yylineno;
 extern struct TreeNode *root;
 extern int nError;
 InterCodes *codes = NULL;
+InterCodes *opt_codes = NULL;
 void yyrestart(FILE *);
 void yyparse();
 
@@ -16,53 +17,61 @@ void yyparse();
 int main(int argc, char **argv)
 {
 	int i;
-	if (argc > 1) {
-		for(i = 1; i < argc; i++) {
-			FILE *fp= fopen(argv[i], "r");
-			if(!fp) {
-				perror(argv[1]);
-				return 1;
-			}
-			printf("\n\nparsering file: %s......\n", argv[i]);
-			yyrestart(fp);
-			yyparse();
-			fclose(fp);
-			yylineno = 1;
-
-			//print tree
-			if(nError || !root) {
-				continue;
-			}
-#if EN_PRINT_TREE
-			printTree(root);
-#endif
-			initTable();
-			preprocessTable();	
-			sematicCheck(root);
-			//printTable();
-			
-			if(!nError) {
-				char fileName[128];
-				strcpy(fileName, argv[i]);
-				strcat(fileName, ".ir");
-				FILE *fp = fopen(fileName, "w");
-				ASSERT(fp);
-				codes = generate_ir(root, fp);
-				test_ir(codes);
-				printInterCodes(codes, fp);
-				fclose(fp);
-
-				codes = opt_ir(codes);
-				
-
-			}
-
-			deleteTree(root);
-			clearTable();
-			clearInterCodes(codes);
-			root = NULL;
-			nError = 0;
+	if (argc >= 3) {
+		FILE *input_fp= fopen(argv[1], "r");
+		FILE *output_fp= fopen(argv[2], "w");
+		if(!input_fp) {
+			perror(argv[1]);
+			return 1;
 		}
+		if(!output_fp) {
+			perror(argv[1]);
+			return 1;
+		}
+		//printf("\n\nparsering file: %s......\n", argv[i]);
+		yyrestart(input_fp);
+		yyparse();
+		fclose(input_fp);
+		yylineno = 1;
+
+		//print tree
+		if(nError || !root) {
+			return 1;
+		}
+#if EN_PRINT_TREE
+		printTree(root);
+#endif
+		initTable();
+		preprocessTable();	
+		sematicCheck(root);
+		//printTable();
+		
+		if(!nError) {
+			codes = generate_ir(root);
+			test_ir(codes);
+
+			char fileName[128];
+			strcpy(fileName, argv[i]);
+			strcat(fileName, ".ir");
+			FILE *fp = fopen(fileName, "w");
+			ASSERT(fp);
+			printInterCodes(codes, fp);
+			fclose(fp);
+
+			opt_codes = opt_ir(codes);
+			printInterCodes(opt_codes, output_fp);
+			fclose(output_fp);
+			clearInterCodes(codes);
+			clearInterCodes(opt_codes);
+		}
+
+		deleteTree(root);
+		clearTable();
+		root = NULL;
+		nError = 0;
+	}
+	else {
+		printf("./parser <input_file> <output_file>\n");
 	}
 	
 	return 0;
