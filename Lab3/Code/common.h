@@ -10,6 +10,7 @@
 #include "sematic.h"
 #include "ir.h"
 #include "test.h"
+#include "ir_opt.h"
 
 
 /*

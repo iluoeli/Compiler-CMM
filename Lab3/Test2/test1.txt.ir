@@ -1,28 +1,28 @@
 FUNCTION main :
-READ t233
-n := t233
-t234 := n
-t235 := #0
-IF t234 > t235 GOTO label25
+READ t248
+n := t248
+t249 := n
+t250 := #0
+IF t249 > t250 GOTO label25
 GOTO label26
 LABEL label25 :
-t236 := #1
-WRITE t236
+t251 := #1
+WRITE t251
 GOTO label27
 LABEL label26 :
-t237 := n
-t238 := #0
-IF t237 < t238 GOTO label28
+t252 := n
+t253 := #0
+IF t252 < t253 GOTO label28
 GOTO label29
 LABEL label28 :
-t240 := #1
-t239 := #0 - t240
-WRITE t239
+t255 := #1
+t254 := #0 - t255
+WRITE t254
 GOTO label30
 LABEL label29 :
-t241 := #0
-WRITE t241
+t256 := #0
+WRITE t256
 LABEL label30 :
 LABEL label27 :
-t242 := #0
-RETURN t242
+t257 := #0
+RETURN t257

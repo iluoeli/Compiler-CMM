@@ -316,6 +316,16 @@ IC_TYPE getRelop(TreeNode *relop)
 	return type;
 }
 
+int compareOperand(Operand op1, Operand op2)
+{
+	if(op1 == op2)	return 1;
+	else if(op1 == NULL || op2 == NULL)	return 0;
+	else if(op1->kind == op2->kind && op1->value == op2->value)
+		return 1;
+	
+	return 0;
+}
+
 InterCodes *generate_ir(TreeNode *root, FILE *fp)
 {
 	if(root == NULL)	return NULL;

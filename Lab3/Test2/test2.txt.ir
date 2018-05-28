@@ -1,41 +1,41 @@
 FUNCTION fact :
 PARAM n
-t243 := n
-t244 := #1
-IF t243 == t244 GOTO label31
+t258 := n
+t259 := #1
+IF t258 == t259 GOTO label31
 GOTO label32
 LABEL label31 :
-t245 := n
-RETURN t245
+t260 := n
+RETURN t260
 GOTO label33
 LABEL label32 :
-t247 := n
-t250 := n
-t251 := #1
-t249 := t250 - t251
-ARG t249
-t248 := CALL fact
-t246 := t247 * t248
-RETURN t246
+t262 := n
+t265 := n
+t266 := #1
+t264 := t265 - t266
+ARG t264
+t263 := CALL fact
+t261 := t262 * t263
+RETURN t261
 LABEL label33 :
 FUNCTION main :
-READ t252
-m := t252
-t253 := m
-t254 := #1
-IF t253 > t254 GOTO label34
+READ t267
+m := t267
+t268 := m
+t269 := #1
+IF t268 > t269 GOTO label34
 GOTO label35
 LABEL label34 :
-t256 := m
-ARG t256
-t255 := CALL fact
-result := t255
+t271 := m
+ARG t271
+t270 := CALL fact
+result := t270
 GOTO label36
 LABEL label35 :
-t257 := #1
-result := t257
+t272 := #1
+result := t272
 LABEL label36 :
-t258 := result
-WRITE t258
-t259 := #0
-RETURN t259
+t273 := result
+WRITE t273
+t274 := #0
+RETURN t274

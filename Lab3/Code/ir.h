@@ -74,12 +74,15 @@ Operand newOp(OP_TYPE type, void *ptr);
 InterCodes* newIC(IC_TYPE, Operand rlt1, Operand op1, Operand op2);
 void deleteInterCodes(InterCodes *code);
 void clearInterCodes(InterCodes *codes);
+int compareOperand(Operand op1, Operand op2);
 
 IC_TYPE getRelop(TreeNode *relop);
 
+void printOperand(Operand op, FILE *fp);
 int printInterCodes(InterCodes *codes, FILE *fp);
 
 
+/*translate functions*/
 InterCodes *generate_ir(TreeNode *root, FILE *fp);
 
 InterCodes *translate_Program(TreeNode *program);
@@ -103,6 +106,7 @@ InterCodes *translate_Array(TreeNode *st, Operand place, Type *type);
 
 InterCodes *translate_Cond(TreeNode *exp, Operand label1, Operand Label2);
 InterCodes *translate_Args(TreeNode *args, ArgList *argList); 
+
 
 
 #endif
