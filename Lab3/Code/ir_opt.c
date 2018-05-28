@@ -150,6 +150,9 @@ void insertTuple(InterCode *code)
 	 */
 	DAGNode nodex, nodey, nodez, nodeop;
 	nodex = nodey = nodez = nodeop = NULL;
+	
+	/*handle special case*/
+
 
 	/*首先在DAGNode的关联符号中寻找*/
 	if(!(nodex=findSign(code->binop.op1))) {

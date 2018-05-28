@@ -231,7 +231,7 @@ int printInterCodes(InterCodes *codes, FILE *fp)
 				break;
 			case IC_READ:
 				fprintf(fp, "READ ");	
-				printOperand(codes->code.binop.op1, fp);
+				printOperand(codes->code.binop.rlt, fp);
 				break;
 			case IC_WRITE:
 				fprintf(fp, "WRITE ");
@@ -757,7 +757,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		ASSERT(sym);
 		
 		if(strcmp(sym->name, "read") == 0) {
-			InterCodes *code1 = newIC(IC_READ, NULL, place, NULL);
+			InterCodes *code1 = newIC(IC_READ, place, NULL, NULL);
 			codes = code1;
 		}
 		else {
