@@ -1,41 +1,41 @@
 FUNCTION fact :
 PARAM n
-t258 := n
-t259 := #1
-IF t258 == t259 GOTO label31
-GOTO label32
-LABEL label31 :
-t260 := n
-RETURN t260
-GOTO label33
-LABEL label32 :
-t262 := n
-t265 := n
-t266 := #1
-t264 := t265 - t266
-ARG t264
-t263 := CALL fact
-t261 := t262 * t263
-RETURN t261
-LABEL label33 :
+t1 := n
+t2 := #1
+IF t1 == t2 GOTO label1
+GOTO label2
+LABEL label1 :
+t3 := n
+RETURN t3
+GOTO label3
+LABEL label2 :
+t5 := n
+t8 := n
+t9 := #1
+t7 := t8 - t9
+ARG t7
+t6 := CALL fact
+t4 := t5 * t6
+RETURN t4
+LABEL label3 :
 FUNCTION main :
-READ t267
-m := t267
-t268 := m
-t269 := #1
-IF t268 > t269 GOTO label34
-GOTO label35
-LABEL label34 :
-t271 := m
-ARG t271
-t270 := CALL fact
-result := t270
-GOTO label36
-LABEL label35 :
-t272 := #1
-result := t272
-LABEL label36 :
-t273 := result
-WRITE t273
-t274 := #0
-RETURN t274
+READ t10
+m := t10
+t11 := m
+t12 := #1
+IF t11 > t12 GOTO label4
+GOTO label5
+LABEL label4 :
+t14 := m
+ARG t14
+t13 := CALL fact
+result := t13
+GOTO label6
+LABEL label5 :
+t15 := #1
+result := t15
+LABEL label6 :
+t16 := result
+WRITE t16
+t17 := #0
+RETURN t17

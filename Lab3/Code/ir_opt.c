@@ -90,7 +90,7 @@ void removeSign(DAGNode node, Operand op)
 {
 	int i;
 	for(i=0; i < node->signSize; i++) {
-		if(compareOperand(op, node->signList[i]) == 0) {
+		if(compareOperand(op, node->signList[i]) == TRUE) {
 			int j;
 			for(j=i; j < node->signSize-1; j++) {
 				node->signList[j] = node->signList[i+1];
@@ -218,6 +218,13 @@ InterCodes *DAG2ir()
 		DAGNode node = nodeMap[i];
 		if(node->isLeaf) {
 			node->activeSign = node->op;
+			for(j=0; j < node->signSize; j++) {
+				Operand sign = node->signList[j];
+				if(sign->kind == VARIABLE) {
+					InterCodes *code = newIC(IC_ASSIGN, sign, node->op, NULL);
+					ADD_TAIL(head, code);
+				}
+			}
 			continue;
 		}
 		int cnt = 0;
@@ -278,7 +285,9 @@ InterCodes *opt_block(InterCodes *start, InterCodes *end)
 		//printMap();
 	}	
 	
+	printf("\n");
 	printMap();
+	printf("\n");
 
 	head = DAG2ir();
 	printInterCodes(head, stdout);
@@ -289,22 +298,44 @@ InterCodes *opt_block(InterCodes *start, InterCodes *end)
 InterCodes *opt_ir(InterCodes *head)
 {
 	int cnt = 0;
-	InterCodes* start, *end, *p;
+	InterCodes* start, *end, *p, *opt_codes, *block;
 	p = head;
+	opt_codes = block = NULL;
 
 	for(; p; p = p->next) {
 		switch(p->code.kind) {
 			case IC_FUNCTION:
-				/*block start*/
-				start = p;
-				cnt = 1;
-				break;
-			case IC_RETURN:
-				/*block end*/
-				end = p;	
-				if(cnt > 2) {
-					opt_block(start, end);
+			case IC_LABEL:
+				if(cnt == 0) {
+					start = p;
+					cnt ++;
 				}
+				else {
+					end = p->prev;
+					block = opt_block(start, end);
+					ADD_TAIL(opt_codes, block);
+
+					cnt = 1;
+					start = p;
+				}
+				break;
+			case IC_GOTO:
+			case IC_JL:
+			case IC_JG:
+			case IC_JGE:	 
+			case IC_JLE:
+			case IC_JE:
+			case IC_JNE:
+			case IC_RETURN:
+				/*block start*/
+				cnt++;
+				ASSERT(cnt > 0);
+				end = p;	
+				block = opt_block(start, end);
+				ADD_TAIL(opt_codes, block);
+				cnt = 0;
+				start = end->next;
+				//end = NULL;
 				break;
 			case IC_ADD:
 			case IC_SUB:
@@ -313,16 +344,8 @@ InterCodes *opt_ir(InterCodes *head)
 			case IC_ASSIGN:
 			case IC_DEC:
 			case IC_PARAM:
-			case IC_LABEL:
-			case IC_GOTO:
 			case IC_CALL:
 			case IC_ARG:
-			case IC_JL:
-			case IC_JG:
-			case IC_JGE:	 
-			case IC_JLE:
-			case IC_JE:
-			case IC_JNE:
 			case IC_READ:
 			case IC_WRITE:
 			case IC_REF:
@@ -334,9 +357,12 @@ InterCodes *opt_ir(InterCodes *head)
 			//default:
 				
 		}
-	
-	
 	}
+
+	printf("\n");
+	printInterCodes(opt_codes, stdout);
+	
+	return opt_codes;
 }
 
 
