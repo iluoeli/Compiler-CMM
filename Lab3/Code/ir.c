@@ -20,6 +20,18 @@ void delInterCodes(InterCodes *code)
 	ASSERT(0);
 }
 
+InterCodes *copyInterCodes(InterCodes *start, InterCodes *end)
+{
+	InterCodes *head = NULL, *p;		
+	for(p=start; p && p->prev != end; p=p->next) {
+		InterCodes *q = newIC(p->code.kind, p->code.binop.rlt
+				, p->code.binop.op1, p->code.binop.op2);
+		ADD_TAIL(head, q);
+	}
+
+	return head;
+}
+
 void clearInterCodes(InterCodes *codes)
 {
 	while(codes) {

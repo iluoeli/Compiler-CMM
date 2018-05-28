@@ -217,14 +217,17 @@ InterCodes *DAG2ir()
 	for(i=0; i < curSize; i++) {
 		DAGNode node = nodeMap[i];
 		if(node->isLeaf) {
-			node->activeSign = node->op;
 			for(j=0; j < node->signSize; j++) {
 				Operand sign = node->signList[j];
 				if(sign->kind == VARIABLE) {
+					if(!node->activeSign)
+						node->activeSign = sign;
 					InterCodes *code = newIC(IC_ASSIGN, sign, node->op, NULL);
 					ADD_TAIL(head, code);
 				}
 			}
+			if(!node->activeSign)
+				node->activeSign = node->op;
 			continue;
 		}
 		int cnt = 0;
@@ -281,8 +284,16 @@ InterCodes *opt_block(InterCodes *start, InterCodes *end)
 
 	clearMap();
 	for(; p && p->prev != end; p=p->next) {
-		insertTuple(&p->code);
-		//printMap();
+		/*NOTE: *q := y killed all the other nodes*/
+		if(IC_ASSIGN <= p->code.kind && p->code.kind <= IC_DIV
+			&& p->code.binop.rlt->kind == DEREF) {
+			head = copyInterCodes(start, end);	
+			return head;
+		}		
+		else {
+			insertTuple(&p->code);
+			//printMap();
+		}
 	}	
 	
 	printf("\n");

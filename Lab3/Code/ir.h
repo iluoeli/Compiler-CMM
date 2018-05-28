@@ -63,6 +63,7 @@ typedef struct InterCodes InterCodes;
 
 InterCodes *addTail(InterCodes *head1, InterCodes *head2);
 #define ADD_TAIL(head1, head2) head1 = addTail(head1, head2)
+InterCodes *copyInterCodes(InterCodes *start, InterCodes *end);
 
 int newParm();
 int newArg();
