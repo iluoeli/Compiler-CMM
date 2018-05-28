@@ -4,7 +4,7 @@ int main()
 	int b;
 
 	b = a + 1;
-	a = b + 1;
+	a = b + 2;
 
 	return 0;
 }

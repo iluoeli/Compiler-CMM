@@ -4,6 +4,15 @@
 DAGNode nodeMap[MAP_SIZE];
 int curSize = 0;
 
+void clearMap()
+{
+	int i;
+	for(i=0; i < curSize; i++) {
+		free(nodeMap[i]);
+		nodeMap[i] = NULL;
+	}
+	curSize = 0;
+}
 
 BOOL compareDAGNode(DAGNode node1, DAGNode node2)
 {
@@ -130,7 +139,7 @@ DAGNode insertNode(Operand op, BOOL isWrite)
 
 
 
-void insertTuple3(InterCode *code)
+void insertTuple(InterCode *code)
 {
 	/*
 	 *z = x op y
@@ -190,68 +199,88 @@ InterCodes *DAG2ir()
 	int i, j;
 	for(i=0; i < curSize; i++) {
 		DAGNode node = nodeMap[i];
-		if(nodeMap[i]->isLeaf)
+		if(node->isLeaf) {
+			node->activeSign = node->op;
 			continue;
+		}
 		int cnt = 0;
 		for(j=0; j < node->signSize; j++) {
 			Operand sign = node->signList[j];
 			/*NOTE: every inner node must be related to a variable*/
 			if(sign->kind == VARIABLE) {
 				if(cnt > 0) {
-					InterCodes *code = newIC(IC_ASSIGN, sign, node->activeNode, NULL);
+					InterCodes *code = newIC(IC_ASSIGN, sign, node->activeSign, NULL);
 					ADD_TAIL(head, code);
 				}
 				else {
-					Operand left=NULL, right=NULL;
-					if(node->left) {
-						if(node->left->isLeaf) {
-							left = node->left->op;
-						}
-						else {
-							left = node->left->activeNode;	 
-						}
-					}
-					if(node->right) {
-						if(node->right->isLeaf) {
-							right = node->right->op;
-						}
-						else {
-							right = node->right->activeNode;	 
-						}
-					}
+					Operand left, right=NULL;
+					left = (node->left) ? node->left->activeSign: NULL;	 
+					right = (node->right) ? node->right->activeSign: NULL;	 
+
 					InterCodes *code = newIC(node->kind, sign, left, right);
 					ADD_TAIL(head, code);
-					node->activeNode = sign;
+					node->activeSign = sign;
 				}
 				cnt ++;
 			}
 		}
 		if(cnt == 0 && node->signSize > 0) {
+			LOG("activeSign is a tmp");
+				
 			ASSERT(0);	
 		}
 	}
+	//printInterCodes(head, stdout);
+	return head;
+}
+
+InterCodes *opt_block(InterCodes *start, InterCodes *end)
+{
+	InterCodes *p = start;
+	InterCodes *head = NULL;
+
+	clearMap();
+	for(; p && p->prev != end; p=p->next) {
+		insertTuple(&p->code);
+		//printMap();
+	}	
+	
+	printMap();
+
+	head = DAG2ir();
 	printInterCodes(head, stdout);
+
 	return head;
 }
 
 InterCodes *opt_ir(InterCodes *head)
 {
-	InterCodes* start = head, *end;
+	int cnt = 0;
+	InterCodes* start, *end, *p;
+	p = head;
 
-	for(; start; start=start->next) {
-		switch(start->code.kind) {
-			/*tuple3*/
+	for(; p; p = p->next) {
+		switch(p->code.kind) {
+			case IC_FUNCTION:
+				/*block start*/
+				start = p;
+				cnt = 1;
+				break;
+			case IC_RETURN:
+				/*block end*/
+				end = p;	
+				if(cnt > 2) {
+					opt_block(start, end);
+				}
+				break;
 			case IC_ADD:
 			case IC_SUB:
 			case IC_MUL:
 			case IC_DIV:
-			/*tuple2*/
 			case IC_ASSIGN:
 			case IC_DEC:
-			case IC_FUNCTION:
 			case IC_PARAM:
 			case IC_LABEL:
-			case IC_RETURN:
 			case IC_GOTO:
 			case IC_CALL:
 			case IC_ARG:
@@ -261,21 +290,20 @@ InterCodes *opt_ir(InterCodes *head)
 			case IC_JLE:
 			case IC_JE:
 			case IC_JNE:
-			
 			case IC_READ:
 			case IC_WRITE:
 			case IC_REF:
 			case IC_DEREF:
-				insertTuple3(&start->code);
-				printMap();
-				printf("\n\n");
+				cnt ++;
+				//insertTuple(&start->code);
+				//printMap();
+				//printf("\n\n");
 			//default:
 				
 		}
 	
 	
 	}
-	DAG2ir();
 }
 
 
@@ -288,11 +316,11 @@ void printMap()
 			printOperand(nodeMap[i]->op, stdout);
 		}
 		else
-			printf("%d", (int)nodeMap[i]->kind);
+			printf("NODE %d", (int)nodeMap[i]->kind);
 		printf(": ");
 		for(j=0; j < nodeMap[i]->signSize; j++) {
 			printOperand(nodeMap[i]->signList[j], stdout);
-			printf(",");
+			printf(" ");
 		}
 		printf("\n");
 	}

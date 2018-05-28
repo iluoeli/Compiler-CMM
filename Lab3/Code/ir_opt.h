@@ -16,7 +16,7 @@ struct DAGNode_
 	int signSize;
 	Operand op;			//leaf use
 	DAGNode left, right;
-	Operand activeNode;	//variable or first tmp
+	Operand activeSign;	//variable or first tmp
 };
 
 BOOL compareDAGNode(DAGNode node1, DAGNode node2);

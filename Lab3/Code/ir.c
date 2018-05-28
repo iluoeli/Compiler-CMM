@@ -103,7 +103,7 @@ void printOperand(Operand op, FILE *fp)
 int printInterCodes(InterCodes *codes, FILE *fp)
 {
 	if(codes == NULL) {
-		printf("null\n");
+		printf("null ic\n");
 		return 0;
 	}
 	
@@ -320,6 +320,7 @@ int compareOperand(Operand op1, Operand op2)
 {
 	if(op1 == op2)	return TRUE;
 	else if(op1 == NULL || op2 == NULL)	return FALSE;
+	/*NOTE: 语法数中，不同地方的相同变量名内存地址不一样*/
 	else if(op1->kind == VARIABLE && op1->kind == op2->kind && safe_strcmp(op1->name, op2->name)==0)
 		return TRUE;
 	else if(op1->kind == op2->kind && op1->value == op2->value)
