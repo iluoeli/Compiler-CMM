@@ -1,8 +1,6 @@
 FUNCTION add :
 PARAM temp
-t5 := temp + #0
-t7 := temp + #0
-t1 := *t5 + *t7
+t1 := *temp + *temp
 RETURN t1
 FUNCTION main :
 DEC t8 144

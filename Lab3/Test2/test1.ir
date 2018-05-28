@@ -9,8 +9,7 @@ LABEL label2 :
 IF n < #0 GOTO label4
 GOTO label5
 LABEL label4 :
-t7 := #0 - #1
-WRITE t7
+WRITE #1
 GOTO label6
 LABEL label5 :
 WRITE #0

@@ -8,7 +8,7 @@ struct Operands
 
 int add(struct Operands temp)
 {
-	return (temp.o1 + temp.o1);
+	return (temp.o1 + temp.o2);
 }
 
 int main()

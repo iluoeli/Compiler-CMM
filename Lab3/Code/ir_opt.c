@@ -218,6 +218,17 @@ void insertTuple(InterCode *code)
 	}
 }
 
+void fixRefAndDeref(Operand op) 
+{
+	if(!op)	return;
+	if(op->kind == DEREF || op->kind == REF) {
+		DAGNode node = findSign(op->op);
+		if(!node)	node = findLeaf(op->op);
+		ASSERT(node);
+		op->op = node->activeSign;
+	}
+
+}
 
 InterCodes *DAG2ir()
 {
@@ -235,8 +246,10 @@ InterCodes *DAG2ir()
 					ADD_TAIL(head, code);
 				}
 			}
-			if(!node->activeSign)
+			if(!node->activeSign) {
+				fixRefAndDeref(node->op);
 				node->activeSign = node->op;
+			}
 			continue;
 		}
 		int cnt = 0;
@@ -350,7 +363,7 @@ InterCodes *opt_ir(InterCodes *head)
 				cnt = 0;
 				start = end->next;
 				break;
-	/*	
+		
 			case IC_ADD:
 				if(p->code.binop.op1->kind == CONSTANT 
 					&& p->code.binop.op1->value == 0) {
@@ -384,7 +397,7 @@ InterCodes *opt_ir(InterCodes *head)
 			case IC_CALL:	case IC_ARG:
 			case IC_READ:	case IC_WRITE:
 			case IC_REF:	case IC_DEREF:
-	*/
+	
 			default:
 				cnt ++;
 		}
