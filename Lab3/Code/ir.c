@@ -70,7 +70,7 @@ Operand newLabel()
 void printOperand(Operand op, FILE *fp)
 {
 	if(!op) {
-		printf("null op\n");
+		printf("null op");
 		return ;
 	}
 
@@ -318,12 +318,14 @@ IC_TYPE getRelop(TreeNode *relop)
 
 int compareOperand(Operand op1, Operand op2)
 {
-	if(op1 == op2)	return 1;
-	else if(op1 == NULL || op2 == NULL)	return 0;
+	if(op1 == op2)	return TRUE;
+	else if(op1 == NULL || op2 == NULL)	return FALSE;
+	else if(op1->kind == VARIABLE && op1->kind == op2->kind && safe_strcmp(op1->name, op2->name)==0)
+		return TRUE;
 	else if(op1->kind == op2->kind && op1->value == op2->value)
-		return 1;
+		return TRUE;
 	
-	return 0;
+	return FALSE;
 }
 
 InterCodes *generate_ir(TreeNode *root, FILE *fp)

@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 				codes = generate_ir(root, fp);
 				test_ir(codes);
 				printInterCodes(codes, fp);
+				opt_ir(codes);
 				fclose(fp);
 			}
 

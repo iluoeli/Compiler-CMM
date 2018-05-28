@@ -27,7 +27,7 @@ struct ArgList_ {
 };
 
 typedef enum {
-	IC_ASSIGN, IC_ADD,
+	IC_ASSIGN=1, IC_ADD,
 	IC_SUB,	IC_MUL,
 	IC_DIV,
 

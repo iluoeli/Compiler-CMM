@@ -12,7 +12,7 @@ struct DAGNode_
 {
 	BOOL isLeaf;
 	IC_TYPE kind;		
-	DAGNode signList[SIGN_SIZE];
+	Operand signList[SIGN_SIZE];
 	int signSize;
 	Operand op;
 	DAGNode left, right;
@@ -21,5 +21,6 @@ struct DAGNode_
 BOOL compareDAGNode(DAGNode node1, DAGNode node2);
 
 void printMap();
+InterCodes *opt_ir(InterCodes *head);
 
 #endif
