@@ -14,15 +14,6 @@ void clearMap()
 	curSize = 0;
 }
 
-BOOL compareDAGNode(DAGNode node1, DAGNode node2)
-{
-	if(node1 == node2)	return TRUE;
-	else if(!node1 || !node2)	return FALSE;
-	//else if(node1->kind)
-
-	return FALSE;
-}
-
 BOOL existSign(DAGNode node, Operand op)
 {
 	if(node == NULL)	return FALSE;
@@ -44,16 +35,10 @@ DAGNode findSign(Operand target)
 			op = nodeMap[i]->signList[j];
 			//ASSERT(nodeMap[i]->signList[j]->isLeaf);
 			if(compareOperand(target, op) == TRUE) {
-				//if(!node->isLeaf) continue;
 				return nodeMap[i];
 			}
 		}
 	}
-	/*
-	printf("not find sign: ");
-	printOperand(target, stdout);
-	printf("\n");
-	*/
 	return NULL;
 }
 
@@ -64,11 +49,6 @@ DAGNode findLeaf(Operand target)
 		if(nodeMap[i]->isLeaf && compareOperand(target, nodeMap[i]->op) == TRUE)
 			return nodeMap[i];
 	}
-	/*
-	printf("not find leaf: ");
-	printOperand(target, stdout);
-	printf("\n");
-	*/
 	return NULL;
 }
 
@@ -101,40 +81,17 @@ void removeSign(DAGNode node, Operand op)
 	}
 }
 
-DAGNode createDAGNode(Operand op, BOOL isWrite)
+DAGNode insertLeaf(Operand op)
 {
 	DAGNode node = malloc(sizeof(struct DAGNode_));	
 	memset(node, 0, sizeof(struct DAGNode_));
+	node->isLeaf = TRUE;	
+	node->op = op;
 
-	/*op is written*/
-	if(!isWrite) {
-		node->isLeaf = TRUE;	
-		node->op = op;
-	}
-	else {
-		ASSERT(0);
-	}
-	
 	nodeMap[curSize++] = node; 
-
-	return node;
-}
-
-DAGNode insertNode(Operand op, BOOL isWrite)
-{
-	//LOG("insertNode");
-	DAGNode node = NULL;
-	if(!isWrite) {
-		node = createDAGNode(op, isWrite);
-	}
-	else {
-		ASSERT(0);
-	}
 	
 	return node;
 }
-
-
 
 void insertTuple(InterCode *code)
 {
@@ -144,30 +101,12 @@ void insertTuple(InterCode *code)
 	DAGNode nodex, nodey, nodez, nodeop;
 	nodex = nodey = nodez = nodeop = NULL;
 	
-	/*handle special case*/
-	/*	
-	if(IC_ADD <= code->kind <= IC_DIV && code->binop.op1->kind == CONSTANT
-		&& code->binop.op2->kind == CONSTANT) {
-		int rlt;
-		if(code->kind == IC_ADD) 
-			rlt = code->binop.op1->value + code->binop.op2->value;
-		else if(code->kind == IC_SUB) 
-			rlt = code->binop.op1->value - code->binop.op2->value;
-		else if(code->kind == IC_MUL) 
-			rlt = code->binop.op1->value * code->binop.op2->value;
-		else
-			rlt = code->binop.op1->value / code->binop.op2->value;
-		Operand op = NEW_OP(CONSTANT, rlt);
-		InterCodes *new_code = newIC(IC_ASSIGN, code->binop.rlt, op, NULL);
-		code = &new_code->code;
-	}
-	*/
 	
 	/*首先在DAGNode的关联符号中寻找*/
 	if(!(nodex=findSign(code->binop.op1))) {
 		/*在叶子节点中找*/
 		if(!(nodex=findLeaf(code->binop.op1))) {
-			nodex = insertNode(code->binop.op1, FALSE);	
+			nodex = insertLeaf(code->binop.op1);	
 		}		
 	}
 	ASSERT(nodex != NULL);
@@ -175,7 +114,7 @@ void insertTuple(InterCode *code)
 	if(code->binop.op2 != NULL) {
 		if(!(nodey=findSign(code->binop.op2))) {
 			if(!(nodey=findLeaf(code->binop.op2))) {
-				nodey = insertNode(code->binop.op2, FALSE);	
+				nodey = insertLeaf(code->binop.op2);	
 			}		
 		}
 	}
@@ -363,41 +302,13 @@ InterCodes *opt_ir(InterCodes *head)
 				cnt = 0;
 				start = end->next;
 				break;
-		
-			case IC_ADD:
-				if(p->code.binop.op1->kind == CONSTANT 
-					&& p->code.binop.op1->value == 0) {
-					p->code.kind = IC_ASSIGN;
-					p->code.binop.op1 = p->code.binop.op2;
-				}	
-				else if(p->code.binop.op2->kind == CONSTANT 
-					&& p->code.binop.op2->value == 0) {
-					p->code.kind = IC_ASSIGN;
-				}	
-				cnt ++;
-				break;
-			case IC_SUB:
-				if(p->code.binop.op1->kind == CONSTANT 
-					&& p->code.binop.op1->value == 0) {
-					p->code.kind = IC_ASSIGN;
-					p->code.binop.op2->value = -p->code.binop.op2->value;
-					p->code.binop.op1 = p->code.binop.op2;
-				}	
-				else if(p->code.binop.op2->kind == CONSTANT 
-					&& p->code.binop.op2->value == 0) {
-					p->code.kind = IC_ASSIGN;
-				}	
-				cnt ++;
-				break;
-			case IC_MUL:
-			case IC_DIV:
-
 			case IC_ASSIGN:
+			case IC_ADD:	case IC_SUB:
+			case IC_MUL:	case IC_DIV:
 			case IC_DEC:	case IC_PARAM:
 			case IC_CALL:	case IC_ARG:
 			case IC_READ:	case IC_WRITE:
 			case IC_REF:	case IC_DEREF:
-	
 			default:
 				cnt ++;
 		}

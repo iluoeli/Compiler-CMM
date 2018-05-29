@@ -19,8 +19,6 @@ struct DAGNode_
 	Operand activeSign;	//variable or first tmp
 };
 
-BOOL compareDAGNode(DAGNode node1, DAGNode node2);
-
 void printMap();
 InterCodes *opt_ir(InterCodes *head);
 
