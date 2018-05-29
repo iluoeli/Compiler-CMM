@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 			}
 			*/
 			FILE *output_fp= fopen(argv[2], "w");
-			f(!output_fp) {
+			if(!output_fp) {
 				perror(argv[2]);
 				return 1;
 			}
