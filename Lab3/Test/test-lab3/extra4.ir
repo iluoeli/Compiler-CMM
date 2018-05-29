@@ -1,22 +1,15 @@
 FUNCTION add :
 PARAM temp
-t4 := temp
-t5 := t4 + #0
-t6 := temp
-t7 := t6 + #0
-t1 := *t5 + *t7
+t7 := temp + #4
+t1 := *temp + *t7
 RETURN t1
 FUNCTION main :
 DEC t8 144
 op := &t8
-t9 := #1
-i := t9
-t10 := #0
-n := t10
+i := #1
+n := #0
 LABEL label1 :
-t11 := i
-t12 := #10
-IF t11 < t12 GOTO label2
+IF i < #10 GOTO label2
 GOTO label3
 LABEL label2 :
 t16 := op
@@ -36,29 +29,17 @@ i := t23
 GOTO label1
 LABEL label3 :
 LABEL label4 :
-t26 := i
-t27 := #0
-IF t26 >= t27 GOTO label5
+IF i >= #0 GOTO label5
 GOTO label6
 LABEL label5 :
-t29 := i
-t30 := #1
-t28 := t29 - t30
-i := t28
-t32 := n
-t36 := op
-t37 := #2
-t38 := #48 * t37
-t35 := t36 + t38
+i := i - #1
+t38 := #48 * #2
+t35 := op + t38
 t34 := t35 + #8
-t39 := i
-t40 := #4 * t39
+t40 := #4 * i
 t41 := t34 + t40
-t31 := t32 + *t41
-n := t31
+n := n + *t41
 GOTO label4
 LABEL label6 :
-t42 := n
-WRITE t42
-t43 := #0
-RETURN t43
+WRITE n
+RETURN #0

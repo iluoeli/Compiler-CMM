@@ -1,4 +1,0 @@
-FUNCTION main :
-b := a + #1
-a := b + #2
-RETURN #0

@@ -17,14 +17,9 @@ void yyparse();
 int main(int argc, char **argv)
 {
 	int i;
-	if (argc >= 3) {
+	if (argc >= 2) {
 		FILE *input_fp= fopen(argv[1], "r");
-		FILE *output_fp= fopen(argv[2], "w");
 		if(!input_fp) {
-			perror(argv[1]);
-			return 1;
-		}
-		if(!output_fp) {
 			perror(argv[1]);
 			return 1;
 		}
@@ -46,10 +41,10 @@ int main(int argc, char **argv)
 		sematicCheck(root);
 		//printTable();
 		
-		if(!nError) {
+		if(!nError && argc >= 3) {
 			codes = generate_ir(root);
 			test_ir(codes);
-
+/*
 			char fileName[128];
 			strcpy(fileName, argv[i]);
 			strcat(fileName, ".ir");
@@ -57,6 +52,18 @@ int main(int argc, char **argv)
 			ASSERT(fp);
 			printInterCodes(codes, fp);
 			fclose(fp);
+*/
+			/*
+			if(argc < 3) {
+				printf("./parser <input_file> <output_file>\n");
+				return 1;
+			}
+			*/
+			FILE *output_fp= fopen(argv[2], "w");
+			if(!output_fp) {
+				perror(argv[2]);
+				return 1;
+			}
 
 			opt_codes = opt_ir(codes);
 			printInterCodes(opt_codes, output_fp);
