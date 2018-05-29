@@ -64,9 +64,12 @@ int main(int argc, char **argv)
 				perror(argv[2]);
 				return 1;
 			}
-
+#ifdef OPTIMIZE_IR
 			opt_codes = opt_ir(codes);
 			printInterCodes(opt_codes, output_fp);
+#else
+			printInterCodes(codes, output_fp);
+#endif
 			fclose(output_fp);
 			clearInterCodes(codes);
 			clearInterCodes(opt_codes);

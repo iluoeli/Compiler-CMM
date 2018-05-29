@@ -28,6 +28,7 @@ BOOL existSign(DAGNode node, Operand op)
 
 DAGNode findSign(Operand target)
 {
+	if(target == NULL)	return NULL;
 	int i, j;
 	Operand op;
 	for(i=0; i < curSize; i++) {
@@ -44,6 +45,7 @@ DAGNode findSign(Operand target)
 
 DAGNode findLeaf(Operand target) 
 {
+	if(target == NULL)	return NULL;
 	int i;
 	for(i=0; i < curSize; i++) {
 		if(nodeMap[i]->isLeaf && compareOperand(target, nodeMap[i]->op) == TRUE)
@@ -102,14 +104,16 @@ void insertTuple(InterCode *code)
 	nodex = nodey = nodez = nodeop = NULL;
 	
 	
-	/*首先在DAGNode的关联符号中寻找*/
-	if(!(nodex=findSign(code->binop.op1))) {
-		/*在叶子节点中找*/
-		if(!(nodex=findLeaf(code->binop.op1))) {
-			nodex = insertLeaf(code->binop.op1);	
-		}		
+	if(code->binop.op1 != NULL) {
+		/*首先在DAGNode的关联符号中寻找*/
+		if(!(nodex=findSign(code->binop.op1))) {
+			/*在叶子节点中找*/
+			if(!(nodex=findLeaf(code->binop.op1))) {
+				nodex = insertLeaf(code->binop.op1);	
+			}		
+		}
+		ASSERT(nodex != NULL);
 	}
-	ASSERT(nodex != NULL);
 
 	if(code->binop.op2 != NULL) {
 		if(!(nodey=findSign(code->binop.op2))) {

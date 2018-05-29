@@ -12,6 +12,7 @@
 #include "test.h"
 #include "ir_opt.h"
 
+#define OPTIMIZE_IR 1
 
 /*
 enum BOOL {
