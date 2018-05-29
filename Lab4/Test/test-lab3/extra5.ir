@@ -1,0 +1,57 @@
+FUNCTION main :
+DEC t1 24
+arr := &t1
+i := #0
+j := #0
+n := #0
+LABEL label1 :
+IF i < #2 GOTO label2
+GOTO label3
+LABEL label2 :
+j := #0
+LABEL label4 :
+IF j < #3 GOTO label5
+GOTO label6
+LABEL label5 :
+t12 := arr
+t13 := i
+t14 := #12 * t13
+t11 := t12 + t14
+t15 := j
+t16 := #4 * t15
+t17 := t11 + t16
+t18 := j
+*t17 := t18
+t20 := j
+t21 := #1
+t19 := t20 + t21
+j := t19
+GOTO label4
+LABEL label6 :
+i := i + #1
+GOTO label1
+LABEL label3 :
+i := #0
+j := #0
+LABEL label7 :
+IF i < #2 GOTO label8
+GOTO label9
+LABEL label8 :
+j := #0
+LABEL label10 :
+IF j < #3 GOTO label11
+GOTO label12
+LABEL label11 :
+t38 := #12 * i
+t35 := arr + t38
+t40 := #4 * j
+t41 := t35 + t40
+n := n + *t41
+j := j + #1
+GOTO label10
+LABEL label12 :
+i := i + #1
+GOTO label7
+LABEL label9 :
+WRITE n
+RETURN #0
