@@ -189,49 +189,48 @@ InterCodes *DAG2ir()
 				fixRefAndDeref(node->op);
 				node->activeSign = node->op;
 			}
-			continue;
 		}
-		int cnt = 0;
-		for(j=0; j < node->signSize; j++) {
-			Operand sign = node->signList[j];
-			/*NOTE: every inner node must be related to a variable*/
-			if(sign->kind == VARIABLE) {
-				if(cnt > 0) {
-					InterCodes *code = newIC(IC_ASSIGN, sign, node->activeSign, NULL);
-					ADD_TAIL(head, code);
-				}
-				else {
-					Operand left, right;
-					left = (node->left) ? node->left->activeSign: NULL;	 
-					right = (node->right) ? node->right->activeSign: NULL;	 
+		else {
+			for(j=0; j < node->signSize; j++) {
+				Operand sign = node->signList[j];
+				/*NOTE: every inner node must be related to a variable*/
+				if(sign->kind == VARIABLE) {
+					if(node->activeSign) {
+						InterCodes *code = newIC(IC_ASSIGN, sign, node->activeSign, NULL);
+						ADD_TAIL(head, code);
+					}
+					else {
+						Operand left, right;
+						left = (node->left) ? node->left->activeSign: NULL;	 
+						right = (node->right) ? node->right->activeSign: NULL;	 
 
-					InterCodes *code = newIC(node->kind, sign, left, right);
-					ADD_TAIL(head, code);
-					node->activeSign = sign;
+						InterCodes *code = newIC(node->kind, sign, left, right);
+						ADD_TAIL(head, code);
+						node->activeSign = sign;
+					}
 				}
-				cnt ++;
 			}
-		}
-		if(cnt == 0 && node->signSize > 0) {
-			//LOG("activeSign is a tmp");
-			Operand left, right;
-			left = (node->left) ? node->left->activeSign: NULL;	 
-			right = (node->right) ? node->right->activeSign: NULL;	 
-			node->activeSign = node->signList[0];
+			if(!node->activeSign && node->signSize > 0) {
+				//LOG("activeSign is a tmp");
+				Operand left, right;
+				left = (node->left) ? node->left->activeSign: NULL;	 
+				right = (node->right) ? node->right->activeSign: NULL;	 
+				node->activeSign = node->signList[0];
 
-			InterCodes *code = newIC(node->kind, node->activeSign, left, right);
-			ADD_TAIL(head, code);
-			//ASSERT(0);	
-		}
-		else if(node->signSize == 0) {
-			/*IC_FUNCTION, IC_PARAM e.t.*/
-			Operand left, right;
-			left = (node->left) ? node->left->activeSign: NULL;	 
-			right = (node->right) ? node->right->activeSign: NULL;	 
-			//node->activeSign = node->signList[0];
+				InterCodes *code = newIC(node->kind, node->activeSign, left, right);
+				ADD_TAIL(head, code);
+				//ASSERT(0);	
+			}
+			else if(node->signSize == 0) {
+				/*IC_FUNCTION, IC_PARAM e.t.*/
+				Operand left, right;
+				left = (node->left) ? node->left->activeSign: NULL;	 
+				right = (node->right) ? node->right->activeSign: NULL;	 
+				//node->activeSign = node->signList[0];
 
-			InterCodes *code = newIC(node->kind, node->activeSign, left, right);
-			ADD_TAIL(head, code);
+				InterCodes *code = newIC(node->kind, node->activeSign, left, right);
+				ADD_TAIL(head, code);
+			}
 		}
 	}
 	//printInterCodes(head, stdout);
@@ -314,8 +313,8 @@ InterCodes *opt_ir(InterCodes *head)
 		}
 	}
 
-	printf("\n");
-	printInterCodes(opt_codes, stdout);
+	//printf("\n");
+	//printInterCodes(opt_codes, stdout);
 	
 	return opt_codes;
 }

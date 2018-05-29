@@ -940,7 +940,7 @@ InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 	else if(first->childs[1]->nType == T_Lb){
 		/*TODO: implement 3.2*/
 		printf("Cannot translate: Code contains variable of multi-dimensional array type or parameters of array type.");
-		//ASSERT(0);
+		ASSERT(0);
 	
 		Type type = NULL;
 		stAddr = newTemp();
