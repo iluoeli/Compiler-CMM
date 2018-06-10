@@ -11,14 +11,9 @@
 #include "ir.h"
 #include "test.h"
 #include "ir_opt.h"
+#include "mips.h"
 
 #define OPTIMIZE_IR 1
-
-/*
-enum BOOL {
-	FALSE, TRUE
-};
-*/
 
 #define NEW_OP(type, ptr)	newOp(type, (void *)ptr)
 

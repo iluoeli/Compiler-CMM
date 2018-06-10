@@ -43,6 +43,7 @@ int main(int argc, char **argv)
 		
 		if(!nError && argc >= 3) {
 			codes = generate_ir(root);
+			//printInterCodes(codes, NULL);
 			test_ir(codes);
 /*
 			char fileName[128];
@@ -70,6 +71,12 @@ int main(int argc, char **argv)
 #else
 			printInterCodes(codes, output_fp);
 #endif
+
+			printInterCodes(opt_codes, NULL);
+			printf("\n\n");
+			generate_mips(opt_codes);
+
+
 			fclose(output_fp);
 			clearInterCodes(codes);
 			clearInterCodes(opt_codes);
