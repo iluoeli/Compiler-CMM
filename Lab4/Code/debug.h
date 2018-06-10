@@ -1,11 +1,13 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-
+#define DEBUG_MODE 
 #define EN_PRINT_TREE 0
 #define SEMATIC_DEBUG 1
 #define EN_ASSERT 1
 #define IR_DEBUG 1
+
+#define LAB_STAGE 4
 
 
 #if SEMATIC_DEBUG
@@ -30,5 +32,6 @@
 
 #define PRINT_ERROR(errType, lineno, ptr)	\
 	printf("Error type %d at Line %d: %s\n", errType, lineno, ptr)
+
 
 #endif

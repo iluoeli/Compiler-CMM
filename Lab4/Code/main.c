@@ -10,6 +10,8 @@ extern struct TreeNode *root;
 extern int nError;
 InterCodes *codes = NULL;
 InterCodes *opt_codes = NULL;
+FILE *mips_out = NULL;
+FILE *ir_out = NULL;
 void yyrestart(FILE *);
 void yyparse();
 
@@ -60,24 +62,37 @@ int main(int argc, char **argv)
 				return 1;
 			}
 			*/
-			FILE *output_fp= fopen(argv[2], "w");
-			if(!output_fp) {
+
+			FILE *fp = fopen(argv[2], "w");
+			if(!fp) {
 				perror(argv[2]);
 				return 1;
 			}
-#ifdef OPTIMIZE_IR
-			opt_codes = opt_ir(codes);
-			printInterCodes(opt_codes, output_fp);
+
+#if LAB_STAGE == 3
+			ir_out = fp;
 #else
-			printInterCodes(codes, output_fp);
+			ir_out = stdout;
 #endif
 
-			printInterCodes(opt_codes, NULL);
+#ifdef OPTIMIZE_IR
+			opt_codes = opt_ir(codes);
+			printInterCodes(opt_codes, ir_out);
+#else
+			printInterCodes(codes, ir_out);
+#endif
+
+			//printInterCodes(opt_codes, NULL);
 			printf("\n\n");
+
+#if LAB_STAGE == 4
+			mips_out = fp;
 			generate_mips(opt_codes);
+#endif
 
-
-			fclose(output_fp);
+			fclose(fp);
+			ir_out = NULL;
+			mips_out = NULL;
 			clearInterCodes(codes);
 			clearInterCodes(opt_codes);
 		}

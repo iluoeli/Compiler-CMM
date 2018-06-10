@@ -1,7 +1,16 @@
 #include "common.h"
 
-
+extern FILE *mips_out;
 CPURegs cpu;
+
+void printMips(char *format, ...)
+{
+	va_list varList;
+	va_start(varList, format);
+	vfprintf(mips_out, format, varList);
+	va_end(varList);
+	fprintf(mips_out, "\n");
+}
 
 void initRegs()
 {
@@ -37,7 +46,7 @@ Reg *get_reg(Operand op)
 		cpu.t[i].available = FALSE;
 
 		if(op->kind == CONSTANT) {
-			fprintf(stdout, "li %s, %d\n", cpu.t[i].name, op->value);	
+			printMips("li %s, %d", cpu.t[i].name, op->value);	
 		}
 		else {
 			ASSERT(0);
@@ -46,44 +55,44 @@ Reg *get_reg(Operand op)
 	}
 }
 
-void gen_ReadAndWrite(FILE *fp)
+void gen_read_write(FILE *fp)
 {
-	fprintf(fp, ".data\n");	
-	fprintf(fp, "_prompt: .asciiz \"Enter an integer:\"\n");	
-	fprintf(fp, "_ret: .asciiz \"\\n\"\n");	
-	fprintf(fp, ".globl main\n");	
-	fprintf(fp, ".text\n");	
+	printMips(".data");	
+	printMips("_prompt: .asciiz \"Enter an integer:\"");	
+	printMips("_ret: .asciiz \"\\n\"");	
+	printMips(".globl main");	
+	printMips(".text");	
 
-	fprintf(fp,"read:\n");
-	fprintf(fp,"li $v0, 4\n");
-	fprintf(fp,"la $a0, _prompt\n");
-	fprintf(fp,"syscall\n");
-	fprintf(fp,"li $v0, 5\n");
-	fprintf(fp,"syscall\n");
-	fprintf(fp,"jr $ra\n");
+	printMips("read:");
+	printMips("li $v0, 4");
+	printMips("la $a0, _prompt");
+	printMips("syscall");
+	printMips("li $v0, 5");
+	printMips("syscall");
+	printMips("jr $ra");
 
-	fprintf(fp,"\nwrite:\n");
-	fprintf(fp,"li $v0, 1\n");
-	fprintf(fp,"syscall\n");
-	fprintf(fp,"li $v0, 4\n");
-	fprintf(fp,"la $a0, _ret\n");
-	fprintf(fp,"syscall\n");
-	fprintf(fp,"move $v0, $0\n");
-	fprintf(fp,"jr $ra\n");
+	printMips("\nwrite:");
+	printMips("li $v0, 1");
+	printMips("syscall");
+	printMips("li $v0, 4");
+	printMips("la $a0, _ret");
+	printMips("syscall");
+	printMips("move $v0, $0");
+	printMips("jr $ra");
 }
 
 void prologue(FILE *fp)
 {
-	fprintf(fp, "subu $sp, $sp, 4\n");
-	fprintf(fp, "sw $ra, 0($sp)\n");
-	fprintf(fp, "sw $fp, -4($sp)\n");
-	fprintf(fp, "addi $fp, $sp, 4\n");
+	printMips("subu $sp, $sp, 4");
+	printMips("sw $ra, 0($sp)");
+	printMips("sw $fp, -4($sp)");
+	printMips("addi $fp, $sp, 4");
 }
 
 void epilogue(FILE *fp)
 {
-	fprintf(fp, "addi $sp, $sp, 4\n");
-	fprintf(fp, "jr $ra\n");
+	printMips("addi $sp, $sp, 4");
+	printMips("jr $ra");
 }
 
 void generate_mips(InterCodes *head)
@@ -93,26 +102,26 @@ void generate_mips(InterCodes *head)
 	
 	Reg *r1 = NULL;
 
-	gen_ReadAndWrite(fp);
+	gen_read_write(fp);
 
 	InterCodes *cur = head;
 	while(cur) {
 		switch(cur->code.kind) {
 			case IC_FUNCTION:
-				fprintf(fp, "\n%s:\n", cur->code.binop.op1->name);
+				printMips("\n%s:", cur->code.binop.op1->name);
 				/*TODO: reset*/
 				prologue(fp);	
 				break;
 			case IC_WRITE:
 				r1 = get_reg(cur->code.binop.op1);					
-				fprintf(fp, "move $a0, %s\n", r1->name);
+				printMips("move $a0, %s", r1->name);
 
-				fprintf(fp, "addi $sp, $sp, -4\n");
-				fprintf(fp, "jal write\n");
+				printMips("addi $sp, $sp, -4");
+				printMips("jal write");
 				break;
 			case IC_RETURN:
 				r1 = get_reg(cur->code.binop.op1);
-				fprintf(fp, "move $v0, %s\n", r1->name);
+				printMips("move $v0, %s", r1->name);
 				epilogue(fp);
 				break;
 			case IC_LABEL:

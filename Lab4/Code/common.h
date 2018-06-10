@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <assert.h>
 #include "TreeNode.h"
 #include "debug.h"
@@ -14,6 +15,7 @@
 #include "mips.h"
 
 #define OPTIMIZE_IR 1
+
 
 #define NEW_OP(type, ptr)	newOp(type, (void *)ptr)
 
