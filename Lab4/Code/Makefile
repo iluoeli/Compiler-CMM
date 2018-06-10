@@ -35,11 +35,13 @@ syntax-c: $(YFILE)
 # 定义的一些伪目标
 .PHONY: clean test
 test:
-	./parser ../Test/test-lab4/test1.cmm ../Test/test-lab4/test1.s
+	./parser ../Test/test-lab4/add.cmm ../Test/test-lab4/out.s
 test-lab2:
 	sh ./test-lab2.sh
 test-lab3:
 	sh ./test-lab3.sh
+test-lab4:
+	sh ./test-lab4.sh
 clean:
 	rm -f parser lex.yy.c syntax.tab.c syntax.tab.h syntax.output
 	rm -f $(OBJS) $(OBJS:.o=.d)

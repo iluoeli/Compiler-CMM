@@ -708,7 +708,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		InterCodes *code1 = translate_Exp(first, t1);	
 		InterCodes *code2 = translate_Exp(third, t2);
 		
-		InterCodes *code3 = newIC(IC_DEC, place, t1, t2);
+		InterCodes *code3 = newIC(IC_DIV, place, t1, t2);
 
 		code2 = addTail(code2, code3);
 		code1 = addTail(code1, code2);

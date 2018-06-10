@@ -2,10 +2,19 @@
 #define _MIPS_H_
 
 
-typedef struct Reg {
-	char name[8];
-	Operand signList[32];
-	int signSize;
+typedef struct LocalVar_* LocalVar;
+struct Reg_;
+struct LocalVar_ {
+	Operand op;
+	struct Reg_ *reg;
+	int offset;
+	LocalVar next;
+};
+
+
+typedef struct Reg_ {
+	char name[4];
+	LocalVar varList;
 	BOOL available;
 } Reg;
 

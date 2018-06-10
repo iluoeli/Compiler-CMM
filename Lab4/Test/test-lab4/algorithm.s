@@ -34,7 +34,6 @@ lw $ra, 0($sp)
 addi $sp, $sp, 4
 li $t1, 0
 move $v0, $t1
-addi, $sp, $fp, 0
 lw $ra, 4($sp)
 lw $fp, 0($sp)
 addi $sp, $sp, 8
