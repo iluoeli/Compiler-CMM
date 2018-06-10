@@ -78,16 +78,29 @@ LocalVar alloc_var(Operand op)
 
 void clear_reg(Reg *reg)
 {
+	if(reg == NULL)
+		return ;
 	reg->available = TRUE;
 	
-	/*
+	
 	while(reg->varList) {
-		LocalVar var = reg->varList;
+		reg->varList->reg = NULL;
 	}
-	*/
+	
 	reg->varList = NULL;
 }
 
+void spill_reg(Reg *reg)
+{
+	LocalVar var = reg->varList;
+	while(var) {
+		if(var->op->kind == VARIABLE || var->op->kind == TEMP) {
+			printMips("sw %s, %d($fp)", reg->name, var->offset);
+		}
+		var = var->next;
+	}
+	clear_reg(reg);
+}
 
 void resetRegs()
 {
@@ -233,6 +246,18 @@ void generate_mips(InterCodes *head)
 				printMips("lw $ra, 0($sp)");
 				printMips("addi $sp, $sp, 4");
 				break;
+			case IC_READ:	
+				r1 = ensure(rlt);
+
+				printMips("addi $sp, $sp, -4");
+				printMips("sw $ra, 0($sp)");
+				printMips("jal read");
+				printMips("lw $ra, 0($sp)");
+				printMips("addi $sp, $sp, 4");
+
+				printMips("move %s, $v0", r1->name);
+				//spill_reg(r1);
+				break;
 			case IC_RETURN:
 				r1 = ensure(cur->code.binop.op1);
 				printMips("move $v0, %s", r1->name);
@@ -244,10 +269,41 @@ void generate_mips(InterCodes *head)
 				printMips("move %s, %s", r1->name, r2->name);
 				break;
 			case IC_LABEL:
+				printMips("label%d:", op1->value);
+				break;
 			case IC_GOTO:	
-			case IC_JL:		case IC_JG:
-			case IC_JGE:	case IC_JLE:
-			case IC_JE:		case IC_JNE:
+				printMips("j label%d", op1->value);
+				break;
+			case IC_JL:
+				r1 = ensure(op1);
+				r2 = ensure(op2);
+				printMips("blt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				break;
+			case IC_JG:
+				r1 = ensure(op1);
+				r2 = ensure(op2);
+				printMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				break;
+			case IC_JGE:	
+				r1 = ensure(op1);
+				r2 = ensure(op2);
+				printMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				break;
+			case IC_JLE:
+				r1 = ensure(op1);
+				r2 = ensure(op2);
+				printMips("ble %s, %s, label%d", r1->name, r2->name, rlt->value);
+				break;
+			case IC_JE:
+				r1 = ensure(op1);
+				r2 = ensure(op2);
+				printMips("beq %s, %s, label%d", r1->name, r2->name, rlt->value);
+				break;
+			case IC_JNE:
+				r1 = ensure(op1);
+				r2 = ensure(op2);
+				printMips("bne %s, %s, label%d", r1->name, r2->name, rlt->value);
+				break;
 			case IC_ADD:
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
@@ -274,7 +330,6 @@ void generate_mips(InterCodes *head)
 				break;
 			case IC_DEC:	case IC_PARAM:
 			case IC_CALL:	case IC_ARG:
-			case IC_READ:	
 			case IC_REF:	case IC_DEREF:
 			default :
 				ASSERT(1);

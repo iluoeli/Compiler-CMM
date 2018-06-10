@@ -26,23 +26,43 @@ sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
 addi $sp, $sp, -4
-li $t1, 1
-move $t0, $t1
 addi $sp, $sp, -4
-li $t3, 2
-move $t2, $t3
+sw $ra, 0($sp)
+jal read
+lw $ra, 0($sp)
+addi $sp, $sp, 4
+move $t0, $v0
 addi $sp, $sp, -4
-add $t4, $t0, $t2
+li $t2, 0
+li $t3, 1
+sub $t1, $t2, $t3
+ble $t0, $t1, label1
+j label2
+label1:
+addi $sp, $sp, -4
+li $t5, 0
+li $t6, 1
+sub $t4, $t5, $t6
 move $a0, $t4
 addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal write
 lw $ra, 0($sp)
 addi $sp, $sp, 4
-li $t5, 0
-move $v0, $t5
-addi, $sp, $fp, 0
-lw $ra, 4($sp)
-lw $fp, 0($sp)
-addi $sp, $sp, 8
-jr $ra
+label2:
+li $t7, 1
+bgt $t0, $t7, label3
+j label4
+label3:
+li $t8, 1
+move $a0, $t8
+addi $sp, $sp, -4
+sw $ra, 0($sp)
+jal write
+lw $ra, 0($sp)
+addi $sp, $sp, 4
+label4:
+li $t9, 0
+bne $t0, $t9, label5
+j label6
+label5:
