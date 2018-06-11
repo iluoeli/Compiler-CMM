@@ -80,15 +80,15 @@ LocalVar alloc_var(Operand op)
 	add_var(var);
 
 	if(op->kind == VARIABLE) {
-		printMips("subu $sp, $sp, 4\t\t#alloc for %s", op->name);
+		printinMips("subu $sp, $sp, 4\t\t#alloc for %s", op->name);
 		//printComment("#alloc %s", op->name);
 	}
 	else if(op->kind == TEMP) {
-		printMips("subu $sp, $sp, 4\t\t#alloc for temp%d", op->value);
+		printinMips("subu $sp, $sp, 4\t\t#alloc for temp%d", op->value);
 		//printComment("#alloc temp%d", op->value);
 	}
 	else {
-		printMips("subu $sp, $sp, 4\t\t#alloc for else", op->value);
+		printinMips("subu $sp, $sp, 4\t\t#alloc for else", op->value);
 	}
 
 
@@ -105,7 +105,7 @@ LocalVar alloc_array(Operand op, int size)
 	var->offset	= fp_off;
 	add_var(var);
 	
-	printMips("subu $sp, $sp, %d\t\t#alloc for temp%d", size, op->value);
+	printinMips("subu $sp, $sp, %d\t\t#alloc for temp%d", size, op->value);
 
 	return var;
 }
@@ -130,7 +130,7 @@ void spill_reg(Reg *reg)
 	LocalVar var = reg->varList;
 	while(var) {
 		if(var->op->kind == VARIABLE || var->op->kind == TEMP) {
-			printMips("sw %s, %d($fp)", reg->name, var->offset);
+			printinMips("sw %s, %d($fp)", reg->name, var->offset);
 		}
 		var = var->next;
 	}
@@ -197,7 +197,7 @@ Reg *ensure(Operand op)
 		}
 		else {
 			reg = alloc_reg(op);
-			printMips("li %s, %d", reg->name, op->value);	
+			printinMips("li %s, %d", reg->name, op->value);	
 		}
 	}
 	else if(op->kind == VARIABLE || op->kind == TEMP){
@@ -212,7 +212,7 @@ Reg *ensure(Operand op)
 			reg = alloc_reg(op);
 			var->reg = reg;
 			reg->varList = var;
-			printMips("lw %s, %d($fp)", reg->name, var->offset);
+			printinMips("lw %s, %d($fp)", reg->name, var->offset);
 		}
 		else {
 			reg = var->reg;
@@ -239,7 +239,7 @@ Reg *ensure_ref(Operand op)
 	LocalVar var = get_var(op);
 	ASSERT(var);
 
-	printMips("la %s, %d($fp)", r->name, var->offset);
+	printinMips("la %s, %d($fp)", r->name, var->offset);
 
 	return r;
 }
@@ -249,7 +249,7 @@ Reg *ensure_rDeref(Operand op)
 	Reg *r1 = alloc_reg(NULL);
 	Reg *r2 = ensure(op);
 
-	printMips("lw %s, 0(%s)", r1->name, r2->name);
+	printinMips("lw %s, 0(%s)", r1->name, r2->name);
 
 	return r1;
 }
@@ -265,7 +265,7 @@ Reg *ensure_lDeref(Reg *r1, Reg *r2)
 		var = alloc_var(rlt);
 	}
 	*/
-	printMips("sw %s, 0(%s)", r2->name, r1->name);	
+	printinMips("sw %s, 0(%s)", r2->name, r1->name);	
 	
 	return r1;
 }
@@ -280,41 +280,41 @@ void gen_read_write(FILE *fp)
 	printMips(".text");	
 
 	printMips("read:");
-	printMips("  li $v0, 4");
-	printMips("  la $a0, _prompt");
-	printMips("  syscall");
-	printMips("  li $v0, 5");
-	printMips("  syscall");
-	printMips("  jr $ra");
+	printinMips("li $v0, 4");
+	printinMips("la $a0, _prompt");
+	printinMips("syscall");
+	printinMips("li $v0, 5");
+	printinMips("syscall");
+	printinMips("jr $ra");
 
-	printMips("\nwrite:");
-	printMips("  li $v0, 1");
-	printMips("  syscall");
-	printMips("  li $v0, 4");
-	printMips("  la $a0, _ret");
-	printMips("  syscall");
-	printMips("  move $v0, $0");
-	printMips("  jr $ra");
+	printinMips("\nwrite:");
+	printinMips("li $v0, 1");
+	printinMips("syscall");
+	printinMips("li $v0, 4");
+	printinMips("la $a0, _ret");
+	printinMips("syscall");
+	printinMips("move $v0, $0");
+	printinMips("jr $ra");
 }
 
 void prologue()
 {
 	/*FIXME: $fp位置可能是错误的*/
-	printMips("subu $sp, $sp, 8");
-	printMips("sw $ra, 4($sp)");
-	printMips("sw $fp, 0($sp)");
-	printMips("addiu $fp, $sp, 0");
+	printinMips("subu $sp, $sp, 8");
+	printinMips("sw $ra, 4($sp)");
+	printinMips("sw $fp, 0($sp)");
+	printinMips("addiu $fp, $sp, 0");
 
 	fp_off = 0;
 }
 
 void epilogue()
 {
-	printMips("addi, $sp, $fp, 0");
-	printMips("lw $ra, 4($sp)");
-	printMips("lw $fp, 0($sp)");
-	printMips("addi $sp, $sp, 8");
-	printMips("jr $ra");
+	printinMips("addi, $sp, $fp, 0");
+	printinMips("lw $ra, 4($sp)");
+	printinMips("lw $fp, 0($sp)");
+	printinMips("addi $sp, $sp, 8");
+	printinMips("jr $ra");
 }
 
 void generate_mips(InterCodes *head)
@@ -364,29 +364,29 @@ void generate_mips(InterCodes *head)
 				break;
 			case IC_WRITE:
 				r1 = ensure(cur->code.binop.op1);					
-				printMips("move $a0, %s", r1->name);
+				printinMips("move $a0, %s", r1->name);
 		
-				printMips("addi $sp, $sp, -4");
-				printMips("sw $ra, 0($sp)");
-				printMips("jal write");
-				printMips("lw $ra, 0($sp)");
-				printMips("addi $sp, $sp, 4");
+				printinMips("addi $sp, $sp, -4");
+				printinMips("sw $ra, 0($sp)");
+				printinMips("jal write");
+				printinMips("lw $ra, 0($sp)");
+				printinMips("addi $sp, $sp, 4");
 				break;
 			case IC_READ:	
 				r1 = ensure(rlt);
 
-				printMips("addi $sp, $sp, -4");
-				printMips("sw $ra, 0($sp)");
-				printMips("jal read");
-				printMips("lw $ra, 0($sp)");
-				printMips("addi $sp, $sp, 4");
+				printinMips("addi $sp, $sp, -4");
+				printinMips("sw $ra, 0($sp)");
+				printinMips("jal read");
+				printinMips("lw $ra, 0($sp)");
+				printinMips("addi $sp, $sp, 4");
 
-				printMips("move %s, $v0", r1->name);
+				printinMips("move %s, $v0", r1->name);
 				//spill_reg(r1);
 				break;
 			case IC_RETURN:
 				r1 = ensure(cur->code.binop.op1);
-				printMips("move $v0, %s", r1->name);
+				printinMips("move $v0, %s", r1->name);
 				epilogue();
 				break;
 			case IC_ASSIGN:
@@ -398,17 +398,18 @@ void generate_mips(InterCodes *head)
 				else {
 					r1 = ensure(rlt);
 					r2 = ensure(op1);
-					printMips("move %s, %s", r1->name, r2->name);
+					printinMips("move %s, %s", r1->name, r2->name);
 					free_cReg(r2);
 				}
 				break;
 			case IC_ADD:
+				/*除了赋值操作，加减乘除可以不考虑对指针赋值*/
 				if(rlt->kind == DEREF) {
 				//r1 = (rlt->kind == DEREF) ?  : ensure(rlt);
 					r1 = alloc_reg(NULL);
 					r2 = ensure(op1);
 					r3 = ensure(op2);
-					printMips("add %s, %s, %s", r1->name, r2->name, r3->name);
+					printinMips("add %s, %s, %s", r1->name, r2->name, r3->name);
 				
 					Reg *r4 = ensure(rlt->op);
 					ensure_lDeref(r4, r1);
@@ -418,7 +419,7 @@ void generate_mips(InterCodes *head)
 					r1 = ensure(rlt);
 					r2 = ensure(op1);
 					r3 = ensure(op2);
-					printMips("add %s, %s, %s", r1->name, r2->name, r3->name);
+					printinMips("add %s, %s, %s", r1->name, r2->name, r3->name);
 				}
 				free_cReg(r2);
 				free_cReg(r3);
@@ -427,7 +428,7 @@ void generate_mips(InterCodes *head)
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				r3 = ensure(op2);
-				printMips("sub %s, %s, %s", r1->name, r2->name, r3->name);
+				printinMips("sub %s, %s, %s", r1->name, r2->name, r3->name);
 
 				free_cReg(r2);
 				free_cReg(r3);
@@ -436,7 +437,7 @@ void generate_mips(InterCodes *head)
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				r3 = ensure(op2);
-				printMips("mul %s, %s, %s", r1->name, r2->name, r3->name);
+				printinMips("mul %s, %s, %s", r1->name, r2->name, r3->name);
 
 				free_cReg(r2);
 				free_cReg(r3);
@@ -445,7 +446,7 @@ void generate_mips(InterCodes *head)
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				r3 = ensure(op2);
-				printMips("div %s, %s, %s", r1->name, r2->name, r3->name);
+				printinMips("div %s, %s, %s", r1->name, r2->name, r3->name);
 
 				free_cReg(r2);
 				free_cReg(r3);
@@ -454,37 +455,37 @@ void generate_mips(InterCodes *head)
 				printMips("label%d:", op1->value);
 				break;
 			case IC_GOTO:	
-				printMips("j label%d", op1->value);
+				printinMips("j label%d", op1->value);
 				break;
 			case IC_JL:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("blt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printinMips("blt %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_JG:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printinMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_JGE:	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("bge %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printinMips("bge %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_JLE:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("ble %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printinMips("ble %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_JE:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("beq %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printinMips("beq %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_JNE:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("bne %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printinMips("bne %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_CALL:	
 				/*put arg0-arg3 to $a0-$a3
@@ -502,30 +503,30 @@ void generate_mips(InterCodes *head)
 				while(code && code->code.kind == IC_ARG) {
 					if(i < 4) {
 						Reg *reg = ensure(code->code.binop.op1);
-						printMips("move $a%d, %s", i, reg->name);			
+						printinMips("move $a%d, %s", i, reg->name);			
 					}
 					else if(i == 4) {
-						printMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-3)*4);
+						printinMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-3)*4);
 						Reg *reg = ensure(code->code.binop.op1);
-						printMips("sw %s, 0($sp)", reg->name);
+						printinMips("sw %s, 0($sp)", reg->name);
 					}
 					else {
 						Reg *reg = ensure(code->code.binop.op1);
-						printMips("sw %s, %d($sp)", reg->name, (i-4)*4);
+						printinMips("sw %s, %d($sp)", reg->name, (i-4)*4);
 					}
 					code = code->prev;
 					i++;
 				}
 
-				printMips("addi $sp, $sp, -4");
-				printMips("sw $ra, 0($sp)");
-				printMips("jal %s", op1->name);
-				printMips("lw $ra, 0($sp)");
-				printMips("addi $sp, $sp, 4");
+				printinMips("addi $sp, $sp, -4");
+				printinMips("sw $ra, 0($sp)");
+				printinMips("jal %s", op1->name);
+				printinMips("lw $ra, 0($sp)");
+				printinMips("addi $sp, $sp, 4");
 
 				/*NOTE: must ensure(rlt) there, or make stack chaos*/
 				r1 = ensure(rlt);
-				printMips("move %s, $v0", r1->name);
+				printinMips("move %s, $v0", r1->name);
 				
 				break;
 			case IC_PARAM:
@@ -541,11 +542,11 @@ void generate_mips(InterCodes *head)
 				alloc_array(op1, op2->value);	
 				break;
 			case IC_REF:	
-				/*TODO: improment*/
+				/*should not be in here*/
 				ASSERT(0);
 				r1 = ensure_ref(op1);	
 				r2 = ensure(rlt);
-				printMips("move %s, %s", r2->name, r1->name);
+				printinMips("move %s, %s", r2->name, r1->name);
 				break;
 			case IC_DEREF:
 				/*should not be in here*/

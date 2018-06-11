@@ -42,9 +42,10 @@ typedef struct CPURegs {
 void generate_mips(InterCodes *head);
 
 void printMips(char *format, ...);
+#define printinMips(format, ...)	printMips("  "format, ##__VA_ARGS__)
+#define printComment(format, ...)	printMips(format, ##__VA_ARGS__)
 
 Reg *ensure_ref(Operand op);
 Reg *ensure_rDeref(Operand op);
-#define printComment(format, ...)	printMips(format, ##__VA_ARGS__)
 
 #endif

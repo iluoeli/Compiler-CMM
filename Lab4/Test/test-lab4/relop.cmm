@@ -1,14 +1,14 @@
 int main()
 {
 	int i = read();
-/*
+
 	if(i < 0)
 		write(-1);
 	if(i == 0)
 		write(0);
 	if(i > 0)
 		write(1);
-*/
+
 	if(i <= -1)
 		write(-1);
 	if(i >= 1)
