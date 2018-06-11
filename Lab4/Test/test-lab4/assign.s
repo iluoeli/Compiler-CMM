@@ -25,7 +25,7 @@ subu $sp, $sp, 8
 sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
-addi $sp, $sp, -4
+subu $sp, $sp, 4
 li $t1, 2
 move $t0, $t1
 move $a0, $t0
@@ -34,8 +34,7 @@ sw $ra, 0($sp)
 jal write
 lw $ra, 0($sp)
 addi $sp, $sp, 4
-li $t2, 0
-move $v0, $t2
+move $v0, $0
 addi, $sp, $fp, 0
 lw $ra, 4($sp)
 lw $fp, 0($sp)

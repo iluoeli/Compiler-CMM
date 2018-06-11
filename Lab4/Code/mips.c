@@ -26,6 +26,13 @@ void initRegs()
 		cpu.t[i].available = TRUE;
 	}
 	
+	for(i=0; i < 8; i++) {
+		cpu.s[i].name[0] = '$';
+		cpu.s[i].name[1] = 's';
+		cpu.s[i].name[2] = '0' + i;
+		cpu.s[i].available = TRUE;
+	}
+
 	for(i=0; i < 4; i++) {
 		cpu.a[i].name[0] = '$';
 		cpu.a[i].name[1] = 'a';
@@ -33,6 +40,7 @@ void initRegs()
 		cpu.t[i].available = TRUE;
 	}
 	
+	strcpy(cpu.zero.name, "$0");
 	strcpy(cpu.ra.name, "$ra");
 	strcpy(cpu.gp.name, "$ga");
 	strcpy(cpu.sp.name, "$sp");
@@ -67,9 +75,9 @@ LocalVar alloc_var(Operand op)
 	LocalVar var = malloc(sizeof(struct LocalVar_));	
 	memset(var, 0, sizeof(struct LocalVar_));
 	var->op = op;
-	fp_off += 4;
+	fp_off -= 4;
 	var->offset	= fp_off;
-	printMips("addi $sp, $sp, -4");
+	printMips("subu $sp, $sp, 4");
 
 	add_var(var);
 
@@ -102,6 +110,14 @@ void spill_reg(Reg *reg)
 	clear_reg(reg);
 }
 
+void free_cReg(Reg *reg)
+{
+	if(reg && (reg->varList == NULL
+			|| (reg->varList && reg->varList->op->kind == CONSTANT))) {
+		clear_reg(reg);
+	}
+}
+
 void resetRegs()
 {
 	int i = 0;
@@ -131,6 +147,13 @@ Reg *alloc_reg(Operand op)
 
 		return &cpu.t[i];
 	}
+	for(i=0; i < 8; i++) {
+		if(cpu.s[i].available == FALSE)
+			continue;
+		cpu.s[i].available = FALSE;
+
+		return &cpu.s[i];
+	}
 	
 	/*TODO: choose an reg*/
 
@@ -142,19 +165,27 @@ Reg *ensure(Operand op)
 {
 	Reg *reg = NULL;	
 	if(op->kind == CONSTANT) {
-		reg = alloc_reg(op);
-		printMips("li %s, %d", reg->name, op->value);	
+		if(op->value == 0) {
+			reg = &cpu.zero;
+		}
+		else {
+			reg = alloc_reg(op);
+			printMips("li %s, %d", reg->name, op->value);	
+		}
 	}
 	else if(op->kind == VARIABLE || op->kind == TEMP){
 		LocalVar var = get_var(op);
 		if(var == NULL) {
 			var = alloc_var(op);
-		}
-
-		if(var->reg == NULL) {
 			reg = alloc_reg(op);
 			var->reg = reg;
-			//printMips("lw %s, %d($fp)", reg->name, var->offset);
+			reg->varList = var;
+		}
+		else if(var->reg == NULL) {
+			reg = alloc_reg(op);
+			var->reg = reg;
+			reg->varList = var;
+			printMips("lw %s, %d($fp)", reg->name, var->offset);
 		}
 		else {
 			reg = var->reg;
@@ -201,6 +232,8 @@ void prologue()
 	printMips("sw $ra, 4($sp)");
 	printMips("sw $fp, 0($sp)");
 	printMips("addiu $fp, $sp, 0");
+
+	fp_off = 0;
 }
 
 void epilogue()
@@ -222,7 +255,8 @@ void generate_mips(InterCodes *head)
 
 	gen_read_write(fp);
 
-	InterCodes *cur = head;
+	InterCodes *cur = head, *code = NULL;
+	int i = 0;
 	while(cur) {
 		rlt = cur->code.binop.rlt;	
 		op1 = cur->code.binop.op1;	
@@ -235,6 +269,26 @@ void generate_mips(InterCodes *head)
 
 				printMips("\n%s:", cur->code.binop.op1->name);
 				prologue();	
+
+				/*param*/
+				i = 0;
+				while(cur->next && cur->next->code.kind == IC_PARAM) {
+					cur = cur->next;
+					if(i < 4) {
+						LocalVar var = alloc_var(cur->code.binop.op1); 
+						var->reg = &cpu.a[i];
+					}
+					else {
+						//Reg *reg = ensure(cur->code.binop.op1);
+						LocalVar var = malloc(sizeof(struct LocalVar_));
+						memset(var, 0, sizeof(struct LocalVar_));
+						var->op = cur->code.binop.op1;
+						var->offset = (3 + 5-i) * 4; 
+						add_var(var);
+						//printMips("lw %s, %d($fp)", reg->name, (i-1)*4);
+					}
+					i++;
+				}	
 				break;
 			case IC_WRITE:
 				r1 = ensure(cur->code.binop.op1);					
@@ -267,6 +321,10 @@ void generate_mips(InterCodes *head)
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				printMips("move %s, %s", r1->name, r2->name);
+
+				if(op1->kind == CONSTANT) {
+					spill_reg(r2);
+				}
 				break;
 			case IC_LABEL:
 				printMips("label%d:", op1->value);
@@ -287,7 +345,7 @@ void generate_mips(InterCodes *head)
 			case IC_JGE:	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
-				printMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				printMips("bge %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
 			case IC_JLE:
 				r1 = ensure(op1);
@@ -309,30 +367,82 @@ void generate_mips(InterCodes *head)
 				r2 = ensure(op1);
 				r3 = ensure(op2);
 				printMips("add %s, %s, %s", r1->name, r2->name, r3->name);
+
+				free_cReg(r2);
+				free_cReg(r3);
 				break;
 			case IC_SUB:
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				r3 = ensure(op2);
 				printMips("sub %s, %s, %s", r1->name, r2->name, r3->name);
+
+				free_cReg(r2);
+				free_cReg(r3);
 				break;
 			case IC_MUL:	
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				r3 = ensure(op2);
 				printMips("mul %s, %s, %s", r1->name, r2->name, r3->name);
+
+				free_cReg(r2);
+				free_cReg(r3);
 				break;
 			case IC_DIV:
 				r1 = ensure(rlt);
 				r2 = ensure(op1);
 				r3 = ensure(op2);
 				printMips("div %s, %s, %s", r1->name, r2->name, r3->name);
+
+				free_cReg(r2);
+				free_cReg(r3);
 				break;
-			case IC_DEC:	case IC_PARAM:
-			case IC_CALL:	case IC_ARG:
+			case IC_CALL:	
+				/*put arg0-arg3 to $a0-$a3
+				 *put arg4~ to stack 
+				 */
+				i = 0;
+				code = cur->prev;
+				while(code && code->code.kind == IC_ARG) {
+					if(i < 4) {
+						Reg *reg = ensure(code->code.binop.op1);
+						printMips("move $a%d, %s", i, reg->name);			
+					}
+					else {
+						/*TODO:*/	
+						Reg *reg = ensure(code->code.binop.op1);
+						printMips("subu $sp, $sp, 4");
+						printMips("sw %s, 0($sp)", reg->name);
+					}
+					code = code->prev;
+					i++;
+				}
+
+				printMips("addi $sp, $sp, -4");
+				printMips("sw $ra, 0($sp)");
+				printMips("jal %s", op1->name);
+				printMips("lw $ra, 0($sp)");
+				printMips("addi $sp, $sp, 4");
+
+				/*NOTE: must ensure(rlt) there, or make stack bad*/
+				r1 = ensure(rlt);
+				printMips("move %s, $v0", r1->name);
+				
+				break;
+			case IC_PARAM:
+				/*it should be handled in case IC_FUNCTION
+				 *for param number may bigger than 4
+				 */
+				ASSERT(0);
+				break;
+			case IC_ARG:
+				/*handle in case CALL*/
+				break;
+			case IC_DEC:
 			case IC_REF:	case IC_DEREF:
 			default :
-				ASSERT(1);
+				ASSERT(0);
 		}	
 
 

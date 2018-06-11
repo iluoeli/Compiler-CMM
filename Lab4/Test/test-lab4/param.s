@@ -20,6 +20,22 @@ write:
   move $v0, $0
   jr $ra
 
+f:
+subu $sp, $sp, 8
+sw $ra, 4($sp)
+sw $fp, 0($sp)
+addiu $fp, $sp, 0
+subu $sp, $sp, 4
+subu $sp, $sp, 4
+subu $sp, $sp, 4
+add $t0, $a0, $a1
+move $v0, $t0
+addi, $sp, $fp, 0
+lw $ra, 4($sp)
+lw $fp, 0($sp)
+addi $sp, $sp, 8
+jr $ra
+
 main:
 subu $sp, $sp, 8
 sw $ra, 4($sp)
@@ -31,8 +47,15 @@ move $t0, $t1
 subu $sp, $sp, 4
 li $t2, 2
 move $t1, $t2
+move $a0, $t0
+move $a1, $t1
+addi $sp, $sp, -4
+sw $ra, 0($sp)
+jal f
+lw $ra, 0($sp)
+addi $sp, $sp, 4
 subu $sp, $sp, 4
-sub $t2, $t0, $t1
+move $t2, $v0
 move $a0, $t2
 addi $sp, $sp, -4
 sw $ra, 0($sp)

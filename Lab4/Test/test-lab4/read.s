@@ -25,7 +25,7 @@ subu $sp, $sp, 8
 sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
-addi $sp, $sp, -4
+subu $sp, $sp, 4
 addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal read
@@ -38,8 +38,7 @@ sw $ra, 0($sp)
 jal write
 lw $ra, 0($sp)
 addi $sp, $sp, 4
-li $t1, 0
-move $v0, $t1
+move $v0, $0
 addi, $sp, $fp, 0
 lw $ra, 4($sp)
 lw $fp, 0($sp)
