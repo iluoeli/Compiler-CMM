@@ -1,0 +1,354 @@
+FUNCTION display :
+PARAM chess
+PARAM number
+PARAM sum
+DEC t1 400
+board := &t1
+i1 := #0
+j1 := #0
+tem := #1
+t9 := #4 * i1
+t10 := number + t9
+IF *t10 == tem GOTO label1
+GOTO label2
+LABEL label1 :
+LABEL label3 :
+IF i1 < sum GOTO label4
+GOTO label5
+LABEL label4 :
+j1 := #0
+tem := #1
+LABEL label6 :
+IF j1 < sum GOTO label7
+GOTO label8
+LABEL label7 :
+t23 := #4 * i1
+t24 := chess + t23
+IF j1 == *t24 GOTO label9
+GOTO label10
+LABEL label9 :
+t28 := board
+t29 := i1
+t30 := #40 * t29
+t27 := t28 + t30
+t31 := j1
+t32 := #4 * t31
+t33 := t27 + t32
+t34 := #1
+*t33 := t34
+t25 := *t33
+t39 := tem
+t40 := #10
+t37 := t39 * t40
+t38 := #1
+t36 := t37 + t38
+tem := t36
+t35 := tem
+GOTO label11
+LABEL label10 :
+t44 := board
+t45 := i1
+t46 := #40 * t45
+t43 := t44 + t46
+t47 := j1
+t48 := #4 * t47
+t49 := t43 + t48
+t50 := #0
+*t49 := t50
+t41 := *t49
+t53 := tem
+t54 := #10
+t52 := t53 * t54
+tem := t52
+t51 := tem
+LABEL label11 :
+j1 := j1 + #1
+GOTO label6
+LABEL label8 :
+WRITE tem
+i1 := i1 + #1
+GOTO label3
+LABEL label5 :
+LABEL label2 :
+RETURN #0
+FUNCTION dfs :
+PARAM p
+PARAM r
+PARAM ld
+PARAM rd
+PARAM current
+PARAM target
+PARAM c
+j := #0
+DEC t67 40
+nld := &t67
+DEC t68 40
+nrd := &t68
+IF current == target GOTO label12
+GOTO label13
+LABEL label12 :
+t73 := c
+t74 := #0
+t75 := #4 * t74
+t76 := t73 + t75
+t80 := c
+t81 := #0
+t82 := #4 * t81
+t83 := t80 + t82
+t79 := #1
+t77 := *t83 + t79
+*t76 := t77
+t71 := *t76
+t85 := p
+t86 := c
+t87 := target
+ARG t87
+ARG t86
+ARG t85
+t84 := CALL display
+t88 := #0
+RETURN t88
+LABEL label13 :
+LABEL label14 :
+IF j < target GOTO label15
+GOTO label16
+LABEL label15 :
+t95 := #4 * j
+t96 := r + t95
+IF *t96 == #1 GOTO label20
+GOTO label18
+LABEL label20 :
+t101 := #4 * j
+t102 := ld + t101
+IF *t102 == #1 GOTO label19
+GOTO label18
+LABEL label19 :
+t107 := #4 * j
+t108 := rd + t107
+IF *t108 == #1 GOTO label17
+GOTO label18
+LABEL label17 :
+t111 := p
+t112 := current
+t113 := #4 * t112
+t114 := t111 + t113
+t115 := j
+*t114 := t115
+t109 := *t114
+t118 := r
+t119 := j
+t120 := #4 * t119
+t121 := t118 + t120
+t122 := #0
+*t121 := t122
+t116 := *t121
+t124 := #0
+k := t124
+t123 := k
+LABEL label21 :
+t126 := target - #1
+IF k < t126 GOTO label22
+GOTO label23
+LABEL label22 :
+t131 := nld
+t132 := k
+t133 := #4 * t132
+t134 := t131 + t133
+t136 := ld
+t138 := k
+t139 := #1
+t137 := t138 + t139
+t140 := #4 * t137
+t141 := t136 + t140
+*t134 := *t141
+t129 := *t134
+t144 := k
+t145 := #1
+t143 := t144 + t145
+k := t143
+t142 := k
+GOTO label21
+LABEL label23 :
+t148 := nld
+t150 := target
+t151 := #1
+t149 := t150 - t151
+t152 := #4 * t149
+t153 := t148 + t152
+t154 := #1
+*t153 := t154
+t146 := *t153
+t155 := j
+t156 := #0
+IF t155 != t156 GOTO label24
+GOTO label25
+LABEL label24 :
+t159 := nld
+t161 := j
+t162 := #1
+t160 := t161 - t162
+t163 := #4 * t160
+t164 := t159 + t163
+t165 := #0
+*t164 := t165
+t157 := *t164
+LABEL label25 :
+k := target - #1
+LABEL label26 :
+IF k > #0 GOTO label27
+GOTO label28
+LABEL label27 :
+t174 := nrd
+t175 := k
+t176 := #4 * t175
+t177 := t174 + t176
+t179 := rd
+t181 := k
+t182 := #1
+t180 := t181 - t182
+t183 := #4 * t180
+t184 := t179 + t183
+*t177 := *t184
+t172 := *t177
+t187 := k
+t188 := #1
+t186 := t187 - t188
+k := t186
+t185 := k
+GOTO label26
+LABEL label28 :
+t191 := nrd
+t192 := #0
+t193 := #4 * t192
+t194 := t191 + t193
+t195 := #1
+*t194 := t195
+t189 := *t194
+t196 := j
+t198 := target
+t199 := #1
+t197 := t198 - t199
+IF t196 != t197 GOTO label29
+GOTO label30
+LABEL label29 :
+t202 := nrd
+t204 := j
+t205 := #1
+t203 := t204 + t205
+t206 := #4 * t203
+t207 := t202 + t206
+t208 := #0
+*t207 := t208
+t200 := *t207
+LABEL label30 :
+t210 := p
+t211 := r
+t212 := nld
+t213 := nrd
+t215 := current
+t216 := #1
+t214 := t215 + t216
+t217 := target
+t218 := c
+ARG t218
+ARG t217
+ARG t214
+ARG t213
+ARG t212
+ARG t211
+ARG t210
+t209 := CALL dfs
+t221 := r
+t222 := j
+t223 := #4 * t222
+t224 := t221 + t223
+t225 := #1
+*t224 := t225
+t219 := *t224
+LABEL label18 :
+j := j + #1
+GOTO label14
+LABEL label16 :
+RETURN #0
+FUNCTION main :
+DEC t231 40
+place := &t231
+DEC t232 4
+count := &t232
+DEC t233 40
+row := &t233
+DEC t234 40
+ldiag := &t234
+DEC t235 40
+rdiag := &t235
+i := #0
+READ N
+IF N == i GOTO label31
+GOTO label33
+LABEL label33 :
+IF N > #10 GOTO label31
+GOTO label32
+LABEL label31 :
+RETURN #0
+LABEL label32 :
+LABEL label34 :
+IF i < N GOTO label35
+GOTO label36
+LABEL label35 :
+t248 := row
+t249 := i
+t250 := #4 * t249
+t251 := t248 + t250
+t252 := #1
+*t251 := t252
+t246 := *t251
+t255 := ldiag
+t256 := i
+t257 := #4 * t256
+t258 := t255 + t257
+t259 := #1
+*t258 := t259
+t253 := *t258
+t262 := rdiag
+t263 := i
+t264 := #4 * t263
+t265 := t262 + t264
+t266 := #1
+*t265 := t266
+t260 := *t265
+t269 := i
+t270 := #1
+t268 := t269 + t270
+i := t268
+t267 := i
+GOTO label34
+LABEL label36 :
+t273 := count
+t274 := #0
+t275 := #4 * t274
+t276 := t273 + t275
+t277 := #0
+*t276 := t277
+t271 := *t276
+t279 := place
+t280 := row
+t281 := ldiag
+t282 := rdiag
+t283 := #0
+t284 := N
+t285 := count
+ARG t285
+ARG t284
+ARG t283
+ARG t282
+ARG t281
+ARG t280
+ARG t279
+t278 := CALL dfs
+t288 := count
+t289 := #0
+t290 := #4 * t289
+t291 := t288 + t290
+WRITE *t291
+t292 := #0
+RETURN t292

@@ -1,0 +1,51 @@
+FUNCTION main :
+READ dollar
+READ rmb
+IF dollar > #100 GOTO label1
+GOTO label2
+LABEL label1 :
+IF rmb < #50 GOTO label4
+GOTO label5
+LABEL label4 :
+t10 := rmb + dollar
+WRITE t10
+GOTO label6
+LABEL label5 :
+t14 := rmb - dollar
+WRITE t14
+LABEL label6 :
+GOTO label3
+LABEL label2 :
+IF dollar == #100 GOTO label7
+GOTO label8
+LABEL label7 :
+IF rmb < #100 GOTO label10
+GOTO label11
+LABEL label10 :
+WRITE rmb
+GOTO label12
+LABEL label11 :
+t24 := rmb - #100
+WRITE t24
+LABEL label12 :
+GOTO label9
+LABEL label8 :
+IF dollar < #100 GOTO label13
+GOTO label14
+LABEL label13 :
+t29 := rmb + dollar
+IF t29 > #100 GOTO label15
+GOTO label16
+LABEL label15 :
+t34 := dollar + #100
+WRITE t34
+GOTO label17
+LABEL label16 :
+WRITE #100
+LABEL label17 :
+LABEL label14 :
+LABEL label9 :
+LABEL label3 :
+t40 := dollar + rmb
+WRITE t40
+RETURN #0

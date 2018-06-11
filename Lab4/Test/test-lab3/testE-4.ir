@@ -1,0 +1,113 @@
+FUNCTION main :
+DEC t1 600
+dis := &t1
+d1 := #10
+d2 := #5
+d3 := #3
+i := #0
+j := #0
+k := #0
+sum := #0
+LABEL label1 :
+IF i < d1 GOTO label2
+GOTO label3
+LABEL label2 :
+j := #0
+LABEL label4 :
+IF j < d2 GOTO label5
+GOTO label6
+LABEL label5 :
+k := #0
+LABEL label7 :
+IF k < d3 GOTO label8
+GOTO label9
+LABEL label8 :
+t23 := dis
+t24 := i
+t25 := #60 * t24
+t22 := t23 + t25
+t26 := j
+t27 := #12 * t26
+t21 := t22 + t27
+t28 := k
+t29 := #4 * t28
+t30 := t21 + t29
+t36 := i
+t37 := d1
+t34 := t36 * t37
+t38 := j
+t39 := d2
+t35 := t38 * t39
+t32 := t34 + t35
+t40 := d3
+t42 := k
+t43 := #1
+t41 := t42 + t43
+t33 := t40 / t41
+t31 := t32 + t33
+*t30 := t31
+t19 := *t30
+t46 := k
+t47 := #1
+t45 := t46 + t47
+k := t45
+t44 := k
+GOTO label7
+LABEL label9 :
+j := j + #1
+GOTO label4
+LABEL label6 :
+i := i + #1
+GOTO label1
+LABEL label3 :
+i := #0
+j := #0
+k := #0
+LABEL label10 :
+IF i < d1 GOTO label11
+GOTO label12
+LABEL label11 :
+j := #0
+LABEL label13 :
+IF j < d2 GOTO label14
+GOTO label15
+LABEL label14 :
+k := #0
+LABEL label16 :
+IF k < d3 GOTO label17
+GOTO label18
+LABEL label17 :
+t78 := #60 * i
+t75 := dis + t78
+t80 := #12 * j
+t74 := t75 + t80
+t82 := #4 * k
+t83 := t74 + t82
+t88 := #60 * #0
+t85 := dis + t88
+t90 := #12 * #0
+t84 := t85 + t90
+t92 := #4 * #0
+t93 := t84 + t92
+IF *t83 > *t93 GOTO label19
+GOTO label20
+LABEL label19 :
+t102 := #60 * i
+t99 := dis + t102
+t104 := #12 * j
+t98 := t99 + t104
+t106 := #4 * k
+t107 := t98 + t106
+sum := sum + *t107
+LABEL label20 :
+k := k + #1
+GOTO label16
+LABEL label18 :
+j := j + #1
+GOTO label13
+LABEL label15 :
+i := i + #1
+GOTO label10
+LABEL label12 :
+WRITE sum
+RETURN #0

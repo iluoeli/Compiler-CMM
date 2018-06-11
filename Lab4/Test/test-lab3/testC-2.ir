@@ -1,0 +1,126 @@
+FUNCTION trap :
+lh := #0
+lIndex := #0
+i := #0
+count := #0
+thisPool := #0
+rh := #0
+n := #12
+DEC t8 48
+height := &t8
+LABEL label1 :
+IF i < n GOTO label2
+GOTO label3
+LABEL label2 :
+t13 := height
+t14 := i
+t15 := #4 * t14
+t16 := t13 + t15
+READ t17
+*t16 := t17
+t11 := *t16
+t20 := i
+t21 := #1
+t19 := t20 + t21
+i := t19
+t18 := i
+GOTO label1
+LABEL label3 :
+i := #0
+LABEL label4 :
+IF i < n GOTO label7
+GOTO label6
+LABEL label7 :
+t30 := #4 * i
+t31 := height + t30
+IF *t31 == #0 GOTO label5
+GOTO label6
+LABEL label5 :
+i := i + #1
+GOTO label4
+LABEL label6 :
+IF i >= n GOTO label8
+GOTO label9
+LABEL label8 :
+RETURN #0
+LABEL label9 :
+lIndex := i
+t43 := #4 * lIndex
+t44 := height + t43
+lh := *t44
+thisPool := #0
+i := lIndex + #1
+LABEL label10 :
+IF i < n GOTO label11
+GOTO label12
+LABEL label11 :
+t59 := #4 * i
+t60 := height + t59
+IF *t60 < lh GOTO label13
+GOTO label14
+LABEL label13 :
+t69 := #4 * i
+t70 := height + t69
+t64 := lh - *t70
+thisPool := thisPool + t64
+GOTO label15
+LABEL label14 :
+count := count + thisPool
+lIndex := i
+t79 := #4 * lIndex
+t80 := height + t79
+lh := *t80
+thisPool := #0
+LABEL label15 :
+i := i + #1
+GOTO label10
+LABEL label12 :
+thisPool := #0
+rh := #0
+i := n - #1
+LABEL label16 :
+IF i > lIndex GOTO label19
+GOTO label18
+LABEL label19 :
+t103 := #4 * i
+t104 := height + t103
+IF *t104 == #0 GOTO label17
+GOTO label18
+LABEL label17 :
+i := i - #1
+GOTO label16
+LABEL label18 :
+t113 := #4 * i
+t114 := height + t113
+rh := *t114
+i := i - #1
+LABEL label20 :
+IF i > lIndex GOTO label21
+GOTO label22
+LABEL label21 :
+t125 := #4 * i
+t126 := height + t125
+IF *t126 < rh GOTO label23
+GOTO label24
+LABEL label23 :
+t135 := #4 * i
+t136 := height + t135
+t130 := rh - *t136
+thisPool := thisPool + t130
+GOTO label25
+LABEL label24 :
+count := count + thisPool
+t145 := #4 * i
+t146 := height + t145
+rh := *t146
+thisPool := #0
+LABEL label25 :
+i := i - #1
+GOTO label20
+LABEL label22 :
+t153 := count + thisPool
+RETURN t153
+FUNCTION main :
+result := CALL trap
+WRITE result
+RETURN #0

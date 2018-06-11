@@ -1,0 +1,147 @@
+FUNCTION qsort :
+PARAM array
+a := l
+PARAM a
+b := r
+PARAM b
+t4 := #4 * a
+t5 := array + t4
+x := *t5
+IF a < b GOTO label1
+GOTO label2
+LABEL label1 :
+LABEL label3 :
+IF a < b GOTO label4
+GOTO label5
+LABEL label4 :
+LABEL label6 :
+IF a < b GOTO label9
+GOTO label8
+LABEL label9 :
+t18 := #4 * b
+t19 := array + t18
+IF *t19 > x GOTO label7
+GOTO label8
+LABEL label7 :
+b := b - #1
+GOTO label6
+LABEL label8 :
+IF a < b GOTO label10
+GOTO label11
+LABEL label10 :
+t28 := array
+t29 := a
+t30 := #4 * t29
+t31 := t28 + t30
+t33 := array
+t34 := b
+t35 := #4 * t34
+t36 := t33 + t35
+*t31 := *t36
+t26 := *t31
+t39 := a
+t40 := #1
+t38 := t39 + t40
+a := t38
+t37 := a
+LABEL label11 :
+LABEL label12 :
+IF a < b GOTO label15
+GOTO label14
+LABEL label15 :
+t47 := #4 * a
+t48 := array + t47
+IF *t48 < x GOTO label13
+GOTO label14
+LABEL label13 :
+a := a + #1
+GOTO label12
+LABEL label14 :
+IF a < b GOTO label16
+GOTO label17
+LABEL label16 :
+t57 := array
+t58 := b
+t59 := #4 * t58
+t60 := t57 + t59
+t62 := array
+t63 := a
+t64 := #4 * t63
+t65 := t62 + t64
+*t60 := *t65
+t55 := *t60
+t68 := b
+t69 := #1
+t67 := t68 - t69
+b := t67
+t66 := b
+LABEL label17 :
+GOTO label3
+LABEL label5 :
+t72 := array
+t73 := a
+t74 := #4 * t73
+t75 := t72 + t74
+t76 := x
+*t75 := t76
+t70 := *t75
+t78 := array
+t79 := l
+t81 := a
+t82 := #1
+t80 := t81 - t82
+ARG t80
+ARG t79
+ARG t78
+t77 := CALL qsort
+t84 := array
+t86 := a
+t87 := #1
+t85 := t86 + t87
+t88 := r
+ARG t88
+ARG t85
+ARG t84
+t83 := CALL qsort
+LABEL label2 :
+RETURN #0
+FUNCTION main :
+DEC t90 40
+number := &t90
+N := #10
+i := #0
+LABEL label18 :
+IF i < N GOTO label19
+GOTO label20
+LABEL label19 :
+t97 := number
+t98 := i
+t99 := #4 * t98
+t100 := t97 + t99
+READ t101
+*t100 := t101
+t95 := *t100
+t104 := i
+t105 := #1
+t103 := t104 + t105
+i := t103
+t102 := i
+GOTO label18
+LABEL label20 :
+i := #0
+t109 := N - #1
+ARG t109
+ARG i
+ARG number
+t106 := CALL qsort
+LABEL label21 :
+IF i < N GOTO label22
+GOTO label23
+LABEL label22 :
+t120 := #4 * i
+t121 := number + t120
+WRITE *t121
+i := i + #1
+GOTO label21
+LABEL label23 :
+RETURN #0

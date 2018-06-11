@@ -1,0 +1,31 @@
+FUNCTION main :
+READ x
+READ n
+t7 := n / #2
+t6 := t7 * #2
+IF n == t6 GOTO label1
+GOTO label2
+LABEL label1 :
+result := #1
+GOTO label3
+LABEL label2 :
+result := x
+LABEL label3 :
+n := n / #2
+LABEL label4 :
+IF n > #0 GOTO label5
+GOTO label6
+LABEL label5 :
+x := x * x
+t27 := n / #2
+t26 := t27 * #2
+IF n != t26 GOTO label7
+GOTO label8
+LABEL label7 :
+result := result * x
+LABEL label8 :
+n := n / #2
+GOTO label4
+LABEL label6 :
+WRITE result
+RETURN #0

@@ -1,0 +1,20 @@
+FUNCTION main :
+x := #12
+t6 := x * x
+b := t6 + #13
+t12 := b / #13
+y := t12 + #1
+t18 := x / b
+t19 := b * y
+z := t18 + t19
+WRITE z
+t29 := z * #2
+c := #3 + t29
+WRITE c
+t40 := x + b
+t38 := t40 + y
+t39 := x / c
+t36 := t38 + t39
+t := t36 + #3
+WRITE t
+RETURN #0

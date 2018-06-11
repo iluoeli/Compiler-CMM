@@ -462,30 +462,42 @@ void generate_mips(InterCodes *head)
 				r2 = ensure(op2);
 				printinMips("blt %s, %s, label%d", r1->name, r2->name, rlt->value);
 				break;
+				free_cReg(r1);
+				free_cReg(r2);
 			case IC_JG:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
+				free_cReg(r1);
+				free_cReg(r2);
 				break;
 			case IC_JGE:	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("bge %s, %s, label%d", r1->name, r2->name, rlt->value);
+				free_cReg(r1);
+				free_cReg(r2);
 				break;
 			case IC_JLE:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("ble %s, %s, label%d", r1->name, r2->name, rlt->value);
+				free_cReg(r1);
+				free_cReg(r2);
 				break;
 			case IC_JE:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("beq %s, %s, label%d", r1->name, r2->name, rlt->value);
+				free_cReg(r1);
+				free_cReg(r2);
 				break;
 			case IC_JNE:
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("bne %s, %s, label%d", r1->name, r2->name, rlt->value);
+				free_cReg(r1);
+				free_cReg(r2);
 				break;
 			case IC_CALL:	
 				/*put arg0-arg3 to $a0-$a3

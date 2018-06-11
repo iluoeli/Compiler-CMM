@@ -534,8 +534,9 @@ InterCodes *translate_Stmt(TreeNode *stmt)
 	TreeNode* child = stmt->childs[0];
 	InterCodes *codes = NULL;
 	if(child->nType == T_Exp) {
-		//FIXME
-		codes = translate_Exp(child, NULL);	
+		//FIXME:这里一定要给一个临时变量
+		Operand t1 = newTemp();
+		codes = translate_Exp(child, t1);	
 	}
 	else if(child->nType == T_CompSt) {
 		codes = translate_CompSt(child);
@@ -1045,7 +1046,7 @@ InterCodes *translate_Cond(TreeNode *exp, Operand label_true, Operand label_fals
 		code1 = addTail(code1, code3);
 		codes = code1;
 	}
-	else if(child->nType == T_Exp && exp->childs[1]->nType == T_And) {
+	else if(child->nType == T_Exp && exp->childs[1]->nType == T_Or) {
 		Operand label1 = newLabel();
 		InterCodes *code1 = translate_Cond(exp->childs[0], label_true, label1);
 		InterCodes *code2 = translate_Cond(exp->childs[2], label_true, label_false);

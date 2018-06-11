@@ -1,0 +1,131 @@
+FUNCTION process :
+PARAM x
+t6 := #11 * #3
+t4 := t6 - #2
+t3 := t4 + #5
+t28 := x * #321
+t26 := t28 * #2
+t27 := x * t3
+t24 := t26 + t27
+t22 := t24 - x
+t23 := t3 * x
+t20 := t22 + t23
+t21 := t3 * t3
+t18 := t20 + t21
+t16 := t18 + x
+t14 := t16 + x
+t12 := t14 - #23
+t11 := t12 + #45
+t50 := t11 / #3
+t51 := #14 * #24
+t48 := t50 + t51
+t56 := x * #12
+t49 := t56 / #4
+t46 := t48 - t49
+t47 := #20 * #3
+t44 := t46 - t47
+t62 := t11 / #12
+t45 := t62 * #24
+t42 := t44 + t45
+t43 := #12 * #3
+t40 := t42 + t43
+t41 := #3 / #2
+t39 := t40 + t41
+t75 := #4 * #6
+t72 := x + t75
+y := t72 + t41
+RETURN y
+FUNCTION main :
+t84 := #5 / #2
+t82 := t84 + #14
+a := t82 - #3
+t91 := #7 * #5
+t89 := t91 / #2
+b := t89 + #3
+t98 := #4 + #5
+t96 := t98 + #6
+t97 := #1 / #2
+c := t96 - t97
+t105 := a + b
+d := t105 + c
+t110 := a * b
+t111 := c / #2
+e := t110 + t111
+t117 := a - b
+t116 := t117 - c
+g1 := #42
+i := #0
+t128 := #1000 * #2
+t125 := d + t128
+f := t125 - t116
+LABEL label1 :
+t135 := a + b
+IF t135 < f GOTO label2
+GOTO label3
+LABEL label2 :
+t148 := i * #12
+t145 := g1 + t148
+t143 := t145 + #4
+t141 := t143 + #5
+t142 := #7 / #3
+g1 := t141 + t142
+ARG f
+t159 := CALL process
+t160 := #2 * a
+t157 := t159 + t160
+t155 := t157 - f
+t156 := c * d
+g := t155 + t156
+t167 := i + i
+t171 := t167 + t167
+t175 := t171 + t171
+t179 := t175 + t175
+i := t179 + t179
+t187 := i + #3
+t191 := t187 - #1
+t195 := t191 + #3
+t201 := #3 * #2
+h := t195 - t201
+ARG a
+t204 := CALL process
+t210 := a + #3
+t208 := t210 - #2
+t207 := t208 - #1
+ARG t207
+t205 := CALL process
+IF t204 == t205 GOTO label4
+GOTO label5
+LABEL label4 :
+t216 := f - #2
+f := t216 + #1
+LABEL label5 :
+t222 := a + #2
+a := t222 + #1
+GOTO label1
+LABEL label3 :
+t229 := #3 * #4
+h := g1 - t229
+LABEL label6 :
+IF h < g1 GOTO label7
+GOTO label8
+LABEL label7 :
+t238 := #15 * #4
+t236 := t238 - #2
+f := t236 + a
+g := g1
+t243 := g - #12
+h := h + #1
+i := a + b
+c := i
+GOTO label6
+LABEL label8 :
+WRITE f
+a := a + b
+b := a + b
+c := a + b
+f := c
+g := c
+t284 := c + c
+t283 := t284 + c
+WRITE t283
+RETURN #0

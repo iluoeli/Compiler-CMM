@@ -1,0 +1,21 @@
+FUNCTION main :
+DEC t1 8
+cola := &t1
+t4 := cola
+t5 := t4 + #0
+READ t6
+*t5 := t6
+t2 := *t5
+t9 := cola
+t10 := t9 + #4
+t11 := #3
+*t10 := t11
+t7 := *t10
+t16 := cola
+t17 := t16 + #0
+t18 := cola
+t19 := t18 + #4
+t13 := *t17 + *t19
+WRITE t13
+t20 := #0
+RETURN t20

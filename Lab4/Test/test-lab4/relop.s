@@ -86,8 +86,8 @@ label8:
   bge $t0, $t5, label9
   j label10
 label9:
-  li $t6, 1
-  move $a0, $t6
+  li $t5, 1
+  move $a0, $t5
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal write
