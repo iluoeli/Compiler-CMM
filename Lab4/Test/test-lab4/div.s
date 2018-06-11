@@ -25,13 +25,13 @@ subu $sp, $sp, 8
 sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for i
 li $t1, 2
 move $t0, $t1
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for j
 li $t2, 4
 move $t1, $t2
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for n
 div $t2, $t1, $t0
 move $a0, $t2
 addi $sp, $sp, -4

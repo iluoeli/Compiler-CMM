@@ -77,11 +77,28 @@ LocalVar alloc_var(Operand op)
 	var->op = op;
 	fp_off -= 4;
 	var->offset	= fp_off;
-	printMips("subu $sp, $sp, 4");
+
+	if(op->kind == VARIABLE) {
+		printMips("subu $sp, $sp, 4\t\t#alloc for %s", op->name);
+		//printComment("#alloc %s", op->name);
+	}
+	else if(op->kind == TEMP) {
+		printMips("subu $sp, $sp, 4\t\t#alloc for temp%d", op->value);
+		//printComment("#alloc temp%d", op->value);
+	}
+	else {
+		printMips("subu $sp, $sp, 4\t\t#alloc for else", op->value);
+	}
+
 
 	add_var(var);
 
 	return var;
+}
+
+LocalVar alloc_array()
+{
+	return NULL;
 }
 
 void clear_reg(Reg *reg)
@@ -160,6 +177,7 @@ Reg *alloc_reg(Operand op)
 	ASSERT(0);
 	return NULL;
 }
+
 
 Reg *ensure(Operand op)
 {
@@ -256,14 +274,13 @@ void generate_mips(InterCodes *head)
 	gen_read_write(fp);
 
 	InterCodes *cur = head, *code = NULL;
-	int i = 0;
+	int i = 0, j = 0;
 	while(cur) {
 		rlt = cur->code.binop.rlt;	
 		op1 = cur->code.binop.op1;	
 		op2=  cur->code.binop.op2;
 		switch(cur->code.kind) {
 			case IC_FUNCTION:
-				/*TODO: reset*/
 				resetRegs();
 				clearVarList();
 
@@ -283,7 +300,7 @@ void generate_mips(InterCodes *head)
 						LocalVar var = malloc(sizeof(struct LocalVar_));
 						memset(var, 0, sizeof(struct LocalVar_));
 						var->op = cur->code.binop.op1;
-						var->offset = (3 + 5-i) * 4; 
+						var->offset = (3 + i-4) * 4; 
 						add_var(var);
 						//printMips("lw %s, %d($fp)", reg->name, (i-1)*4);
 					}
@@ -402,6 +419,13 @@ void generate_mips(InterCodes *head)
 				/*put arg0-arg3 to $a0-$a3
 				 *put arg4~ to stack 
 				 */
+				j = 0;
+				code = cur->prev;
+				/*NOTE: have to cnt arg nr first*/
+				while(code && code->code.kind == IC_ARG) {
+					j++;
+					code = code->next;
+				}
 				i = 0;
 				code = cur->prev;
 				while(code && code->code.kind == IC_ARG) {
@@ -409,11 +433,14 @@ void generate_mips(InterCodes *head)
 						Reg *reg = ensure(code->code.binop.op1);
 						printMips("move $a%d, %s", i, reg->name);			
 					}
-					else {
-						/*TODO:*/	
+					else if(i == 4) {
+						printMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-3)*4);
 						Reg *reg = ensure(code->code.binop.op1);
-						printMips("subu $sp, $sp, 4");
 						printMips("sw %s, 0($sp)", reg->name);
+					}
+					else {
+						Reg *reg = ensure(code->code.binop.op1);
+						printMips("sw %s, %d($sp)", reg->name, (i-4)*4);
 					}
 					code = code->prev;
 					i++;
@@ -425,13 +452,13 @@ void generate_mips(InterCodes *head)
 				printMips("lw $ra, 0($sp)");
 				printMips("addi $sp, $sp, 4");
 
-				/*NOTE: must ensure(rlt) there, or make stack bad*/
+				/*NOTE: must ensure(rlt) there, or make stack chaos*/
 				r1 = ensure(rlt);
 				printMips("move %s, $v0", r1->name);
 				
 				break;
 			case IC_PARAM:
-				/*it should be handled in case IC_FUNCTION
+				/*it should be handled in case IC_FUNCTION,
 				 *for param number may bigger than 4
 				 */
 				ASSERT(0);
@@ -440,6 +467,8 @@ void generate_mips(InterCodes *head)
 				/*handle in case CALL*/
 				break;
 			case IC_DEC:
+				
+				break;
 			case IC_REF:	case IC_DEREF:
 			default :
 				ASSERT(0);

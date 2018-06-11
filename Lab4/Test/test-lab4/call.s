@@ -49,7 +49,7 @@ sw $ra, 0($sp)
 jal f
 lw $ra, 0($sp)
 addi $sp, $sp, 4
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for i
 move $t0, $v0
 move $v0, $0
 addi, $sp, $fp, 0

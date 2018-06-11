@@ -25,20 +25,20 @@ subu $sp, $sp, 8
 sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for i
 addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal read
 lw $ra, 0($sp)
 addi $sp, $sp, 4
 move $t0, $v0
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for temp3
 li $t2, 1
 sub $t1, $0, $t2
 ble $t0, $t1, label1
 j label2
 label1:
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for temp5
 li $t3, 1
 sub $t2, $0, $t3
 move $a0, $t2

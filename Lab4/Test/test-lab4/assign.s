@@ -25,7 +25,7 @@ subu $sp, $sp, 8
 sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for n
 li $t1, 2
 move $t0, $t1
 move $a0, $t0

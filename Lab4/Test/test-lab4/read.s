@@ -25,7 +25,7 @@ subu $sp, $sp, 8
 sw $ra, 4($sp)
 sw $fp, 0($sp)
 addiu $fp, $sp, 0
-subu $sp, $sp, 4
+subu $sp, $sp, 4		#alloc for n
 addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal read

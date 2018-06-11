@@ -41,4 +41,7 @@ typedef struct CPURegs {
 
 void generate_mips(InterCodes *head);
 
+void printMips(char *format, ...);
+#define printComment(format, ...)	printMips(format, ##__VA_ARGS__)
+
 #endif

@@ -29,37 +29,31 @@ subu $sp, $sp, 4		#alloc for p1
 subu $sp, $sp, 4		#alloc for p2
 subu $sp, $sp, 4		#alloc for p3
 subu $sp, $sp, 4		#alloc for p4
-subu $sp, $sp, 4		#alloc for temp10
+subu $sp, $sp, 4		#alloc for temp8
 li $t1, 1
 mul $t0, $a0, $t1
-subu $sp, $sp, 4		#alloc for temp11
+subu $sp, $sp, 4		#alloc for temp9
 li $t2, 2
 mul $t1, $a1, $t2
-subu $sp, $sp, 4		#alloc for temp8
+subu $sp, $sp, 4		#alloc for temp6
 add $t2, $t0, $t1
-subu $sp, $sp, 4		#alloc for temp9
+subu $sp, $sp, 4		#alloc for temp7
 li $t4, 3
 mul $t3, $a2, $t4
-subu $sp, $sp, 4		#alloc for temp6
+subu $sp, $sp, 4		#alloc for temp4
 add $t4, $t2, $t3
-subu $sp, $sp, 4		#alloc for temp7
+subu $sp, $sp, 4		#alloc for temp5
 li $t6, 4
 mul $t5, $a3, $t6
-subu $sp, $sp, 4		#alloc for temp4
+subu $sp, $sp, 4		#alloc for temp2
 add $t6, $t4, $t5
-subu $sp, $sp, 4		#alloc for temp5
+subu $sp, $sp, 4		#alloc for temp3
 lw $t8, 12($fp)
 li $t9, 5
 mul $t7, $t8, $t9
-subu $sp, $sp, 4		#alloc for temp2
-add $t9, $t6, $t7
-subu $sp, $sp, 4		#alloc for temp3
-lw $s1, 16($fp)
-li $s2, 6
-mul $s0, $s1, $s2
 subu $sp, $sp, 4		#alloc for temp1
-add $s2, $t9, $s0
-move $v0, $s2
+add $t9, $t6, $t7
+move $v0, $t9
 addi, $sp, $fp, 0
 lw $ra, 4($sp)
 lw $fp, 0($sp)
@@ -86,24 +80,20 @@ move $t3, $t4
 subu $sp, $sp, 4		#alloc for a5
 li $t5, 5
 move $t4, $t5
-subu $sp, $sp, 4		#alloc for a6
-li $t6, 6
-move $t5, $t6
 move $a0, $t0
 move $a1, $t1
 move $a2, $t2
 move $a3, $t3
 subu $sp, $sp, -8		#alloc for arg4~
 sw $t4, 0($sp)
-sw $t5, 4($sp)
 addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal f
 lw $ra, 0($sp)
 addi $sp, $sp, 4
 subu $sp, $sp, 4		#alloc for n
-move $t6, $v0
-move $a0, $t6
+move $t5, $v0
+move $a0, $t5
 addi $sp, $sp, -4
 sw $ra, 0($sp)
 jal write
