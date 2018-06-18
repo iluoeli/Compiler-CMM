@@ -1,12 +1,12 @@
 FUNCTION qsort :
 PARAM array
+PARAM l
+PARAM r
 a := l
-PARAM a
-b := r
-PARAM b
 t4 := #4 * a
 t5 := array + t4
 x := *t5
+b := r
 IF a < b GOTO label1
 GOTO label2
 LABEL label1 :

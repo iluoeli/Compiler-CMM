@@ -4,6 +4,7 @@
  b = tem;
  write(a);
  write(b);
+ return a;
  }
 
  int main() {
