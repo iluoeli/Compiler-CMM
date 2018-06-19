@@ -1,52 +1,277 @@
-FUNCTION myPow :
-PARAM x
-PARAM n
-IF n == #0 GOTO label1
-GOTO label2
-LABEL label1 :
-RETURN #1
-LABEL label2 :
-IF n == #1 GOTO label3
-GOTO label4
-LABEL label3 :
-RETURN x
-LABEL label4 :
-IF n == #2 GOTO label5
-GOTO label6
-LABEL label5 :
-t9 := x * x
-RETURN t9
-LABEL label6 :
-t14 := n / #2
-t13 := t14 * #2
-IF n == t13 GOTO label7
-GOTO label8
-LABEL label7 :
-t21 := n / #2
-ARG t21
-ARG x
-t19 := CALL myPow
-ARG #2
-ARG t19
-t18 := CALL myPow
-RETURN t18
-GOTO label9
-LABEL label8 :
-t29 := n / #2
-ARG t29
-ARG x
-t27 := CALL myPow
-ARG #2
-ARG t27
-value := CALL myPow
-t33 := x * value
-RETURN t33
-LABEL label9 :
-FUNCTION main :
-READ x1
-READ n1
-ARG n1
-ARG x1
-t41 := CALL myPow
-WRITE t41
-RETURN #0
+.data
+_prompt: .asciiz "Enter an integer:"
+_ret: .asciiz "\n"
+.globl main
+.text
+read:
+  li $v0, 4
+  la $a0, _prompt
+  syscall
+  li $v0, 5
+  syscall
+  jr $ra
+  
+write:
+  li $v0, 1
+  syscall
+  li $v0, 4
+  la $a0, _ret
+  syscall
+  move $v0, $0
+  jr $ra
+
+myPow:
+  subu $sp, $sp, 8
+  sw $ra, 4($sp)
+  sw $fp, 0($sp)
+  addiu $fp, $sp, 0
+  subu $sp, $sp, 4		#alloc -4($fp) for x
+  subu $sp, $sp, 4		#alloc -8($fp) for n
+  subu $sp, $sp, 4		#alloc -12($fp) for temp1
+  move $t0, $a1
+  subu $sp, $sp, 4		#alloc -16($fp) for temp2
+  move $t1, $0
+  beq $t0, $t1, label1
+  j label2
+label1:
+  sw $t0, -12($fp)		#spill
+  sw $t1, -16($fp)		#spill
+  subu $sp, $sp, 4		#alloc -20($fp) for temp3
+  li $t1, 1
+  move $t0, $t1
+  move $v0, $t0
+  addi, $sp, $fp, 0
+  lw $ra, 4($sp)
+  lw $fp, 0($sp)
+  addi $sp, $sp, 8
+  jr $ra
+label2:
+  sw $t0, -20($fp)		#spill
+  subu $sp, $sp, 4		#alloc -24($fp) for temp4
+  move $t0, $a1
+  subu $sp, $sp, 4		#alloc -28($fp) for temp5
+  li $t2, 1
+  move $t1, $t2
+  beq $t0, $t1, label3
+  j label4
+label3:
+  sw $t0, -24($fp)		#spill
+  sw $t1, -28($fp)		#spill
+  subu $sp, $sp, 4		#alloc -32($fp) for temp6
+  move $t0, $a0
+  move $v0, $t0
+  addi, $sp, $fp, 0
+  lw $ra, 4($sp)
+  lw $fp, 0($sp)
+  addi $sp, $sp, 8
+  jr $ra
+label4:
+  sw $t0, -32($fp)		#spill
+  subu $sp, $sp, 4		#alloc -36($fp) for temp7
+  move $t0, $a1
+  subu $sp, $sp, 4		#alloc -40($fp) for temp8
+  li $t2, 2
+  move $t1, $t2
+  beq $t0, $t1, label5
+  j label6
+label5:
+  sw $t0, -36($fp)		#spill
+  sw $t1, -40($fp)		#spill
+  subu $sp, $sp, 4		#alloc -44($fp) for temp10
+  move $t0, $a0
+  subu $sp, $sp, 4		#alloc -48($fp) for temp11
+  move $t1, $a0
+  subu $sp, $sp, 4		#alloc -52($fp) for temp9
+  mul $t2, $t0, $t1
+  move $v0, $t2
+  addi, $sp, $fp, 0
+  lw $ra, 4($sp)
+  lw $fp, 0($sp)
+  addi $sp, $sp, 8
+  jr $ra
+label6:
+  sw $t0, -44($fp)		#spill
+  sw $t1, -48($fp)		#spill
+  sw $t2, -52($fp)		#spill
+  subu $sp, $sp, 4		#alloc -56($fp) for temp12
+  move $t0, $a1
+  subu $sp, $sp, 4		#alloc -60($fp) for temp16
+  move $t1, $a1
+  subu $sp, $sp, 4		#alloc -64($fp) for temp17
+  li $t3, 2
+  move $t2, $t3
+  subu $sp, $sp, 4		#alloc -68($fp) for temp14
+  div $t3, $t1, $t2
+  subu $sp, $sp, 4		#alloc -72($fp) for temp15
+  li $t5, 2
+  move $t4, $t5
+  subu $sp, $sp, 4		#alloc -76($fp) for temp13
+  mul $t5, $t3, $t4
+  beq $t0, $t5, label7
+  j label8
+label7:
+  sw $t0, -56($fp)		#spill
+  sw $t1, -60($fp)		#spill
+  sw $t2, -64($fp)		#spill
+  sw $t3, -68($fp)		#spill
+  sw $t4, -72($fp)		#spill
+  sw $t5, -76($fp)		#spill
+  subu $sp, $sp, 4		#alloc -80($fp) for temp20
+  move $t0, $a0
+  subu $sp, $sp, 4		#alloc -84($fp) for temp22
+  move $t1, $a1
+  subu $sp, $sp, 4		#alloc -88($fp) for temp23
+  li $t3, 2
+  move $t2, $t3
+  subu $sp, $sp, 4		#alloc -92($fp) for temp21
+  div $t3, $t1, $t2
+  move $a0, $t0
+  move $a1, $t3
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal myPow
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -96($fp) for temp19
+  move $t4, $v0
+  subu $sp, $sp, 4		#alloc -100($fp) for temp24
+  li $t6, 2
+  move $t5, $t6
+  move $a0, $t4
+  move $a1, $t5
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal myPow
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -104($fp) for temp18
+  move $t6, $v0
+  move $v0, $t6
+  addi, $sp, $fp, 0
+  lw $ra, 4($sp)
+  lw $fp, 0($sp)
+  addi $sp, $sp, 8
+  jr $ra
+  j label9
+label8:
+  sw $t0, -80($fp)		#spill
+  sw $t1, -84($fp)		#spill
+  sw $t2, -88($fp)		#spill
+  sw $t3, -92($fp)		#spill
+  sw $t4, -96($fp)		#spill
+  sw $t5, -100($fp)		#spill
+  sw $t6, -104($fp)		#spill
+  subu $sp, $sp, 4		#alloc -108($fp) for temp28
+  move $t0, $a0
+  subu $sp, $sp, 4		#alloc -112($fp) for temp30
+  move $t1, $a1
+  subu $sp, $sp, 4		#alloc -116($fp) for temp31
+  li $t3, 2
+  move $t2, $t3
+  subu $sp, $sp, 4		#alloc -120($fp) for temp29
+  div $t3, $t1, $t2
+  move $a0, $t0
+  move $a1, $t3
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal myPow
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -124($fp) for temp27
+  move $t4, $v0
+  subu $sp, $sp, 4		#alloc -128($fp) for temp32
+  li $t6, 2
+  move $t5, $t6
+  move $a0, $t4
+  move $a1, $t5
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal myPow
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -132($fp) for temp26
+  move $t6, $v0
+  subu $sp, $sp, 4		#alloc -136($fp) for value
+  move $t7, $t6
+  subu $sp, $sp, 4		#alloc -140($fp) for temp25
+  move $t8, $t7
+  subu $sp, $sp, 4		#alloc -144($fp) for temp34
+  move $t9, $a0
+  subu $sp, $sp, 4		#alloc -148($fp) for temp35
+  move $s0, $t7
+  subu $sp, $sp, 4		#alloc -152($fp) for temp33
+  mul $s1, $t9, $s0
+  move $v0, $s1
+  addi, $sp, $fp, 0
+  lw $ra, 4($sp)
+  lw $fp, 0($sp)
+  addi $sp, $sp, 8
+  jr $ra
+label9:
+  sw $t0, -108($fp)		#spill
+  sw $t1, -112($fp)		#spill
+  sw $t2, -116($fp)		#spill
+  sw $t3, -120($fp)		#spill
+  sw $t4, -124($fp)		#spill
+  sw $t5, -128($fp)		#spill
+  sw $t6, -132($fp)		#spill
+  sw $t7, -136($fp)		#spill
+  sw $t8, -140($fp)		#spill
+  sw $t9, -144($fp)		#spill
+  sw $s0, -148($fp)		#spill
+  sw $s1, -152($fp)		#spill
+
+main:
+  subu $sp, $sp, 8
+  sw $ra, 4($sp)
+  sw $fp, 0($sp)
+  addiu $fp, $sp, 0
+  subu $sp, $sp, 4		#alloc -4($fp) for temp37
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal read
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  move $t0, $v0
+  subu $sp, $sp, 4		#alloc -8($fp) for x1
+  move $t1, $t0
+  subu $sp, $sp, 4		#alloc -12($fp) for temp36
+  move $t2, $t1
+  subu $sp, $sp, 4		#alloc -16($fp) for temp39
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal read
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  move $t3, $v0
+  subu $sp, $sp, 4		#alloc -20($fp) for n1
+  move $t4, $t3
+  subu $sp, $sp, 4		#alloc -24($fp) for temp38
+  move $t5, $t4
+  subu $sp, $sp, 4		#alloc -28($fp) for temp42
+  move $t6, $t1
+  subu $sp, $sp, 4		#alloc -32($fp) for temp43
+  move $t7, $t4
+  move $a0, $t6
+  move $a1, $t7
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal myPow
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -36($fp) for temp41
+  move $t8, $v0
+  move $a0, $t8
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal write
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -40($fp) for temp44
+  move $t9, $0
+  move $v0, $t9
+  addi, $sp, $fp, 0
+  lw $ra, 4($sp)
+  lw $fp, 0($sp)
+  addi $sp, $sp, 8
+  jr $ra

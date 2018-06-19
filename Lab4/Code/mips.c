@@ -4,6 +4,7 @@ extern FILE *mips_out;
 CPURegs cpu;
 LocalVar localVarList = NULL;
 int fp_off = 0;
+int mips_cnt = 0;
 
 void printMips(char *format, ...)
 {
@@ -12,6 +13,7 @@ void printMips(char *format, ...)
 	vfprintf(mips_out, format, varList);
 	va_end(varList);
 	fprintf(mips_out, "\n");
+	mips_cnt ++;
 }
 
 void initRegs()
@@ -80,11 +82,11 @@ LocalVar alloc_var(Operand op)
 	add_var(var);
 
 	if(op->kind == VARIABLE) {
-		printinMips("subu $sp, $sp, 4\t\t#alloc for %s", op->name);
+		printinMips("subu $sp, $sp, 4\t\t#alloc %d($fp) for %s",var->offset, op->name);
 		//printComment("#alloc %s", op->name);
 	}
 	else if(op->kind == TEMP) {
-		printinMips("subu $sp, $sp, 4\t\t#alloc for temp%d", op->value);
+		printinMips("subu $sp, $sp, 4\t\t#alloc %d($fp) for temp%d",var->offset, op->value);
 		//printComment("#alloc temp%d", op->value);
 	}
 	else {
@@ -118,7 +120,7 @@ void clear_reg(Reg *reg)
 	reg->available = TRUE;
 	
 	
-	while(reg->varList) {
+	if(reg->varList) {
 		reg->varList->reg = NULL;
 	}
 	
@@ -128,13 +130,27 @@ void clear_reg(Reg *reg)
 void spill_reg(Reg *reg)
 {
 	LocalVar var = reg->varList;
-	while(var) {
+	if(var) {
 		if(var->op->kind == VARIABLE || var->op->kind == TEMP) {
-			printinMips("sw %s, %d($fp)", reg->name, var->offset);
+			printinMips("sw %s, %d($fp)\t\t#spill", reg->name, var->offset);
 		}
-		var = var->next;
+		else {
+			printOperand(var->op, stdout);
+		}
 	}
 	clear_reg(reg);
+}
+
+void spill_allReg()
+{
+	int i;
+	for(i=0; i < 10; i++) {
+		spill_reg(&cpu.t[i]);
+	}
+
+	for(i=0; i < 8; i++) {
+		spill_reg(&cpu.s[i]);
+	}
 }
 
 void free_cReg(Reg *reg)
@@ -171,18 +187,31 @@ Reg *alloc_reg(Operand op)
 		if(cpu.t[i].available == FALSE)
 			continue;
 		cpu.t[i].available = FALSE;
-
+		cpu.t[i].lastUse = mips_cnt;
 		return &cpu.t[i];
 	}
 	for(i=0; i < 8; i++) {
 		if(cpu.s[i].available == FALSE)
 			continue;
 		cpu.s[i].available = FALSE;
-
+		cpu.s[i].lastUse = mips_cnt;
 		return &cpu.s[i];
 	}
 	
 	/*TODO: choose an reg*/
+	int idx = 0;
+	int min_cnt = 0x7fffffff;
+	for(i=0; i < 10; i++) {
+		if(min_cnt > cpu.t[i].lastUse) {
+			idx = i;
+			min_cnt = cpu.t[i].lastUse;
+		}	
+	}
+	printinMips("#spill %d", idx);
+	spill_reg(&cpu.t[idx]);		
+	cpu.t[idx].lastUse = mips_cnt;
+	cpu.t[idx].available = FALSE;
+	return &cpu.t[idx];
 
 	ASSERT(0);
 	return NULL;
@@ -452,12 +481,16 @@ void generate_mips(InterCodes *head)
 				free_cReg(r3);
 				break;
 			case IC_LABEL:
+				/*block start*/
+				spill_allReg();	
 				printMips("label%d:", op1->value);
 				break;
 			case IC_GOTO:	
+				spill_allReg();	
 				printinMips("j label%d", op1->value);
 				break;
 			case IC_JL:
+				spill_allReg();	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("blt %s, %s, label%d", r1->name, r2->name, rlt->value);
@@ -465,6 +498,7 @@ void generate_mips(InterCodes *head)
 				free_cReg(r1);
 				free_cReg(r2);
 			case IC_JG:
+				spill_allReg();	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("bgt %s, %s, label%d", r1->name, r2->name, rlt->value);
@@ -472,6 +506,7 @@ void generate_mips(InterCodes *head)
 				free_cReg(r2);
 				break;
 			case IC_JGE:	
+				spill_allReg();	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("bge %s, %s, label%d", r1->name, r2->name, rlt->value);
@@ -479,6 +514,7 @@ void generate_mips(InterCodes *head)
 				free_cReg(r2);
 				break;
 			case IC_JLE:
+				spill_allReg();	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("ble %s, %s, label%d", r1->name, r2->name, rlt->value);
@@ -486,6 +522,7 @@ void generate_mips(InterCodes *head)
 				free_cReg(r2);
 				break;
 			case IC_JE:
+				spill_allReg();	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("beq %s, %s, label%d", r1->name, r2->name, rlt->value);
@@ -493,6 +530,7 @@ void generate_mips(InterCodes *head)
 				free_cReg(r2);
 				break;
 			case IC_JNE:
+				spill_allReg();	
 				r1 = ensure(op1);
 				r2 = ensure(op2);
 				printinMips("bne %s, %s, label%d", r1->name, r2->name, rlt->value);

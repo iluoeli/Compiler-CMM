@@ -294,16 +294,6 @@ InterCodes *opt_ir(InterCodes *head)
 				cnt = 0;
 				start = p->next;
 				break;
-				/*
-				if(cnt != 0) {
-					end = p->prev;
-					block = opt_block(start, end);
-					ADD_TAIL(opt_codes, block);
-				}
-				cnt = 1;
-				start = p;
-				break;
-				*/
 			case IC_GOTO:	case IC_RETURN:
 			case IC_JL:		case IC_JG:
 			case IC_JGE:	case IC_JLE:

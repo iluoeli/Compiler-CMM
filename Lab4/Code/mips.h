@@ -15,6 +15,7 @@ struct LocalVar_ {
 typedef struct Reg_ {
 	char name[4];
 	LocalVar varList;
+	int lastUse;
 	BOOL available;
 } Reg;
 

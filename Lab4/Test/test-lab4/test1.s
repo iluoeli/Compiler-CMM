@@ -25,14 +25,18 @@ main:
   sw $ra, 4($sp)
   sw $fp, 0($sp)
   addiu $fp, $sp, 0
-  li $t0, 1
+  subu $sp, $sp, 4		#alloc -4($fp) for temp2
+  li $t1, 1
+  move $t0, $t1
   move $a0, $t0
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal write
   lw $ra, 0($sp)
   addi $sp, $sp, 4
-  move $v0, $0
+  subu $sp, $sp, 4		#alloc -8($fp) for temp3
+  move $t1, $0
+  move $v0, $t1
   addi, $sp, $fp, 0
   lw $ra, 4($sp)
   lw $fp, 0($sp)

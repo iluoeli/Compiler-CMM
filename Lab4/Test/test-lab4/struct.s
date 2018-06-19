@@ -25,17 +25,21 @@ sum:
   sw $ra, 4($sp)
   sw $fp, 0($sp)
   addiu $fp, $sp, 0
-  subu $sp, $sp, 4		#alloc for arg
-  subu $sp, $sp, 4		#alloc for temp5
-  add $t0, $a0, $0
-  subu $sp, $sp, 4		#alloc for temp7
-  li $t2, 4
-  add $t1, $a0, $t2
-  subu $sp, $sp, 4		#alloc for temp1
-  lw $t3, 0($t0)
-  lw $t4, 0($t1)
-  add $t2, $t3, $t4
-  move $v0, $t2
+  subu $sp, $sp, 4		#alloc -4($fp) for arg
+  subu $sp, $sp, 4		#alloc -8($fp) for temp4
+  move $t0, $a0
+  subu $sp, $sp, 4		#alloc -12($fp) for temp5
+  add $t1, $t0, $0
+  subu $sp, $sp, 4		#alloc -16($fp) for temp6
+  move $t2, $a0
+  subu $sp, $sp, 4		#alloc -20($fp) for temp7
+  li $t4, 4
+  add $t3, $t2, $t4
+  subu $sp, $sp, 4		#alloc -24($fp) for temp1
+  lw $t5, 0($t1)
+  lw $t6, 0($t3)
+  add $t4, $t5, $t6
+  move $v0, $t4
   addi, $sp, $fp, 0
   lw $ra, 4($sp)
   lw $fp, 0($sp)
@@ -48,49 +52,57 @@ main:
   sw $fp, 0($sp)
   addiu $fp, $sp, 0
   subu $sp, $sp, 8		#alloc for temp8
-  subu $sp, $sp, 4		#alloc for n
+  subu $sp, $sp, 4		#alloc -12($fp) for n
   la $t1, -8($fp)
   move $t0, $t1
-  subu $sp, $sp, 4		#alloc for temp10
+  subu $sp, $sp, 4		#alloc -16($fp) for temp11
   move $t1, $t0
-  subu $sp, $sp, 4		#alloc for temp11
+  subu $sp, $sp, 4		#alloc -20($fp) for temp12
   add $t2, $t1, $0
-  subu $sp, $sp, 4		#alloc for temp12
+  subu $sp, $sp, 4		#alloc -24($fp) for temp13
   li $t4, 1
   move $t3, $t4
   sw $t3, 0($t2)
-  subu $sp, $sp, 4		#alloc for temp14
-  move $t4, $t0
-  subu $sp, $sp, 4		#alloc for temp15
-  li $t6, 4
-  add $t5, $t4, $t6
-  subu $sp, $sp, 4		#alloc for temp16
-  li $t7, 2
-  move $t6, $t7
-  sw $t6, 0($t5)
-  subu $sp, $sp, 4		#alloc for temp18
-  move $t7, $t0
-  move $a0, $t7
+  subu $sp, $sp, 4		#alloc -28($fp) for temp9
+  lw $t5, 0($t2)
+  move $t4, $t5
+  subu $sp, $sp, 4		#alloc -32($fp) for temp16
+  move $t5, $t0
+  subu $sp, $sp, 4		#alloc -36($fp) for temp17
+  li $t7, 4
+  add $t6, $t5, $t7
+  subu $sp, $sp, 4		#alloc -40($fp) for temp18
+  li $t8, 2
+  move $t7, $t8
+  sw $t7, 0($t6)
+  subu $sp, $sp, 4		#alloc -44($fp) for temp14
+  lw $t9, 0($t6)
+  move $t8, $t9
+  subu $sp, $sp, 4		#alloc -48($fp) for temp21
+  move $t9, $t0
+  move $a0, $t9
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal sum
   lw $ra, 0($sp)
   addi $sp, $sp, 4
-  subu $sp, $sp, 4		#alloc for temp17
-  move $t8, $v0
-  subu $sp, $sp, 4		#alloc for rlt
-  move $t9, $t8
-  subu $sp, $sp, 4		#alloc for temp19
-  move $s0, $t9
-  move $a0, $s0
+  subu $sp, $sp, 4		#alloc -52($fp) for temp20
+  move $s0, $v0
+  subu $sp, $sp, 4		#alloc -56($fp) for rlt
+  move $s1, $s0
+  subu $sp, $sp, 4		#alloc -60($fp) for temp19
+  move $s2, $s1
+  subu $sp, $sp, 4		#alloc -64($fp) for temp23
+  move $s3, $s1
+  move $a0, $s3
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal write
   lw $ra, 0($sp)
   addi $sp, $sp, 4
-  subu $sp, $sp, 4		#alloc for temp20
-  move $s1, $0
-  move $v0, $s1
+  subu $sp, $sp, 4		#alloc -68($fp) for temp24
+  move $s4, $0
+  move $v0, $s4
   addi, $sp, $fp, 0
   lw $ra, 4($sp)
   lw $fp, 0($sp)
