@@ -63,6 +63,9 @@ qsort:
   sw $t8, -48($fp)		#spill
   sw $t9, -52($fp)		#spill
   sw $s0, -56($fp)		#spill
+  sw $a0, -4($fp)		#spill
+  sw $a1, -8($fp)		#spill
+  sw $a2, -12($fp)		#spill
   lw $t0, -52($fp)
   lw $t1, -56($fp)
   blt $t0, $t1, label1
@@ -107,25 +110,27 @@ label6:
   j label8
 label9:
   subu $sp, $sp, 4		#alloc -76($fp) for temp16
-  move $t0, $a0
+  lw $t1, -4($fp)
+  move $t0, $t1
   subu $sp, $sp, 4		#alloc -80($fp) for temp17
-  lw $t2, -48($fp)
-  move $t1, $t2
+  lw $t3, -48($fp)
+  move $t2, $t3
   subu $sp, $sp, 4		#alloc -84($fp) for temp18
-  li $t4, 4
-  mul $t3, $t4, $t1
+  li $t5, 4
+  mul $t4, $t5, $t2
   subu $sp, $sp, 4		#alloc -88($fp) for temp19
-  add $t4, $t0, $t3
+  add $t5, $t0, $t4
   subu $sp, $sp, 4		#alloc -92($fp) for temp15
-  lw $t6, -32($fp)
-  move $t5, $t6
+  lw $t7, -32($fp)
+  move $t6, $t7
   sw $t0, -76($fp)		#spill
-  sw $t1, -80($fp)		#spill
-  sw $t2, -48($fp)		#spill
-  sw $t3, -84($fp)		#spill
-  sw $t4, -88($fp)		#spill
-  sw $t5, -92($fp)		#spill
-  sw $t6, -32($fp)		#spill
+  sw $t1, -4($fp)		#spill
+  sw $t2, -80($fp)		#spill
+  sw $t3, -48($fp)		#spill
+  sw $t4, -84($fp)		#spill
+  sw $t5, -88($fp)		#spill
+  sw $t6, -92($fp)		#spill
+  sw $t7, -32($fp)		#spill
   lw $t1, -88($fp)
   lw $t0, 0($t1)
   lw $t2, -92($fp)
@@ -170,55 +175,57 @@ label8:
   j label11
 label10:
   subu $sp, $sp, 4		#alloc -120($fp) for temp28
-  move $t0, $a0
+  lw $t1, -4($fp)
+  move $t0, $t1
   subu $sp, $sp, 4		#alloc -124($fp) for temp29
-  lw $t2, -40($fp)
-  move $t1, $t2
+  lw $t3, -40($fp)
+  move $t2, $t3
   subu $sp, $sp, 4		#alloc -128($fp) for temp30
-  li $t4, 4
-  mul $t3, $t4, $t1
+  li $t5, 4
+  mul $t4, $t5, $t2
   subu $sp, $sp, 4		#alloc -132($fp) for temp31
-  add $t4, $t0, $t3
+  add $t5, $t0, $t4
   subu $sp, $sp, 4		#alloc -136($fp) for temp33
-  move $t5, $a0
+  move $t6, $t1
   subu $sp, $sp, 4		#alloc -140($fp) for temp34
-  lw $t7, -48($fp)
-  move $t6, $t7
+  lw $t8, -48($fp)
+  move $t7, $t8
   subu $sp, $sp, 4		#alloc -144($fp) for temp35
-  li $t9, 4
-  mul $t8, $t9, $t6
+  li $s0, 4
+  mul $t9, $s0, $t7
   subu $sp, $sp, 4		#alloc -148($fp) for temp36
-  add $t9, $t5, $t8
-  lw $s0, 0($t9)
-  sw $s0, 0($t4)
+  add $s0, $t6, $t9
+  lw $s1, 0($s0)
+  sw $s1, 0($t5)
   subu $sp, $sp, 4		#alloc -152($fp) for temp26
-  lw $s2, 0($t4)
-  move $s1, $s2
+  lw $s3, 0($t5)
+  move $s2, $s3
   subu $sp, $sp, 4		#alloc -156($fp) for temp39
-  move $s2, $t2
+  move $s3, $t3
   subu $sp, $sp, 4		#alloc -160($fp) for temp40
-  li $s4, 1
-  move $s3, $s4
+  li $s5, 1
+  move $s4, $s5
   subu $sp, $sp, 4		#alloc -164($fp) for temp38
-  add $s4, $s2, $s3
-  move $t2, $s4
+  add $s5, $s3, $s4
+  move $t3, $s5
   subu $sp, $sp, 4		#alloc -168($fp) for temp37
-  move $s5, $t2
+  move $s6, $t3
   sw $t0, -120($fp)		#spill
-  sw $t1, -124($fp)		#spill
-  sw $t2, -40($fp)		#spill
-  sw $t3, -128($fp)		#spill
-  sw $t4, -132($fp)		#spill
-  sw $t5, -136($fp)		#spill
-  sw $t6, -140($fp)		#spill
-  sw $t7, -48($fp)		#spill
-  sw $t8, -144($fp)		#spill
-  sw $t9, -148($fp)		#spill
-  sw $s1, -152($fp)		#spill
-  sw $s2, -156($fp)		#spill
-  sw $s3, -160($fp)		#spill
-  sw $s4, -164($fp)		#spill
-  sw $s5, -168($fp)		#spill
+  sw $t1, -4($fp)		#spill
+  sw $t2, -124($fp)		#spill
+  sw $t3, -40($fp)		#spill
+  sw $t4, -128($fp)		#spill
+  sw $t5, -132($fp)		#spill
+  sw $t6, -136($fp)		#spill
+  sw $t7, -140($fp)		#spill
+  sw $t8, -48($fp)		#spill
+  sw $t9, -144($fp)		#spill
+  sw $s0, -148($fp)		#spill
+  sw $s2, -152($fp)		#spill
+  sw $s3, -156($fp)		#spill
+  sw $s4, -160($fp)		#spill
+  sw $s5, -164($fp)		#spill
+  sw $s6, -168($fp)		#spill
 label11:
 label12:
   subu $sp, $sp, 4		#alloc -172($fp) for temp41
@@ -239,25 +246,27 @@ label12:
   j label14
 label15:
   subu $sp, $sp, 4		#alloc -180($fp) for temp45
-  move $t0, $a0
+  lw $t1, -4($fp)
+  move $t0, $t1
   subu $sp, $sp, 4		#alloc -184($fp) for temp46
-  lw $t2, -40($fp)
-  move $t1, $t2
+  lw $t3, -40($fp)
+  move $t2, $t3
   subu $sp, $sp, 4		#alloc -188($fp) for temp47
-  li $t4, 4
-  mul $t3, $t4, $t1
+  li $t5, 4
+  mul $t4, $t5, $t2
   subu $sp, $sp, 4		#alloc -192($fp) for temp48
-  add $t4, $t0, $t3
+  add $t5, $t0, $t4
   subu $sp, $sp, 4		#alloc -196($fp) for temp44
-  lw $t6, -32($fp)
-  move $t5, $t6
+  lw $t7, -32($fp)
+  move $t6, $t7
   sw $t0, -180($fp)		#spill
-  sw $t1, -184($fp)		#spill
-  sw $t2, -40($fp)		#spill
-  sw $t3, -188($fp)		#spill
-  sw $t4, -192($fp)		#spill
-  sw $t5, -196($fp)		#spill
-  sw $t6, -32($fp)		#spill
+  sw $t1, -4($fp)		#spill
+  sw $t2, -184($fp)		#spill
+  sw $t3, -40($fp)		#spill
+  sw $t4, -188($fp)		#spill
+  sw $t5, -192($fp)		#spill
+  sw $t6, -196($fp)		#spill
+  sw $t7, -32($fp)		#spill
   lw $t1, -192($fp)
   lw $t0, 0($t1)
   lw $t2, -196($fp)
@@ -302,139 +311,149 @@ label14:
   j label17
 label16:
   subu $sp, $sp, 4		#alloc -224($fp) for temp57
-  move $t0, $a0
+  lw $t1, -4($fp)
+  move $t0, $t1
   subu $sp, $sp, 4		#alloc -228($fp) for temp58
-  lw $t2, -48($fp)
-  move $t1, $t2
+  lw $t3, -48($fp)
+  move $t2, $t3
   subu $sp, $sp, 4		#alloc -232($fp) for temp59
-  li $t4, 4
-  mul $t3, $t4, $t1
+  li $t5, 4
+  mul $t4, $t5, $t2
   subu $sp, $sp, 4		#alloc -236($fp) for temp60
-  add $t4, $t0, $t3
+  add $t5, $t0, $t4
   subu $sp, $sp, 4		#alloc -240($fp) for temp62
-  move $t5, $a0
+  move $t6, $t1
   subu $sp, $sp, 4		#alloc -244($fp) for temp63
-  lw $t7, -40($fp)
-  move $t6, $t7
+  lw $t8, -40($fp)
+  move $t7, $t8
   subu $sp, $sp, 4		#alloc -248($fp) for temp64
-  li $t9, 4
-  mul $t8, $t9, $t6
+  li $s0, 4
+  mul $t9, $s0, $t7
   subu $sp, $sp, 4		#alloc -252($fp) for temp65
-  add $t9, $t5, $t8
-  lw $s0, 0($t9)
-  sw $s0, 0($t4)
+  add $s0, $t6, $t9
+  lw $s1, 0($s0)
+  sw $s1, 0($t5)
   subu $sp, $sp, 4		#alloc -256($fp) for temp55
-  lw $s2, 0($t4)
-  move $s1, $s2
+  lw $s3, 0($t5)
+  move $s2, $s3
   subu $sp, $sp, 4		#alloc -260($fp) for temp68
-  move $s2, $t2
+  move $s3, $t3
   subu $sp, $sp, 4		#alloc -264($fp) for temp69
-  li $s4, 1
-  move $s3, $s4
+  li $s5, 1
+  move $s4, $s5
   subu $sp, $sp, 4		#alloc -268($fp) for temp67
-  sub $s4, $s2, $s3
-  move $t2, $s4
+  sub $s5, $s3, $s4
+  move $t3, $s5
   subu $sp, $sp, 4		#alloc -272($fp) for temp66
-  move $s5, $t2
+  move $s6, $t3
   sw $t0, -224($fp)		#spill
-  sw $t1, -228($fp)		#spill
-  sw $t2, -48($fp)		#spill
-  sw $t3, -232($fp)		#spill
-  sw $t4, -236($fp)		#spill
-  sw $t5, -240($fp)		#spill
-  sw $t6, -244($fp)		#spill
-  sw $t7, -40($fp)		#spill
-  sw $t8, -248($fp)		#spill
-  sw $t9, -252($fp)		#spill
-  sw $s1, -256($fp)		#spill
-  sw $s2, -260($fp)		#spill
-  sw $s3, -264($fp)		#spill
-  sw $s4, -268($fp)		#spill
-  sw $s5, -272($fp)		#spill
+  sw $t1, -4($fp)		#spill
+  sw $t2, -228($fp)		#spill
+  sw $t3, -48($fp)		#spill
+  sw $t4, -232($fp)		#spill
+  sw $t5, -236($fp)		#spill
+  sw $t6, -240($fp)		#spill
+  sw $t7, -244($fp)		#spill
+  sw $t8, -40($fp)		#spill
+  sw $t9, -248($fp)		#spill
+  sw $s0, -252($fp)		#spill
+  sw $s2, -256($fp)		#spill
+  sw $s3, -260($fp)		#spill
+  sw $s4, -264($fp)		#spill
+  sw $s5, -268($fp)		#spill
+  sw $s6, -272($fp)		#spill
 label17:
   j label3
 label5:
   subu $sp, $sp, 4		#alloc -276($fp) for temp72
-  move $t0, $a0
+  lw $t1, -4($fp)
+  move $t0, $t1
   subu $sp, $sp, 4		#alloc -280($fp) for temp73
-  lw $t2, -40($fp)
-  move $t1, $t2
+  lw $t3, -40($fp)
+  move $t2, $t3
   subu $sp, $sp, 4		#alloc -284($fp) for temp74
-  li $t4, 4
-  mul $t3, $t4, $t1
+  li $t5, 4
+  mul $t4, $t5, $t2
   subu $sp, $sp, 4		#alloc -288($fp) for temp75
-  add $t4, $t0, $t3
+  add $t5, $t0, $t4
   subu $sp, $sp, 4		#alloc -292($fp) for temp76
-  lw $t6, -32($fp)
-  move $t5, $t6
-  sw $t5, 0($t4)
+  lw $t7, -32($fp)
+  move $t6, $t7
+  sw $t6, 0($t5)
   subu $sp, $sp, 4		#alloc -296($fp) for temp70
-  lw $t8, 0($t4)
-  move $t7, $t8
+  lw $t9, 0($t5)
+  move $t8, $t9
   subu $sp, $sp, 4		#alloc -300($fp) for temp78
-  move $t8, $a0
+  move $t9, $t1
   subu $sp, $sp, 4		#alloc -304($fp) for temp79
-  move $t9, $a1
+  lw $s1, -8($fp)
+  move $s0, $s1
   subu $sp, $sp, 4		#alloc -308($fp) for temp81
-  move $s0, $t2
+  move $s2, $t3
   subu $sp, $sp, 4		#alloc -312($fp) for temp82
-  li $s2, 1
-  move $s1, $s2
+  li $s4, 1
+  move $s3, $s4
   subu $sp, $sp, 4		#alloc -316($fp) for temp80
-  sub $s2, $s0, $s1
-  move $a0, $t8
-  move $a1, $t9
-  move $a2, $s2
+  sub $s4, $s2, $s3
+  move $a0, $t9
+  move $a1, $s0
+  move $a2, $s4
+  sw $t0, -276($fp)		#spill
+  sw $t1, -4($fp)		#spill
+  sw $t2, -280($fp)		#spill
+  sw $t3, -40($fp)		#spill
+  sw $t4, -284($fp)		#spill
+  sw $t5, -288($fp)		#spill
+  sw $t6, -292($fp)		#spill
+  sw $t7, -32($fp)		#spill
+  sw $t8, -296($fp)		#spill
+  sw $t9, -300($fp)		#spill
+  sw $s0, -304($fp)		#spill
+  sw $s1, -8($fp)		#spill
+  sw $s2, -308($fp)		#spill
+  sw $s3, -312($fp)		#spill
+  sw $s4, -316($fp)		#spill
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal qsort
   lw $ra, 0($sp)
   addi $sp, $sp, 4
   subu $sp, $sp, 4		#alloc -320($fp) for temp77
-  move $s3, $v0
+  move $t0, $v0
   subu $sp, $sp, 4		#alloc -324($fp) for temp84
-  move $s4, $a0
+  lw $t2, -4($fp)
+  move $t1, $t2
   subu $sp, $sp, 4		#alloc -328($fp) for temp86
-  move $s5, $t2
+  lw $t4, -40($fp)
+  move $t3, $t4
   subu $sp, $sp, 4		#alloc -332($fp) for temp87
-  li $s7, 1
-  move $s6, $s7
+  li $t6, 1
+  move $t5, $t6
   subu $sp, $sp, 4		#alloc -336($fp) for temp85
-  add $s7, $s5, $s6
+  add $t6, $t3, $t5
   subu $sp, $sp, 4		#alloc -340($fp) for temp88
-  #spill 0
-  sw $t0, -276($fp)		#spill
-  move $t0, $a2
-  move $a0, $s4
-  move $a1, $s7
-  move $a2, $t0
+  lw $t8, -12($fp)
+  move $t7, $t8
+  move $a0, $t1
+  move $a1, $t6
+  move $a2, $t7
+  sw $t0, -320($fp)		#spill
+  sw $t1, -324($fp)		#spill
+  sw $t2, -4($fp)		#spill
+  sw $t3, -328($fp)		#spill
+  sw $t4, -40($fp)		#spill
+  sw $t5, -332($fp)		#spill
+  sw $t6, -336($fp)		#spill
+  sw $t7, -340($fp)		#spill
+  sw $t8, -12($fp)		#spill
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal qsort
   lw $ra, 0($sp)
   addi $sp, $sp, 4
   subu $sp, $sp, 4		#alloc -344($fp) for temp83
-  #spill 1
-  sw $t1, -280($fp)		#spill
-  move $t1, $v0
-  sw $t0, -340($fp)		#spill
-  sw $t1, -344($fp)		#spill
-  sw $t2, -40($fp)		#spill
-  sw $t3, -284($fp)		#spill
-  sw $t4, -288($fp)		#spill
-  sw $t5, -292($fp)		#spill
-  sw $t6, -32($fp)		#spill
-  sw $t7, -296($fp)		#spill
-  sw $t8, -300($fp)		#spill
-  sw $t9, -304($fp)		#spill
-  sw $s0, -308($fp)		#spill
-  sw $s1, -312($fp)		#spill
-  sw $s2, -316($fp)		#spill
-  sw $s3, -320($fp)		#spill
-  sw $s4, -324($fp)		#spill
-  sw $s5, -328($fp)		#spill
-  sw $s6, -332($fp)		#spill
-  sw $s7, -336($fp)		#spill
+  move $t0, $v0
+  sw $t0, -344($fp)		#spill
 label2:
   subu $sp, $sp, 4		#alloc -348($fp) for temp89
   move $t0, $0
@@ -548,19 +567,6 @@ label20:
   move $a0, $t0
   move $a1, $t2
   move $a2, $t6
-  addi $sp, $sp, -4
-  sw $ra, 0($sp)
-  jal qsort
-  lw $ra, 0($sp)
-  addi $sp, $sp, 4
-  subu $sp, $sp, 4		#alloc -132($fp) for temp106
-  move $t7, $v0
-  subu $sp, $sp, 4		#alloc -136($fp) for temp113
-  move $t8, $0
-  lw $t9, -60($fp)
-  move $t9, $t8
-  subu $sp, $sp, 4		#alloc -140($fp) for temp112
-  move $s0, $t9
   sw $t0, -112($fp)		#spill
   sw $t1, -44($fp)		#spill
   sw $t2, -116($fp)		#spill
@@ -568,10 +574,23 @@ label20:
   sw $t4, -52($fp)		#spill
   sw $t5, -124($fp)		#spill
   sw $t6, -128($fp)		#spill
-  sw $t7, -132($fp)		#spill
-  sw $t8, -136($fp)		#spill
-  sw $t9, -60($fp)		#spill
-  sw $s0, -140($fp)		#spill
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal qsort
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -132($fp) for temp106
+  move $t0, $v0
+  subu $sp, $sp, 4		#alloc -136($fp) for temp113
+  move $t1, $0
+  lw $t2, -60($fp)
+  move $t2, $t1
+  subu $sp, $sp, 4		#alloc -140($fp) for temp112
+  move $t3, $t2
+  sw $t0, -132($fp)		#spill
+  sw $t1, -136($fp)		#spill
+  sw $t2, -60($fp)		#spill
+  sw $t3, -140($fp)		#spill
 label21:
   subu $sp, $sp, 4		#alloc -144($fp) for temp114
   lw $t1, -60($fp)

@@ -1,0 +1,21 @@
+int f(int n)
+{
+	if(n <= 1)	return 1;
+	else {
+		return f(n-1) *n;
+	}
+}
+
+
+
+int main()
+{
+	int i, result;
+
+	i = read();
+
+	result = f(i);
+	write(result);
+
+	return 0;
+}

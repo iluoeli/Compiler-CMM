@@ -49,11 +49,6 @@ main:
   move $t7, $t6
   subu $sp, $sp, 4		#alloc -36($fp) for temp4
   move $t8, $t7
-label1:
-  subu $sp, $sp, 4		#alloc -40($fp) for temp6
-  move $t9, $t5
-  subu $sp, $sp, 4		#alloc -44($fp) for temp7
-  move $s0, $t7
   sw $t0, -4($fp)		#spill
   sw $t1, -8($fp)		#spill
   sw $t2, -12($fp)		#spill
@@ -63,8 +58,17 @@ label1:
   sw $t6, -28($fp)		#spill
   sw $t7, -32($fp)		#spill
   sw $t8, -36($fp)		#spill
-  sw $t9, -40($fp)		#spill
-  sw $s0, -44($fp)		#spill
+label1:
+  subu $sp, $sp, 4		#alloc -40($fp) for temp6
+  lw $t1, -24($fp)
+  move $t0, $t1
+  subu $sp, $sp, 4		#alloc -44($fp) for temp7
+  lw $t3, -32($fp)
+  move $t2, $t3
+  sw $t0, -40($fp)		#spill
+  sw $t1, -24($fp)		#spill
+  sw $t2, -44($fp)		#spill
+  sw $t3, -32($fp)		#spill
   lw $t0, -40($fp)
   lw $t1, -44($fp)
   blt $t0, $t1, label2

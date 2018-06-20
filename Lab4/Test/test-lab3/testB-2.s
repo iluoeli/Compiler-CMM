@@ -1089,16 +1089,17 @@ main:
   addi $sp, $sp, 4
   subu $sp, $sp, 4		#alloc -4($fp) for temp234
   move $t0, $v0
+  sw $t0, -4($fp)		#spill
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal bubbleSort
   lw $ra, 0($sp)
   addi $sp, $sp, 4
   subu $sp, $sp, 4		#alloc -8($fp) for temp235
-  move $t1, $v0
+  move $t0, $v0
   subu $sp, $sp, 4		#alloc -12($fp) for temp236
-  move $t2, $0
-  move $v0, $t2
+  move $t1, $0
+  move $v0, $t1
   addi, $sp, $fp, 0
   lw $ra, 4($sp)
   lw $fp, 0($sp)

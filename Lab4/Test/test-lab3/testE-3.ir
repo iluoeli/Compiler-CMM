@@ -39,26 +39,30 @@ calculate:
   move $t4, $t5
   subu $sp, $sp, 4		#alloc -28($fp) for N
   move $t5, $t4
-label1:
   sw $t0, -8($fp)		#spill
   sw $t1, -12($fp)		#spill
   sw $t2, -16($fp)		#spill
   sw $t3, -20($fp)		#spill
   sw $t4, -24($fp)		#spill
   sw $t5, -28($fp)		#spill
+label1:
   subu $sp, $sp, 4		#alloc -32($fp) for temp4
   lw $t1, -20($fp)
   move $t0, $t1
   subu $sp, $sp, 4		#alloc -36($fp) for temp5
   lw $t3, -28($fp)
   move $t2, $t3
-  blt $t0, $t2, label2
-  j label3
-label2:
   sw $t0, -32($fp)		#spill
   sw $t1, -20($fp)		#spill
   sw $t2, -36($fp)		#spill
   sw $t3, -28($fp)		#spill
+  lw $t0, -32($fp)
+  lw $t1, -36($fp)
+  blt $t0, $t1, label2
+  sw $t0, -32($fp)		#spill
+  sw $t1, -36($fp)		#spill
+  j label3
+label2:
   subu $sp, $sp, 4		#alloc -40($fp) for temp8
   lw $t1, -12($fp)
   move $t0, $t1
@@ -93,8 +97,6 @@ label2:
   move $t5, $s3
   subu $sp, $sp, 4		#alloc -88($fp) for temp16
   move $s4, $t5
-  j label1
-label3:
   sw $t0, -40($fp)		#spill
   sw $t1, -12($fp)		#spill
   sw $t2, -44($fp)		#spill
@@ -110,6 +112,8 @@ label3:
   sw $s2, -80($fp)		#spill
   sw $s3, -84($fp)		#spill
   sw $s4, -88($fp)		#spill
+  j label1
+label3:
   subu $sp, $sp, 4		#alloc -92($fp) for temp22
   move $t0, $a0
   subu $sp, $sp, 4		#alloc -96($fp) for temp23
@@ -162,7 +166,4 @@ main:
   move $t5, $t6
   subu $sp, $sp, 4		#alloc -4068($fp) for N1
   move $t6, $t5
-  subu $sp, $sp, 4		#alloc -4072($fp) for temp34
-  li $t8, 10
-  move $t7, $t8
-  subu $sp, $sp, 4		#alloc -4076(
+  subu $sp, $sp, 4	

@@ -171,13 +171,6 @@ label4:
   move $a0, $s2
   lw $s3, 0($s1)
   move $a1, $s3
-  addi $sp, $sp, -4
-  sw $ra, 0($sp)
-  jal swap
-  lw $ra, 0($sp)
-  addi $sp, $sp, 4
-  subu $sp, $sp, 4		#alloc -116($fp) for temp24
-  move $s4, $v0
   sw $t0, -76($fp)		#spill
   sw $t1, -24($fp)		#spill
   sw $t2, -80($fp)		#spill
@@ -190,7 +183,14 @@ label4:
   sw $t9, -104($fp)		#spill
   sw $s0, -108($fp)		#spill
   sw $s1, -112($fp)		#spill
-  sw $s4, -116($fp)		#spill
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal swap
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  subu $sp, $sp, 4		#alloc -116($fp) for temp24
+  move $t0, $v0
+  sw $t0, -116($fp)		#spill
 label5:
   subu $sp, $sp, 4		#alloc -120($fp) for temp39
   lw $t1, -32($fp)

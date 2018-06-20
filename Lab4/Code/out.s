@@ -128,7 +128,7 @@ main:
   move $a1, $s1
   move $a2, $s2
   move $a3, $s3
-  subu $sp, $sp, 4		#alloc for arg4~
+  subu $sp, $sp, 8		#alloc for arg4~
   sw $s4, 0($sp)
   sw $t0, -4($fp)		#spill
   sw $t1, -8($fp)		#spill

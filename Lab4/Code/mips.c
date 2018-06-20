@@ -129,9 +129,13 @@ void clear_reg(Reg *reg)
 
 void spill_reg(Reg *reg)
 {
+	if(reg == NULL) return;
 	LocalVar var = reg->varList;
 	if(var) {
-		if(var->op->kind == VARIABLE || var->op->kind == TEMP) {
+		if(var->op == NULL) {
+			clear_reg(reg);
+		}
+		else if(var->op->kind == VARIABLE || var->op->kind == TEMP) {
 			printinMips("sw %s, %d($fp)\t\t#spill", reg->name, var->offset);
 		}
 		else {
@@ -151,6 +155,10 @@ void spill_allReg()
 	for(i=0; i < 8; i++) {
 		spill_reg(&cpu.s[i]);
 	}
+	
+	for(i=0; i < 4; i++) {
+		spill_reg(&cpu.a[i]);
+	}
 }
 
 void free_cReg(Reg *reg)
@@ -161,6 +169,15 @@ void free_cReg(Reg *reg)
 	}
 }
 
+void resetArgReg()
+{
+	int i;
+	for(i=0; i < 4; i++) {
+		cpu.a[i].varList = NULL;
+		cpu.a[i].available = TRUE;
+	}
+}
+
 void resetRegs()
 {
 	int i = 0;
@@ -168,6 +185,12 @@ void resetRegs()
 		cpu.t[i].varList = NULL;
 		cpu.t[i].available = TRUE;
 	}
+
+	for(i=0; i < 8; i++) {
+		cpu.s[i].varList = NULL;
+		cpu.s[i].available = TRUE;
+	}
+
 }
 
 void clearVarList()
@@ -175,6 +198,11 @@ void clearVarList()
 	LocalVar var;
 	while(localVarList) {
 		var = localVarList;
+		if(var->reg) {
+			var->reg->varList = NULL;
+			var->reg->available = TRUE;
+		}
+		var->reg = NULL;
 		localVarList = localVarList->next;
 		free(var);
 	}
@@ -378,6 +406,8 @@ void generate_mips(InterCodes *head)
 					if(i < 4) {
 						LocalVar var = alloc_var(cur->code.binop.op1); 
 						var->reg = &cpu.a[i];
+						cpu.a[i].available = FALSE;
+						cpu.a[i].varList = var;
 					}
 					else {
 						//Reg *reg = ensure(cur->code.binop.op1);
@@ -476,6 +506,7 @@ void generate_mips(InterCodes *head)
 				r2 = ensure(op1);
 				r3 = ensure(op2);
 				printinMips("div %s, %s, %s", r1->name, r2->name, r3->name);
+				//printinMips("mflo %s", r1->name);
 
 				free_cReg(r2);
 				free_cReg(r3);
@@ -546,17 +577,23 @@ void generate_mips(InterCodes *head)
 				/*NOTE: have to cnt arg nr first*/
 				while(code && code->code.kind == IC_ARG) {
 					j++;
-					code = code->next;
+					code = code->prev;
 				}
 				i = 0;
 				code = cur->prev;
+				spill_reg(&cpu.a[0]);
+				spill_reg(&cpu.a[1]);
+				spill_reg(&cpu.a[2]);
+				spill_reg(&cpu.a[3]);
 				while(code && code->code.kind == IC_ARG) {
 					if(i < 4) {
 						Reg *reg = ensure(code->code.binop.op1);
+						spill_reg(&cpu.a[i]);
 						printinMips("move $a%d, %s", i, reg->name);			
 					}
 					else if(i == 4) {
-						printinMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-3)*4);
+						printf("j=%d\n", j);
+						printinMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-4)*4);
 						Reg *reg = ensure(code->code.binop.op1);
 						printinMips("sw %s, 0($sp)", reg->name);
 					}
@@ -567,6 +604,7 @@ void generate_mips(InterCodes *head)
 					code = code->prev;
 					i++;
 				}
+				spill_allReg();	
 
 				printinMips("addi $sp, $sp, -4");
 				printinMips("sw $ra, 0($sp)");

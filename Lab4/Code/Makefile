@@ -36,7 +36,7 @@ syntax-c: $(YFILE)
 .PHONY: clean test
 test:
 #	sh ./test-lab4.sh
-	./parser ../Test/test-lab4/fibonacci.cmm ../Test/test-lab4/out.s
+	./parser ../Test/test-lab3/testB-1.cmm ../Test/test-lab3/out.s
 test-lab2:
 	sh ./test-lab2.sh
 test-lab3:
