@@ -17,6 +17,6 @@
 //#define OPTIMIZE_IR 1
 
 
-#define NEW_OP(type, ptr)	newOp(type, (void *)ptr)
+#define NEW_OP(type, ptr)	newOp(type, (unsigned long)ptr)
 
 #endif

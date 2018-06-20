@@ -72,7 +72,7 @@ Operand newTemp();
 Operand newLabel();
 InterCodes *newInterCodes();
 Operand newOperand();
-Operand newOp(OP_TYPE type, void *ptr);
+Operand newOp(OP_TYPE type, unsigned long ptr);
 InterCodes* newIC(IC_TYPE, Operand rlt1, Operand op1, Operand op2);
 void deleteInterCodes(InterCodes *code);
 void clearInterCodes(InterCodes *codes);

@@ -78,12 +78,12 @@ int main(int argc, char **argv)
 
 #ifdef OPTIMIZE_IR
 			opt_codes = opt_ir(codes);
-			printInterCodes(opt_codes, ir_out);
+			//printInterCodes(opt_codes, ir_out);
 			//printInterCodes(opt_codes, NULL);
 			printf("\n");
 #else
 			opt_codes = codes;
-			printInterCodes(codes, ir_out);
+			//printInterCodes(codes, ir_out);
 			//printInterCodes(codes, stdout);
 #endif
 

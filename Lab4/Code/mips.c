@@ -82,15 +82,16 @@ LocalVar alloc_var(Operand op)
 	add_var(var);
 
 	if(op->kind == VARIABLE) {
-		printinMips("subu $sp, $sp, 4\t\t#alloc %d($fp) for %s",var->offset, op->name);
-		//printComment("#alloc %s", op->name);
+		//printinMips("subu $sp, $sp, 4\t\t#alloc %d($fp) for %s",var->offset, op->name);
+		printinMips("subu $sp, $sp, 4",var->offset, op->name);
 	}
 	else if(op->kind == TEMP) {
-		printinMips("subu $sp, $sp, 4\t\t#alloc %d($fp) for temp%d",var->offset, op->value);
-		//printComment("#alloc temp%d", op->value);
+		//printinMips("subu $sp, $sp, 4\t\t#alloc %d($fp) for temp%d",var->offset, op->value);
+		printinMips("subu $sp, $sp, 4",var->offset, op->value);
 	}
 	else {
-		printinMips("subu $sp, $sp, 4\t\t#alloc for else", op->value);
+		//printinMips("subu $sp, $sp, 4\t\t#alloc for else", op->value);
+		printinMips("subu $sp, $sp, 4", op->value);
 	}
 
 
@@ -107,7 +108,8 @@ LocalVar alloc_array(Operand op, int size)
 	var->offset	= fp_off;
 	add_var(var);
 	
-	printinMips("subu $sp, $sp, %d\t\t#alloc for temp%d", size, op->value);
+	//printinMips("subu $sp, $sp, %d\t\t#alloc for temp%d", size, op->value);
+	printinMips("subu $sp, $sp, %d", size, op->value);
 
 	return var;
 }
@@ -136,7 +138,7 @@ void spill_reg(Reg *reg)
 			clear_reg(reg);
 		}
 		else if(var->op->kind == VARIABLE || var->op->kind == TEMP) {
-			printinMips("sw %s, %d($fp)\t\t#spill", reg->name, var->offset);
+			printinMips("sw %s, %d($fp)", reg->name, var->offset);
 		}
 		else {
 			printOperand(var->op, stdout);
@@ -235,7 +237,7 @@ Reg *alloc_reg(Operand op)
 			min_cnt = cpu.t[i].lastUse;
 		}	
 	}
-	printinMips("#spill %d", idx);
+	//printinMips("#spill %d", idx);
 	spill_reg(&cpu.t[idx]);		
 	cpu.t[idx].lastUse = mips_cnt;
 	cpu.t[idx].available = FALSE;
@@ -592,8 +594,8 @@ void generate_mips(InterCodes *head)
 						printinMips("move $a%d, %s", i, reg->name);			
 					}
 					else if(i == 4) {
-						printf("j=%d\n", j);
-						printinMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-4)*4);
+						//printinMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-4)*4);
+						printinMips("subu $sp, $sp, %d", (j-4)*4);
 						Reg *reg = ensure(code->code.binop.op1);
 						printinMips("sw %s, 0($sp)", reg->name);
 					}

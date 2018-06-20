@@ -285,13 +285,13 @@ Operand newOperand()
 	return op;
 }
 
-Operand newOp(OP_TYPE type, void *ptr)
+Operand newOp(OP_TYPE type, unsigned long ptr)
 {
 	Operand op = malloc(sizeof(struct Operand_));
 	memset(op, 0, sizeof(struct Operand_));
 	op->kind = type;
 	if(type == VARIABLE) 
-		op->name = ptr;
+		op->name = (char *)(void *)ptr;
 	else if(type == REF || type == DEREF) 
 		op->op = (Operand)ptr;
 	else
@@ -775,7 +775,7 @@ InterCodes *translate_Exp(TreeNode *exp, Operand place)
 		}
 		else {
 			/*FIXME: what if function return void?*/
-			Operand op1 = newOp(VARIABLE, sym->name);
+			Operand op1 = NEW_OP(VARIABLE, sym->name);
 			InterCodes *code1 = newIC(IC_CALL, place, op1, NULL);
 			codes = code1;
 		}
