@@ -1,0 +1,15 @@
+1 struct Product{
+2 int name;
+3 int price;
+4 int date;
+5 };
+6 int main()
+7 {
+8 struct Inside_Function{
+9 int name;
+10 int price;
+11 };
+12 struct Product a;
+13 a.name = a.price = 2;
+14 a.data = 1;
+15 }

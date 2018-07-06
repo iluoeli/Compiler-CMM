@@ -1,0 +1,8 @@
+ float function()
+ {
+ float x4 = 1.e1;
+ float x1 = 4e;
+ float x2 = 1.e1.3;
+ 
+return x1 + x2;
+ }

@@ -7,7 +7,11 @@
 #define EN_ASSERT 1
 #define IR_DEBUG 1
 
-#define LAB_STAGE 4
+#define lab1   1
+#define lab2   2
+#define lab3   3
+#define lab4   4
+#define LAB_STAGE lab4
 
 
 #if SEMATIC_DEBUG

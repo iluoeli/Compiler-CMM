@@ -14,9 +14,6 @@
 #include "ir_opt.h"
 #include "mips.h"
 
-//#define OPTIMIZE_IR 1
-
-
 #define NEW_OP(type, ptr)	newOp(type, (unsigned long)ptr)
 
 #endif

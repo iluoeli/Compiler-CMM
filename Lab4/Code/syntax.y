@@ -103,7 +103,7 @@ ExtDef : Specifier ExtDecList SEMI	{
 		$$->nType = T_ExtDef;
 	}
 	| error SEMI {//error recovery
-		yyerror("Missing \";\"");
+		//yyerror("Missing \";\"");
 		nError ++;
 	}
 	;
@@ -148,7 +148,7 @@ StructSpecifier : STRUCT Tag	{
 		$$->nType =T_StructSpecifier;
 	}
 	| STRUCT OptTag LC error RC {//error handle
-		yyerror("Missing \"{\"");
+		//yyerror("Missing \"{\"");
 		nError ++;	
 	}
 	;
@@ -182,7 +182,7 @@ VarDec : ID	{
 		$$->nType =T_VarDec;
 	}
 	| VarDec LB error	{//error handle	
-		yyerror("Missing \"]\"");
+		//yyerror("Missing \"]\"");
 		nError ++;	
 	}
 	;
@@ -202,7 +202,7 @@ FunDec : ID LP VarList RP{
 		$$->nType = T_FunDec;
 	}
 	| ID error RP {//error handle
-		yyerror("Missing \"(\"");
+		//yyerror("Missing \"(\"");
 		nError ++;	
 	}
 	;
@@ -302,7 +302,7 @@ Stmt : Exp SEMI	{
 		$$->nType =T_Stmt;
 	}
 	| Exp error SEMI	{//error handle
-		yyerror("Missing \";\"");
+		//yyerror("Missing \";\"");
 		nError ++;
 		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
@@ -503,7 +503,7 @@ Exp : Exp ASSIGNOP Exp	{
 		$$->nType =T_Exp;
 	}
 	| Exp LB error RB	{//error handle 
-		yyerror("Missing \"]\"");
+		//yyerror("Missing \"]\"");
 		nError ++;
 	}
 	;
@@ -544,12 +544,13 @@ void yyerror(char *pstr, ...)
 {
 	//if(newLine) {
 		//printf("Error type B at Line %d: ", yylineno);
-		fprintf(stderr, "#%d Error type B at Line %d: ", nError, yylineno);
+		fprintf(stderr, "Error type B at Line %d: ", yylineno);
 		va_list varList;
 		va_start(varList, pstr);
 		vprintf(pstr, varList);
 		va_end(varList);
 		printf(".\n");
 		newLine = 0;
+        nError ++;
 	//}
 }

@@ -25,43 +25,33 @@ int main(int argc, char **argv)
 			perror(argv[1]);
 			return 1;
 		}
-		//printf("\n\nparsering file: %s......\n", argv[i]);
 		yyrestart(input_fp);
 		yyparse();
 		fclose(input_fp);
 		yylineno = 1;
 
-		//print tree
 		if(nError || !root) {
-			return 1;
+			return 0;
 		}
-#if EN_PRINT_TREE
+
+#if LAB_STAGE == lab1
 		printTree(root);
+        return 0;
 #endif
+
 		initTable();
 		preprocessTable();	
 		sematicCheck(root);
-		//printTable();
+
+#if LAB_STAGE == lab2
+		deleteTree(root);
+		clearTable();
+        return 0;
+#endif
 		
 		if(!nError && argc >= 3) {
 			codes = generate_ir(root);
-			//printInterCodes(codes, NULL);
 			test_ir(codes);
-/*
-			char fileName[128];
-			strcpy(fileName, argv[i]);
-			strcat(fileName, ".ir");
-			FILE *fp = fopen(fileName, "w");
-			ASSERT(fp);
-			printInterCodes(codes, fp);
-			fclose(fp);
-*/
-			/*
-			if(argc < 3) {
-				printf("./parser <input_file> <output_file>\n");
-				return 1;
-			}
-			*/
 
 			FILE *fp = fopen(argv[2], "w");
 			if(!fp) {
@@ -69,29 +59,27 @@ int main(int argc, char **argv)
 				return 1;
 			}
 
-#if LAB_STAGE == 3
-			ir_out = fp;
-#else
-			ir_out = stdout;
-#endif
-			//printInterCodes(codes, stdout);
-
-#ifdef OPTIMIZE_IR
+#if LAB_STAGE == lab3
+    #ifdef OPTIMIZE_IR
 			opt_codes = opt_ir(codes);
-			//printInterCodes(opt_codes, ir_out);
-			//printInterCodes(opt_codes, NULL);
-			printf("\n");
-#else
+    #else
 			opt_codes = codes;
-			//printInterCodes(codes, ir_out);
-			//printInterCodes(codes, stdout);
+            codes = NULL;
+    #endif
+			ir_out = fp;
+			printInterCodes(opt_codes, fp);
+			fclose(fp);
+			clearInterCodes(codes);
+			clearInterCodes(opt_codes);
+		    deleteTree(root);
+		    clearTable();
+            return 0;
+#else
+            opt_codes = codes;
+            codes = NULL;
 #endif
 
-			//printInterCodes(opt_codes, NULL);
-			//printf("\n\n");
-
-#if LAB_STAGE == 4
-			//printInterCodes(opt_codes, stdout);
+#if LAB_STAGE == lab4
 			mips_out = fp;
 			generate_mips(opt_codes);
 #endif
