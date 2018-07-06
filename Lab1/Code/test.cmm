@@ -1,9 +1,0 @@
-
-int main ()
-{
-	i = 1;
-	int i;
-	i = 1;
-	int i;
-	return 0;
-}
