@@ -11,7 +11,7 @@
 #define lab2   2
 #define lab3   3
 #define lab4   4
-#define LAB_STAGE lab2
+#define LAB_STAGE lab4
 
 
 #if SEMATIC_DEBUG
