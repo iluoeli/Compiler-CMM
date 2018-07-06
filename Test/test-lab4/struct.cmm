@@ -1,0 +1,23 @@
+struct Op {
+	int x;
+	int y;
+};
+
+int sum(struct Op arg)
+{
+	return (arg.x + arg.y);
+}
+
+int main()
+{
+
+	struct Op n;
+	int rlt;
+	n.x = 1;
+	n.y = 2;
+	
+	rlt = sum(n);
+	write(rlt);
+
+	return 0;
+}
