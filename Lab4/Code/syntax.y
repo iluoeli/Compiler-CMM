@@ -3,7 +3,6 @@
 	#include <stdarg.h>
 	#include "TreeNode.h"
 	int yylex();	
-//	void yyerror(const char *msg);
 	void yyerror(char *pstr, ...);
 	void detailedMessage(const char *msg);
 	struct TreeNode *root = NULL;
@@ -266,7 +265,6 @@ Stmt : Exp SEMI	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Stmt;
 	}
 	| IF LP Exp RP Stmt %prec LOWER_THAN_ELSE	{
@@ -276,7 +274,6 @@ Stmt : Exp SEMI	{
 		addChild($$, $3);
 		addChild($$, $4);
 		addChild($$, $5);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Stmt;
 	}
 	| IF LP Exp RP Stmt ELSE Stmt	{
@@ -288,7 +285,6 @@ Stmt : Exp SEMI	{
 		addChild($$, $5);
 		addChild($$, $6);
 		addChild($$, $7);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Stmt;
 	}
 	| WHILE LP Exp RP Stmt	{
@@ -298,13 +294,11 @@ Stmt : Exp SEMI	{
 		addChild($$, $3);
 		addChild($$, $4);
 		addChild($$, $5);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Stmt;
 	}
 	| Exp error SEMI	{//error handle
 		//yyerror("Missing \";\"");
 		nError ++;
-		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 	;
 
@@ -312,7 +306,6 @@ DefList : Def DefList	{
 		$$ = createNode("DefList", @$.first_line);
 		addChild($$, $1);
 		addChild($$, $2);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_DefList;
 	}
 	| {//null
@@ -324,19 +317,16 @@ Def : Specifier DecList SEMI	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Def;
 	}
 	| Specifier DecList error SEMI	{//error handle
 		nError ++;
 		//yyerror("Missing \";\"");
-		//syntaxError("Missing \";\"\n", @1.first_line);		
 	}
 	;
 DecList : Dec	{
 		$$ = createNode("DecList", @$.first_line);
 		addChild($$, $1);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_DecList;
 	}
 	| Dec COMMA DecList	{
@@ -344,14 +334,12 @@ DecList : Dec	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_DecList;
 	}
 	;
 Dec : VarDec	{
 		$$ = createNode("Dec", @$.first_line);
 		addChild($$, $1);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Dec;
 	}
 	| VarDec ASSIGNOP Exp	{
@@ -359,7 +347,6 @@ Dec : VarDec	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Dec;
 	}
 	;
@@ -369,7 +356,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp AND Exp	{
@@ -377,7 +363,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp OR Exp	{
@@ -385,7 +370,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp RELOP Exp	{
@@ -393,7 +377,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp PLUS Exp	{
@@ -401,7 +384,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp MINUS Exp	{
@@ -409,7 +391,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp STAR Exp	{
@@ -417,7 +398,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp DIV Exp	{
@@ -425,7 +405,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| LP Exp RP		{
@@ -433,21 +412,18 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| MINUS Exp		{
 		$$ = createNode("Exp", @$.first_line);
 		addChild($$, $1);
 		addChild($$, $2);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| NOT Exp		{
 		$$ = createNode("Exp", @$.first_line);
 		addChild($$, $1);
 		addChild($$, $2);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| ID LP Args RP	{
@@ -456,7 +432,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $2);
 		addChild($$, $3);
 		addChild($$, $4);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| ID LP RP		{
@@ -464,7 +439,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp LB Exp RB	{
@@ -473,7 +447,6 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $2);
 		addChild($$, $3);
 		addChild($$, $4);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp DOT ID	{
@@ -481,25 +454,21 @@ Exp : Exp ASSIGNOP Exp	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| ID			{
 		$$ = createNode("Exp", @$.first_line);
 		addChild($$, $1);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| INT			{
 		$$ = createNode("Exp", @$.first_line);
 		addChild($$, $1);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| FLOAT			{
 		$$ = createNode("Exp", @$.first_line);
 		addChild($$, $1);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Exp;
 	}
 	| Exp LB error RB	{//error handle 
@@ -512,13 +481,11 @@ Args : Exp COMMA Args	{
 		addChild($$, $1);
 		addChild($$, $2);
 		addChild($$, $3);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Args;
 	}
 	| Exp			{
 		$$ = createNode("Args", @$.first_line);
 		addChild($$, $1);
-		$$->nType = T_NonTerminal;
 		$$->nType =T_Args;
 	}
 	;
@@ -533,24 +500,15 @@ void detailedMessage(const char *msg)
 	printf("(%s).\n", msg);
 }
 
-//let yyerror do nothing
-/*
-void yyerror(const char *msg)
-{
-}
-*/
 
 void yyerror(char *pstr, ...)
 {
-	//if(newLine) {
-		//printf("Error type B at Line %d: ", yylineno);
-		fprintf(stderr, "Error type B at Line %d: ", yylineno);
-		va_list varList;
-		va_start(varList, pstr);
-		vprintf(pstr, varList);
-		va_end(varList);
-		printf(".\n");
-		newLine = 0;
-        nError ++;
-	//}
+	fprintf(stderr, "Error type B at Line %d: ", yylineno);
+	va_list varList;
+	va_start(varList, pstr);
+	vprintf(pstr, varList);
+	va_end(varList);
+	printf(".\n");
+	newLine = 0;
+    nError ++;
 }

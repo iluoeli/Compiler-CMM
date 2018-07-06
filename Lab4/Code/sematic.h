@@ -4,7 +4,6 @@
 #include "common.h"
 
 
-
 //High-level 
 void sematicCheck(TreeNode *);
 void Program(TreeNode *p);
@@ -27,8 +26,6 @@ FieldList ParamDec(TreeNode *paramDec, BOOL addTable);
 void CompSt(TreeNode *compSt);
 void StmtList(TreeNode *stmtList);
 void Stmt(TreeNode *stmt);
-
-
 
 //Local Definitions
 FieldList DefList(TreeNode *defList, BOOL addTable, FieldList list);

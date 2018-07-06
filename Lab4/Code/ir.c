@@ -1,6 +1,9 @@
 #include "common.h"
 
 
+#define NEW_OP(type, ptr)	newOp(type, (unsigned long)ptr)
+
+
 InterCodes *addTail(InterCodes *head1, InterCodes *head2)
 {
 	if(NULL == head1) return head2;
@@ -61,14 +64,6 @@ Operand newTemp()
 	op->value = cnt++;
 	return op;
 }
-
-/*
-int newTemp()
-{
-	static int cnt = 1;
-	return cnt++;
-}
-*/
 
 Operand newLabel()
 {
@@ -332,7 +327,7 @@ int compareOperand(Operand op1, Operand op2)
 {
 	if(op1 == op2)	return TRUE;
 	else if(op1 == NULL || op2 == NULL)	return FALSE;
-	/*NOTE: 语法数中，不同地方的相同变量名内存地址不一样*/
+	/*NOTE: 语法树中，不同位置相同变量名内存地址不一样*/
 	else if(op1->kind == VARIABLE && op1->kind == op2->kind && safe_strcmp(op1->name, op2->name)==0)
 		return TRUE;
 	else if(op1->kind == op2->kind && op1->value == op2->value)
@@ -441,8 +436,6 @@ InterCodes *translate_FunDec(TreeNode *funDec)
 	}
 	codes = addTail(codes, argListCodes);
 	
-	//InterCodes *argListCodes = translate_VarList(funDec->childs[2]);
-	//codes = addTail(codes, argListCodes);
 	return codes;
 }
 
@@ -498,7 +491,7 @@ InterCodes *translate_Dec(TreeNode *dec)
 	}
 	/*Dec -> VarDec ASSIGNOP Exp*/
 	else if(dec->nChild == 3) {
-		/*only basic type can be initilize*/
+		/*only basic type can be initilized*/
 		ASSERT(dec->childs[0]->childs[0]->nType == T_Id);
 		Symbol sym = searchTable(dec->childs[0]->childs[0]->ptr);
 		ASSERT(sym && sym->kind == BASIC);
@@ -939,7 +932,6 @@ InterCodes *translate_Array(TreeNode *exp, Operand place, Type *pType)
 	}
 	/*<exp[exp]>[exp]*/
 	else if(first->childs[1]->nType == T_Lb){
-		/*TODO: implement 3.2*/
 	//	printf("Cannot translate: Code contains variable of multi-dimensional array type or parameters of array type.");
 	//	exit(-1);
 	
@@ -995,7 +987,6 @@ InterCodes *translate_Args(TreeNode *args, ArgList *argList)
 {
 	Operand t1 = newTemp();	
 	InterCodes *code1 = translate_Exp(args->childs[0], t1);
-	//FIXME
 	ArgList node = malloc(sizeof(struct ArgList_));
 	node->op = t1;
 	node->next = NULL;

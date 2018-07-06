@@ -293,7 +293,6 @@ Reg *ensure(Operand op)
 
 Reg *ensure_ref(Operand op)
 {
-	//printOperand(op, stdout);
 	Reg *r = alloc_reg(NULL);
 	LocalVar var = get_var(op);
 	ASSERT(var);
@@ -315,15 +314,6 @@ Reg *ensure_rDeref(Operand op)
 
 Reg *ensure_lDeref(Reg *r1, Reg *r2)
 {
-	/* *reg(rlt) := reg(x) op reg(y) 
-	 * *(rlt) :=  reg(rlt)
-	 */
-	/*
-	LocalVar var = get_var(rlt);
-	if(var == NULL) {
-		var = alloc_var(rlt);
-	}
-	*/
 	printinMips("sw %s, 0(%s)", r2->name, r1->name);	
 	
 	return r1;
@@ -412,13 +402,11 @@ void generate_mips(InterCodes *head)
 						cpu.a[i].varList = var;
 					}
 					else {
-						//Reg *reg = ensure(cur->code.binop.op1);
 						LocalVar var = malloc(sizeof(struct LocalVar_));
 						memset(var, 0, sizeof(struct LocalVar_));
 						var->op = cur->code.binop.op1;
 						var->offset = (3 + i-4) * 4; 
 						add_var(var);
-						//printMips("lw %s, %d($fp)", reg->name, (i-1)*4);
 					}
 					i++;
 				}	
@@ -466,7 +454,6 @@ void generate_mips(InterCodes *head)
 			case IC_ADD:
 				/*除了赋值操作，加减乘除可以不考虑对指针赋值*/
 				if(rlt->kind == DEREF) {
-				//r1 = (rlt->kind == DEREF) ?  : ensure(rlt);
 					r1 = alloc_reg(NULL);
 					r2 = ensure(op1);
 					r3 = ensure(op2);
@@ -508,7 +495,6 @@ void generate_mips(InterCodes *head)
 				r2 = ensure(op1);
 				r3 = ensure(op2);
 				printinMips("div %s, %s, %s", r1->name, r2->name, r3->name);
-				//printinMips("mflo %s", r1->name);
 
 				free_cReg(r2);
 				free_cReg(r3);
@@ -576,7 +562,7 @@ void generate_mips(InterCodes *head)
 				 */
 				j = 0;
 				code = cur->prev;
-				/*NOTE: have to cnt arg nr first*/
+				/*NOTE: cnt arg number firstly*/
 				while(code && code->code.kind == IC_ARG) {
 					j++;
 					code = code->prev;
@@ -594,7 +580,6 @@ void generate_mips(InterCodes *head)
 						printinMips("move $a%d, %s", i, reg->name);			
 					}
 					else if(i == 4) {
-						//printinMips("subu $sp, $sp, %d\t\t#alloc for arg4~", (j-4)*4);
 						printinMips("subu $sp, $sp, %d", (j-4)*4);
 						Reg *reg = ensure(code->code.binop.op1);
 						printinMips("sw %s, 0($sp)", reg->name);
@@ -644,7 +629,6 @@ void generate_mips(InterCodes *head)
 			default :
 				ASSERT(0);
 		}	
-
 
 		cur = cur->next;
 	}

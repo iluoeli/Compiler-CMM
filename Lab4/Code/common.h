@@ -14,6 +14,5 @@
 #include "ir_opt.h"
 #include "mips.h"
 
-#define NEW_OP(type, ptr)	newOp(type, (unsigned long)ptr)
 
 #endif

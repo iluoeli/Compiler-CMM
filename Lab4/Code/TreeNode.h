@@ -9,10 +9,6 @@
 typedef enum ValueType {
 	//value
 	T_Int = 1,	T_Float,	T_Id,
-	T_Type,		
-	T_Token,
-	T_NonTerminal,
-	T_None,
 	//sign
 	T_Semi,		T_Comma,	T_Assignop,
 	T_Relop,	T_Plus,		T_Minus,
@@ -22,7 +18,7 @@ typedef enum ValueType {
 	T_Rb,		T_Lc,		T_Rc,
 	//keyword
 	T_Struct,	T_Return,	T_If,
-	T_Else,		T_While,
+	T_Else,		T_While,    T_Type,
 	//nonterminals
 	T_Program,		T_ExtDefList,	T_ExtDef,
 	T_ExtDecList,	T_Specifier,	T_StructSpecifier,
@@ -44,7 +40,6 @@ typedef struct TreeNode {
 		char *ptr;
 	};
 	char *info;	//other information
-//	Type type;	//type of the node/exp
 	int nChild;	//childs no
 	struct TreeNode *childs[8];	//childs pointers
 } TreeNode;

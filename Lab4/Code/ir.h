@@ -110,5 +110,4 @@ InterCodes *translate_Cond(TreeNode *exp, Operand label1, Operand Label2);
 InterCodes *translate_Args(TreeNode *args, ArgList *argList); 
 
 
-
 #endif

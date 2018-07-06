@@ -161,16 +161,11 @@ Type StructSpecifier(TreeNode *p)
 			structure->name = malloc(len+1);
 			strcpy(structure->name, optTag->childs[0]->ptr);
 		}
-		//PRINT_FIELD_LIST(structure);
-		//structure->tail = DefList(p->childs[3], FALSE);
 		DefList(p->childs[3], FALSE, structure);
-		//PRINT_FIELD_LIST(structure);
-		//checkStructure(structure->tail);
 
 		Type type = malloc(sizeof(struct Type_));
 		type->kind = STRUCTURE;
 		type->structure = structure;
-		//PRINT_TYPE(type);
 		
 		Symbol symbol = newTypeSymbol(S_StrucDef, structure->name, type);
 		int ret = insertTable(symbol);
@@ -202,15 +197,6 @@ Symbol VarDec(Type type, TreeNode *p)
 		newType->array.size = p->childs[2]->iValue;
 
 		symbol = VarDec(newType, child);
-		/*
-		Symbol childSymbol = VarDec(type, child);
-		Type arrType = malloc(sizeof(struct Type_));
-		arrType->kind = ARRAY;
-	
-		arrType->array.elem = childSymbol->type;
-		arrType->array.size = p->childs[2]->iValue;
-		symbol = newTypeSymbol(S_Type, childSymbol->name, arrType);
-		*/
 	}
 	else {
 		ASSERT(0);
@@ -263,7 +249,6 @@ FieldList ParamDec(TreeNode *paramDec, BOOL addTable)
 	strcpy(list->name, symbol->name);
 	list->type = symbol->type;
 	list->tail = NULL;
-	//free(symbol);
 	return list;
 }
 
@@ -273,22 +258,11 @@ FieldList ParamDec(TreeNode *paramDec, BOOL addTable)
 */
 void CompSt(TreeNode *compSt)
 {
-	//FieldList fList = DefList(compSt->childs[1], TRUE);		
 	FieldList fList = malloc(sizeof(struct FieldList_));
 	fList->tail = NULL;
 	fList->type = NULL;
 	fList->name = NULL;
 	DefList(compSt->childs[1], TRUE, fList);		
-/*	for(; fList; fList=fList->tail) {
-		Symbol symbol = newTypeSymbol(S_Type, fList->name, fList->type);
-		int ret = insertTable(symbol);
-		if(ret == 1) {
-			//TODO:cant make sure lineno
-			printf("Error type 3 at Line %d: Redefined variable \"%s\".\n",
-					compSt->childs[1]->lineno, symbol->name);
-		}
-	}	
-*/
 
 	StmtList(compSt->childs[2]);
 }
@@ -363,17 +337,12 @@ FieldList DefList(TreeNode *defList, BOOL addTable, FieldList list)
 {
 	
 	if(defList == NULL)	return NULL;
-	//FieldList list = 
 	Def(defList->childs[0], addTable, list);
-	//printFieldList(list);
 	if(defList->nChild == 2) {
 		FieldList tail = list;
 		for(; tail->tail; tail=tail->tail);
-		//tail->tail = 
 		DefList(defList->childs[1], addTable, list);
 	}
-
-	//printFieldList(list);
 	
 	return list;
 }
@@ -392,10 +361,8 @@ FieldList DecList(TreeNode *decList, Type type, BOOL addTable, FieldList list)
 	
 	FieldList l = Dec(decList->childs[0], type, addTable, list);	
 	if(decList->nChild == 3) {
-		//l->tail = 
 		DecList(decList->childs[2], type, addTable, list);
 	}
-	//printFieldList(list);
 	
 	return list;
 }
@@ -441,7 +408,6 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 			PRINT_ERROR(15, dec->lineno, "Illegal initializatio for structure filed");	
 		}
 	}
-
 	
 	return list;
 }
@@ -454,7 +420,6 @@ FieldList Dec(TreeNode *dec, Type type, BOOL addTable, FieldList list)
 Type Exp(TreeNode *exp)
 {
 	if(exp == NULL)	return NULL;
-	//printTree(exp);
 	
 	TreeNode *first = exp->childs[0];
 	TreeNode *second = exp->childs[1];
@@ -466,7 +431,6 @@ Type Exp(TreeNode *exp)
 			lType = Exp(first);
 			if(second->nType == T_Assignop) {
 				if(lType != NULL && isLeftVar(first) == FALSE) {
-					//PRINT_TYPE(lType);
 					nError++;
 					PRINT_ERROR(6, exp->lineno, "The left-hand side of an assignment must be a variable.");
 					lType = NULL;
@@ -598,8 +562,6 @@ Type Exp(TreeNode *exp)
 						nError++;
 						printf("Error type 9 at Line %d: Function \"", first->lineno);
 						printFuncType(func);
-						//printType(func->func->retType);
-						//printFieldList(func->func->argList);
 						printf("\" is not applicable for arguments \"");
 						printFieldList(argList);
 						printf("\".\n");
@@ -628,7 +590,6 @@ Type Exp(TreeNode *exp)
 			ASSERT(0);
 	}
 	
-	//PRINT_TYPE(lType);
 	return lType;
 }
 
@@ -638,7 +599,6 @@ BOOL isLeftVar(TreeNode *p)
 	//TODO:more specific type
 	if(p == NULL)	return TRUE;
 	
-	//printTree(p);
 	TreeNode *child = p->childs[0];
 	if(p->nType == T_Id){
 		Symbol symbol = searchTable(p->ptr);

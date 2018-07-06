@@ -14,8 +14,6 @@ Symbol newTypeSymbol(S_TYPE s_type, char *name, Type type)
 	strcpy(symbol->name, name);
 	symbol->name[len] = '\0';
 
-	//printSymbol(symbol);
-	//printf("\n");
 	return symbol;
 }
 
@@ -30,8 +28,6 @@ Symbol newFuncSymbol(S_TYPE s_type, char *name, Func type)
 	symbol->name = malloc(len+1);
 	strcpy(symbol->name, name);
 	
-	//printSymbol(symbol);
-	//printf("\n");
 	return symbol;
 }
 
@@ -82,9 +78,6 @@ int insertTable(Symbol symbol)
 {
 	if(symbol == NULL || symbol->name == NULL)	return -1;
 	unsigned int hashValue = hash_pjw(symbol->name);
-	//printf("hash=%d ", hashValue);
-	//printSymbol(symbol);
-	//PRINT_TABLE();
 
 	//first in this place
 	if(symbolTable[hashValue] == NULL) {
@@ -98,7 +91,6 @@ int insertTable(Symbol symbol)
 		p->next = symbol;
 		symbol->next = NULL;
 	}
-	//PRINT_TABLE();
 	return 0;
 }
 
@@ -144,7 +136,6 @@ int typeSize(Type type)
 			break;
 		case ARRAY:
 			size = typeSize(type->array.elem) * type->array.size;
-			//printf("size: %d = %d * elem_size\n", size, type->array.size);
 			break;
 		case STRUCTURE:
 			p = type->structure;
@@ -163,10 +154,6 @@ Type structureField(FieldList st, char *name)
 {
 	for(; st; st=st->tail) {
 		if(safe_strcmp(st->name , name) == 0) {
-		/*	printf("%s.type=", name);
-			printType(st->type);
-			printf("\n");
-		*/
 			return st->type;
 		}
 	}
@@ -180,9 +167,6 @@ BOOL compareType(Type t1, Type t2)
 		return TRUE;
 	if(t1 == NULL || t2 == NULL)
 		return FALSE;
-	//PRINT_TYPE(t1);
-	//PRINT_TYPE(t2);
-	//printf("\n");
 	if(t1->kind != t2->kind)
 		return FALSE;
 	if(t1->kind == BASIC)
@@ -226,7 +210,6 @@ BOOL compareFunction(Symbol f1, Symbol f2)
 void printFieldList(FieldList list)
 {
 	if(list == NULL)	return;
-	//printf("(");
 	for(; list->tail; list=list->tail) {
 		printType(list->type);
 		if(list->name != NULL)
@@ -236,7 +219,6 @@ void printFieldList(FieldList list)
 	printType(list->type);
 	if(list->name != NULL)
 		printf(" %s", list->name);
-	//printf(")");
 }
 
 void printType(Type type)
